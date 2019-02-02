@@ -1,0 +1,13 @@
+<!-- 查看范围 只会存在安全中心和学校的人进来看，因此其实就是学院列表的筛选 -->
+
+<input type="hidden" name="checkGrade">
+<div class="dropdown" id="check-grades-${timestamp}" style="min-width: 100px"></div>
+<div class="filter-name">检查项等级</div>
+<script>
+$http.get({
+    url: 'tpl/check-grades',
+    forbidLoading: true
+}, function(res) {
+    $('#check-grades-${timestamp}').html(res);
+})
+</script>

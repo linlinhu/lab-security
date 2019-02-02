@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>银玺·实验室安全检查 - 登录</title>
+    <link href="/img/favicon.ico" rel="shortcut icon">
+    <link href="/css/bootstrap.min.css?v=3.4.0" rel="stylesheet">
+    <link href="/css/font-awesome.min.css?v=4.3.0" rel="stylesheet">
+    <link href="/css/animate.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+    <link href="/css/loginNew.css" rel="stylesheet">
+    <link href="/css/iconfont.css" rel="stylesheet">
+
+</head>
+<body auto-flag="loginPageWelcomeU">
+<div class="row signin">
+	<div class="logo-box">
+		<img class="left" src="img/login/logo_login.png">
+		<p class="left">银玺科技</p>
+	</div>
+    <div class="containPanel">
+	    <div class="leftPanel">
+	        <h5>实验室</h5>
+	        <h3>安全管理信息系统</h3>
+	    </div>
+	    <div class="rightPanel">
+	       <form id="loginForm">
+	            <div class="loginTitle">
+	            	 登录
+	            </div>
+	            <div class="form-group">
+	                <input class="form-control" type="text" placeholder="账号/手机号码/电子邮箱" name="username">
+	                <span class="iconfont icon-icon_phone"></span>
+	            </div>
+	            <div class="form-group">
+	                <input class="form-control" type="password" placeholder="请输入由数字、英文组成的密码" name="password">
+	                <span class="iconfont icon-icon_password"></span>
+	            </div>
+	            <div class="form-group codeParent">
+	                <input class="form-control" type="text" placeholder="请输入计算结果" name="code" maxlength="5"><br>
+	                <span class="iconfont icon-icon_verification"></span>
+					<img id="validateCode" class="validateCode"/>
+	            </div>
+	            <div class="form-group loginBtnParent" >
+	                <button class="btn ls-btn btn-success btn-block loginBtn">登录</button>
+	            </div>
+	        </form>
+	    </div>
+       
+    </div>
+</div>
+
+</body>
+<script src="/js/jquery-2.1.1.min.js"></script>
+<script src="/js/bootstrap.min.js?v=3.4.0"></script>
+<!-- iconfont -->
+<script src="/js/iconfont.js"></script>
+<script src="/js/plugins/validate/jquery.validate.min.js"></script>
+<script src="/js/plugins/layer/layer.min.js"></script>
+<script src="/js/jquery.md5.js"></script>
+<script>
+    $(function () {
+
+        /* if(localStorage.merisWebToken){
+            sessionStorage.isLogout = 'false';
+            window.location.replace("/")
+        } */
+
+       
+        
+      	var icon = "<i class='fa fa-times-circle'></i> ";
+        var Validate = function (id, url, eventBinds) {
+	        this.id = id;
+	        this.jq = $("#" + id);
+	        this.url = url;
+	        this.config = {width: 120, height: 300};
+	        this.sequence = "";
+	        this.createSequence = function () {
+	            return "user-" + new Date().getTime() + "-" + Math.random().toString(36).substr(2);
+	        };
+            this.init = function () {
+                var _config = {
+                    width: 80,
+                    height: 40,
+                    fontName:"华文彩云",
+                };
+                $.extend(this.config, _config);
+                var _this = this;
+                var length = eventBinds.length;
+                for (var j = 0; j < length; j++) {
+                    this.jq.on(eventBinds[j], function () {
+                        _this.request();
+                    });
+                }
+                this.request();
+                return this;
+            };
+            this.request = function () {
+                this.sequence = this.createSequence();
+                this.handlerSrc(this.createUrl());
+            };
+            this.handlerSrc = function (url) {
+                console.info("当前验证码访问路径:url=" + encodeURI(url));
+                this.jq.attr("src", encodeURI(url));
+            };
+            this.createUrl = function () {
+                return url + "?sequence=" + this.sequence
+                    + "&fontName="+this.config.fontName
+                    + "&width="+this.config.width
+                    + "&height="+this.config.height
+                    +"&"+ new Date().getTime();
+            };
+            this.getCurSequence =function(){
+                return this.sequence;
+            }
+            return this.init();
+        };
+
+        var validate = new Validate("validateCode", "/getValidImg", ["click"]);
+        sessionStorage.isModify = false;
+        $("#loginForm").validate({
+            onfocusin: function(element) { $(element).valid(); },
+            onfocusout: function(element) { $(element).valid(); },
+            rules: {
+                username: {
+                    required: true,
+                    minlength: 2
+                },
+                password: {
+                    required: true,
+                    passwordR: true,
+                    rangelength: [6, 20]
+                },
+                code: {
+                    required: true
+                }
+            },
+            messages: {
+                username: {
+                    required: icon + '请输入账号',
+                    minlength: icon + "账号不少于2个字符",
+
+                },
+                password: {
+                    required: icon + '请输入密码',
+                    passwordR: icon + '密码格式错误',
+                    rangelength: icon + "密码长度为6-20"
+                },
+                code: {
+                    required: icon + '请填写验证码',
+                }
+            },
+            submitHandler: function (form) {
+                var data = $(form).serializeObject();
+                var url = form.action;
+
+                data.password = $.md5(data.password)
+                data.sessionKey = validate.sequence;
+                console.log(data)
+                loading = layer.load();
+                $.ajax({
+                    url: url,
+                    type: "post",
+                    dataType: "json",
+                    data: data,
+                    success: function (res, status, xhr) {
+                        layer.close(loading);
+                        if (!res.success) {
+                            layer.msg(res.message ? res.message : '登录失败', {icon: 5});
+                            $('.validateCode').trigger('click');
+                        } else {
+                            sessionStorage.isLogout = 'false';
+              
+                        	window.location.replace("/")
+                        }
+                    },
+                    error: function () {
+                        setTimeout(function () {
+                            layer.alert('抱歉，资源访问失败', {
+                                        closeBtn: 0
+                                    },
+                                    function () {
+                                        layer.close(loading);
+                                        //history.go(-1);
+                                        layer.closeAll('dialog');
+                                    }
+                            );
+                            $('.validateCode').trigger('click');
+                        }, 1000)
+                    }
+                })
+
+            }
+        });
+        $.validator.addMethod("passwordR", function (value, element, params) {
+            var passwordR = /^[0-9a-zA-Z]{0,}[0-9a-zA-Z]{1}$/;
+            return this.optional(element) || (passwordR.test(value));
+        }, "*密码格式错误");
+    })
+
+    $.fn.serializeObject = function () {
+        var o = {};
+        var a = this.serializeArray();
+        $.each(a, function () {
+            if (o[this.name] !== undefined) {
+                if (!o[this.name].push) {
+                    o[this.name] = [o[this.name]];
+                }
+                o[this.name].push(this.value || '');
+            } else {
+                o[this.name] = this.value || '';
+            }
+        });
+        return o;
+    };
+
+    // $(document).ready(function () {
+    //     $(document).bind("contextmenu", function (e) {
+    //         return false;
+    //     });
+    // });
+</script>
+</html>

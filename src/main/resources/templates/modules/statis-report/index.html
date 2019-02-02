@@ -1,0 +1,77 @@
+<style>
+#statis-report .th-operation,
+#statis-report .td-operation {
+    display: none;
+}
+#statis-report .reportcharts {
+    padding-bottom: 20px;
+}
+</style>
+<div class="vertical-tabs" id="statis-report">
+    <div class="tabs-container">
+        <div class="tabs-left">
+            <ul class="nav nav-tabs" >
+                <#list reportItems as item>
+                <li class="<#if item_index == 0>active</#if>">
+                    <a data-toggle="tab" href="#sr-${item.code}" data-code="${item.code}" aria-expanded="false">${item.codeName}</a>
+                </li>
+                </#list>
+            </ul>
+            <div class="tab-content">
+                <#list reportItems as item>
+                <div id="sr-${item.code}" class="tab-pane <#if item_index == 0>active</#if>">
+                    <div class="panel-body">
+                        <div class="reportcharts"></div>
+                        <div class="tablelist"></div>
+                    </div>
+                </div>
+                </#list>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var StatisReport = function() {
+        var that = this;
+        that.wrapId = '#statis-report';
+        that.loadCharts = function(code) {
+            console.info(code + ".............")
+            var htmlElem = '#sr-' + code + ' div.reportcharts';
+            $http.get({
+                url: code + '/charts?ecmId=${ecmId}',
+                forbidLoading: true
+            }, function(res) {
+                $(htmlElem).html(res);
+            });
+        };
+        // 根据code加载tablelist的内容
+        that.loadTableList = function(code) {
+            var htmlElem = '#sr-' + code + ' div.tablelist';
+            $http.get({
+                url: code + '/tablelist?ecmId=${ecmId}',
+                forbidLoading: true
+            }, function(res) {
+                $(htmlElem).html(res);
+            });
+        };
+        that.bindEvent = function() {
+            $(that.wrapId + ' ul.nav-tabs a').unbind().click(function() {
+                var code = $(this).data().code;
+                that.loadCharts(code);
+                that.loadTableList(code);
+            });
+        }
+
+        that.init = function() {
+            // 默认加载第一个tablelist
+            var activeCode = $(that.wrapId + ' ul.nav-tabs > li.active > a').data().code;
+            that.loadCharts(activeCode);
+            that.loadTableList(activeCode);
+            // 绑定tab切换事件
+            that.bindEvent();
+        }
+        that.init();
+    };
+    new StatisReport();
+</script>

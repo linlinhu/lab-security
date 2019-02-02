@@ -1,0 +1,130 @@
+<section class="emin-diagrams safety-charts">
+    <div class="emin-diagram emin-diagram-6">
+        <div class="basic-box">
+            <div class="seperate-title">
+                <span class="title">按检查类型统计</span>
+                <div class="opts">
+                    <div class="select-box">
+                        <#assign chartId = 'inspect-type'>
+                        <#include "../../../tpl/safety-overview/college-box.html" />
+                    </div>
+                </div>
+            </div>
+            <div class="echarts" id="echarts-inspect-type"></div>
+        </div>
+    </div>
+
+    <div class="emin-diagram emin-diagram-6">
+        <div class="basic-box">
+            <div class="seperate-title">
+                <span class="title">按隐患等级统计</span>
+                <div class="opts">
+                    <div class="select-box">
+                        <#assign chartId = 'hidden-danger-level'>
+                        <#include "../../../tpl/safety-overview/college-box.html" />
+                    </div>
+                </div>
+            </div>
+            <div class="echarts" id="echarts-hidden-danger-level"></div>
+        </div>
+    </div>
+    <div style="clear:both"></div>
+</section>
+
+<#--
+<div class="wrapper-content safety-overview">
+    <div class="graphic-statis-area">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>按检查类型统计</h5>
+                        <div class="ibox-tools">
+                            <div class="select-box">
+                                <#assign chartId = 'inspect-type'>
+                                <#include "../../../tpl/safety-overview/college-box.html" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="echarts" id="echarts-inspect-type"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>按隐患等级统计</h5>
+                        <div class="ibox-tools">
+                            <div class="select-box">
+                                <#assign chartId = 'hidden-danger-level'>
+                                <#include "../../../tpl/safety-overview/college-box.html" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="echarts" id="echarts-hidden-danger-level"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+-->
+<#include "inspect-list.html" />
+
+<script>
+
+    (function() {
+        var that = this;
+        this.optData = {};
+        var $this = {
+            init: function() {
+                this.initInspectTypeChart();
+                this.initDangerLevelChart();
+            },
+            // 检查类型统计图表
+            initInspectTypeChart: function () {
+                var chart = echarts.init(document.getElementById('echarts-inspect-type'));
+                var chartOption = ChartUtil.buildRingChartOption({
+                    legendData: ['日常检查', '开学检查', '期中检查', '期末检查', '专项检查'],
+                    seriesName: '分类',
+                    seriesData: [
+                        {value:30, name:'日常检查'},
+                        {value:25, name:'开学检查'},
+                        {value:15, name:'期中检查'},
+                        {value:35, name:'期末检查'},
+                        {value:45, name:'专项检查'}
+                    ],
+                    centerText: '150\n 总数 '
+                });
+                chart.setOption(chartOption);
+                $(window).resize(chart.resize);
+            },
+            // 隐患等级统计图表
+            initDangerLevelChart: function () {
+                var chart = echarts.init(document.getElementById('echarts-hidden-danger-level'));
+                var chartOption = ChartUtil.buildRingChartOption({
+                    legendData: ['严重', '一般', '管理问题'],
+                    seriesName: '等级',
+                    seriesData: [
+                        {value:30, name:'严重'},
+                        {value:25, name:'一般'},
+                        {value:45, name:'管理问题'}
+                    ],
+                    centerText: '100\n 总数 '
+                });
+                chart.setOption(chartOption);
+                $(window).resize(chart.resize);
+            }
+        };
+        $.extend(this,$this);
+        this.init();
+    })();
+
+</script>
+
+
+

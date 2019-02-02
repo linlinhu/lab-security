@@ -1,0 +1,95 @@
+<section class="emin-diagrams safety-charts">
+    <div class="emin-diagram emin-diagram-6">
+        <div class="basic-box">
+            <div class="seperate-title">
+                <span class="title">危险源总数统计</span>
+                <div class="opts">
+                    <div class="collapse-desc">
+                        总数&nbsp<span class="count">${sum}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="echarts" id="echarts-hazard-count"></div>
+        </div>
+    </div>
+    <div class="emin-diagram emin-diagram-6">
+        <div class="basic-box">
+            <div class="seperate-title">
+                <span class="title">按分类统计</span>
+                <div class="opts">
+                    <div class="select-box">
+                        <#assign chartId = 'hazard-type'>
+                        <#include "../../../tpl/safety-overview/college-box.html" />
+                    </div>
+                </div>
+            </div>
+            <div class="echarts" id="echarts-hazard-type"></div>
+        </div>
+    </div>
+    <div style="clear:both"></div>
+</section>
+<#include "hazards-list.html" />
+
+<script>
+
+    (function(){
+        var that = this;
+        this.optData = {};
+        var $this = {
+            init: function() {
+                this.initHazardCountChart();
+                this.initHazardTypeChart();
+            },
+            // 危险源总数统计图表
+            initHazardCountChart: function () {
+                var chart = echarts.init(document.getElementById('echarts-hazard-count'));
+                var xAxisData = ['历史学院','化学学院','物理学院','工商学院','外语学院', '考古学院','计算机学院'];
+                var seriesData = [13, 10, 4, 3, 18, 23, 15];
+
+                <#if collegeData??>
+                    var collegeData = ${collegeData};
+                    xAxisData = collegeData.xAxisData;
+                    seriesData = collegeData.seriesData;
+                </#if>
+
+                var chartOption = ChartUtil.buildVerticalBarChartOption({
+                    xAxisData: xAxisData,
+                    seriesData: seriesData
+                });
+
+                chart.setOption(chartOption);
+                $(window).resize(chart.resize);
+            },
+            // 危险源分类统计图表
+            initHazardTypeChart: function () {
+                var chart = echarts.init(document.getElementById('echarts-hazard-type'));
+
+                var legendData = ['易燃品', '易爆品', '腐蚀品', '辐射品'];
+                var seriesData = [
+                    {value:30, name:'易燃品'},
+                    {value:25, name:'易爆品'},
+                    {value:15, name:'腐蚀品'},
+                    {value:35, name:'辐射品'}
+                ];
+
+                <#if hazardCategoryData??>
+                    var hazardCategoryData = ${hazardCategoryData};
+                    legendData = hazardCategoryData.legendData;
+                    seriesData = hazardCategoryData.seriesData;
+                </#if>
+
+                var chartOption = ChartUtil.buildRingChartOption({
+                    legendData: legendData,
+                    seriesName: '分类',
+                    seriesData: seriesData,
+                    centerText: '105\n 总数 '
+                });
+                chart.setOption(chartOption);
+                $(window).resize(chart.resize);
+            }
+        };
+        $.extend(this,$this);
+        this.init();
+    })();
+
+</script>

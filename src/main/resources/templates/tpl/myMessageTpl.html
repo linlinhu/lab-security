@@ -1,0 +1,18 @@
+<script id="my_massage_simple_List_tpl" type="text/html">
+	{{# layui.each(d, function(index, item){ }}
+		<li>
+			<a href="javascript:void(0)" data-id="{{item.id}}" data-type="{{item.type}}">{{# if(item.type ==1) { }}
+					【检查通知】
+				{{# } else if(item.type == 2) { }}
+					【整改通知】
+				{{# } else if(item.type == 3) { }}
+					【复查通知】
+				{{# } else if(item.type == 4) { }}
+					【系统公告】
+				{{# } else if(item.type == 5) { }}
+					【申请通知】
+				{{# } }}{{item.title}} {{new Date(item.createTime).Format("yyyy-MM-dd hh:mm")}}
+			</a>
+		</li>
+	{{# }) }}
+</script>

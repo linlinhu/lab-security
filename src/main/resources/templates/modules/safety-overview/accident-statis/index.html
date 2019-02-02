@@ -1,0 +1,50 @@
+<section class="emin-diagrams safety-charts">
+    <#--<div class="emin-diagram">-->
+        <div class="basic-box">
+            <div class="seperate-title">
+                <span class="title">安全事故总数统计</span>
+                <div class="opts">
+                    <div class="collapse-desc">
+                        总数&nbsp<span class="count">125</span>
+                    </div>
+                </div>
+            </div>
+            <div class="echarts" id="echarts-accident"></div>
+        </div>
+    <#--</div>-->
+    <div style="clear:both"></div>
+</section>
+
+<#include "accident-list.html" />
+
+<script>
+
+    (function() {
+        var that = this;
+        this.optData = {};
+        var $this = {
+            init: function() {
+                this.initAccidentChart();
+            },
+            // 安全事故统计图表
+            initAccidentChart: function () {
+                var chart = echarts.init(document.getElementById('echarts-accident'));
+                var xAxisData = ['历史学院','化学学院','物理学院','工商学院','外语学院', '考古学院','计算机学院'];
+                var seriesData = [13, 10, 4, 3, 18, 23, 15];
+                var chartOption = ChartUtil.buildVerticalBarChartOption({
+                    xAxisData: xAxisData,
+                    seriesData: seriesData
+                });
+
+                chart.setOption(chartOption);
+                $(window).resize(chart.resize);
+            }
+        };
+        $.extend(this,$this);
+        this.init();
+    })();
+
+</script>
+
+
+

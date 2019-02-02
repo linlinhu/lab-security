@@ -1,0 +1,372 @@
+<style type="text/css">
+    .nfConfigContainer {
+        padding-top: 50px;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .nfConfigContainer .mask {
+        position: absolute;
+
+        top: 0px;
+        left: 0px;
+        display: none;
+        width: 100%;
+        height: 100%;
+
+        background: rgba(180, 180, 180, 0.5);
+        z-index: 6000;
+    }
+
+    .nfConfigContainer .addItemOption {
+        width: 400px;
+        animation-duration: 0.5s;
+        display: none;
+        position: absolute;
+        right: 0px;
+        top: 0px;
+        bottom: 0px;
+        z-index: 6001;
+        background: #fff;
+    }
+
+    .nfConfigContainer .addItemOption .checkbox {
+        height: 50px;
+    }
+
+    .nfConfigContainer .addItemOption .personTree {
+        border: 1px solid #DCE3E9;
+        border-top: none;
+    }
+
+    .nfConfigContainer .addItemOption .personTree .expand-icon {
+        width: 15px !important;
+        margin-left: 16px;
+        font-size: 14px;
+    }
+
+    .nfConfigContainer .addItemOption .personTree .check-icon {
+        color: #55A8FD;
+        width: 15px !important;
+    }
+
+    .nfConfigContainer .addItemOption .personTree .check-icon.fa-square-o {
+        color: #d6d6d6;
+    }
+
+    .nfConfigContainer .addItemOption .personTree .badge {
+        border: none !important;
+        background: transparent !important;
+    }
+
+    .nfConfigContainer .addItemOption .personTree .list-group-item {
+        width: 100%;
+        border: none;
+    }
+
+    .nfConfigContainer .addItemOption .dept {
+        padding: 20px 40px;
+        display: grid;
+        grid-template-columns: 44% 44%;
+        grid-template-rows: 30px;
+        grid-column-gap: 4%;
+        grid-row-gap: 20px;
+        height: 100%;
+        width: 100%;
+    }
+
+    .nfConfigContainer .addItemOption .selectedPersons {
+        padding: 16px 20px;
+        display: grid;
+        grid-template-columns: 68px 68px 68px 68px;
+        grid-template-rows: 35px;
+        grid-auto-rows: 35px;
+        grid-column-gap: 16px;
+        grid-row-gap: 16px;
+    }
+
+    .nfConfigContainer .addItemOption .selectedPersons .listItem {
+        height: 35px !important;
+        line-height: 35px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow:ellipsis;
+        text-align: center;
+        font-size: 14px;
+        background: #E9F3FD;
+        color: #55A8FD;
+        position: relative;
+    }
+
+    .nfConfigContainer .addItemOption .selectedPersons .listItem .closeBtn {
+        position: absolute;
+        top: -12px;
+        right: 3px;
+    }
+
+    .nfConfigContainer .row {
+        margin-bottom: 15px;
+    }
+
+    .nfConfigContainer .levelContainer {
+        margin-bottom: 30px;
+        display: flex;
+    }
+
+
+
+    .nfConfigContainer .levelLabel {
+
+        vertical-align: top;
+        width: 100px;
+        line-height: 60px;
+
+    }
+
+    .nfConfigItemsContainer {
+        display: flex;
+        flex-wrap: wrap;
+        width: calc(100% - 160px);
+
+    }
+
+    .nfConfigItemsContainer .addItems {
+
+        cursor: pointer;
+        display: none;
+        height: 50px;
+        margin-top: 5px;
+        width: 50px;
+        text-align: center;
+        line-height: 50px;
+        border: 1px dashed #55A8FD;
+        border-radius: 3px
+    }
+
+    .nfConfigItemsContainer .addItems i {
+        font-size: 20px;
+        color: rgba(200, 200, 200, 0.8);
+    }
+
+    .nfConfigItemsContainer .nfConfigItems {
+        background: rgba(242, 242, 242, 1);
+        height: 60px;
+        margin-bottom: 20px;
+        margin-right: 20px;
+        width: 150px !important;
+        position: relative;
+        padding-left: 15px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+    }
+    .nfConfigItemsContainer .nfConfigItems .itemName small{
+        color: #888;
+        font-size:12px;
+    }
+
+    .nfConfigItems .itemIcon {
+        margin-right:5px;
+        display: inline-block;
+        height: 30px;
+        line-height: 30px;
+        width: 30px;
+        text-align: center;
+        border-radius: 15px;
+        background: #687789;
+    }
+
+    .nfConfigItems .itemIcon i {
+        font-size: 18px;
+        color: #fff;
+
+    }
+
+    .nfConfigItems .deleteBtn {
+        display: none;
+        position: absolute;
+        top: 0px;
+        right: 5px;
+        cursor: pointer;
+    }
+
+    .nfConfigItems.modify .deleteBtn{
+        display: block;
+    }
+    .nfConfigItems .deleteBtn i {
+        font-size: 16px !important;
+    }
+
+    .nfConfigContainer .nav > li {
+        width: 50%;
+        height: 44px;
+        transition: 0.2s all linear;
+        line-height: 1;
+        position: relative;
+        text-align: center !important;
+    }
+
+    .nfConfigContainer .nav > li > a {
+        width: 120px;
+        display: inline-block;
+        outline: none;
+    }
+
+    .nfConfigContainer .nav > li:before {
+        content: "";
+        position: absolute;
+        z-index: 5000;
+        top: 0;
+        left: 100%;
+        width: 0;
+        height: 100%;
+        border-bottom: 2px solid #55A8FD;
+        transition: 0.2s all linear;
+    }
+
+    .nfConfigContainer .nav > li.active {
+        background: #fff;
+    }
+
+    .nfConfigContainer .nav > li.active ~ li:before {
+        left: 0px;
+    }
+
+    .nfConfigContainer .nav > li.active:before {
+        width: 100%;
+        left: 0px;
+        top: 0px;
+    }
+
+    .nfConfigContainer .tabs-container .nav-tabs {
+        border: none;
+        margin: auto;
+    }
+
+    .nfConfigContainer .tabs-container .nav-tabs > li.active > a,
+    .nfConfigContainer .tabs-container .nav-tabs > li.active > a:hover,
+    .nfConfigContainer .tabs-container .nav-tabs > li.active > a:focus {
+        border: none;
+    }
+
+
+</style>
+<div class="wrapper-content nfConfigContainer" style="position:relative;height:100%">
+    <div class="mask">
+
+    </div>
+    <h2>隐患默认通知配置</h2>
+    <div style="padding-left:60px;padding-top:30px;height:calc(100% - 60px);overflow: auto">
+        <#list phLevels as level>
+            <div class="levelContainer">
+                <div class="levelLabel">
+                    ${level.name}
+                </div>
+                <div class="nfConfigItemsContainer" data-name="${level.name}">
+                    <#assign list = []>
+                    <#list configs as config>
+                        <#if level.name = config.unqualifiedProGrade>
+                            <#assign list = config.detail>
+                            <#break >
+                        </#if>
+                    </#list>
+                    <#include "items.html">
+                </div>
+            </div>
+        </#list>
+    </div>
+
+    <div class="text-center">
+        <button class="btn ls-btn btn-primary nfConfigOpts" data-opt="modify" style="width:120px;"><i
+                class="iconfont icon-icon_edit"></i> 修改
+        </button>
+    </div>
+
+    <div class="addItemOption animated">
+        <#include "itemOption.html">
+    </div>
+
+</div>
+<script type="text/javascript">
+    (function () {
+        var that = this
+        this.optData = {}
+        var $this = {
+            init: function () {
+                this.bindEvent()
+            },
+            bindEvent: function () {
+                $(".nfConfigOpts").unbind("click").click(function () {
+                    var opt = $(this).data("opt")
+                    that.optData = $(this).data()
+                    eval("that." + opt + "()");
+                })
+                $(".nfConfigContainer .mask").click(function () {
+                    $(this).hide()
+                    $(".nfConfigContainer .addItemOption").removeClass("slideInRight").addClass("slideOutRight")
+                })
+                $(".nfConfigContainer").on("click",".nfConfigItems .deleteBtn",function(){
+                    $(this).parent().remove()
+                })
+
+            },
+            addItem: function () {
+                this.showMask();
+                $(".nfConfigContainer .addItemOption").removeClass("slideOutRight").addClass("slideInRight")
+                $(".nfConfigContainer .addItemOption").show()
+                $(".nfConfigContainer .addItemOption").data("levelName", that.optData.levelName)
+                $(".nfConfigContainer .addItemOption").trigger("init")
+
+            },
+            showMask: function () {
+                $(".nfConfigContainer .mask").show()
+            },
+            hideMask: function () {
+                $(".nfConfigContainer .mask").hide()
+            },
+            modify: function () {
+
+                $(".nfConfigItemsContainer .nfConfigItems").addClass("modify")
+                $(".nfConfigItemsContainer .addItems").show();
+                $(".nfConfigOpts[data-opt='modify']").html("<i class='fa fa-save'></i>  保存")
+                $(".nfConfigOpts[data-opt='modify']").data("opt", "save")
+                $(".nfConfigOpts[data-opt='modify']").attr("data-opt", "save")
+            },
+            save: function () {
+                var data = []
+                $(".nfConfigItemsContainer").each(function(index,ele){
+                    var o = $(this).data()
+                    var config = {
+                        unqualifiedProGrade:o.name,
+                        orderNumber:index,
+                        detail:[]
+                    }
+                    $(this).find(".nfConfigItems.custom").each(function(index,ele){
+                        var d = $(this).data()
+                        d.orderNumber = index;
+                        config.detail.push(d)
+                    })
+                    data.push(config)
+                })
+                $http.post({
+                    url:"notification-config/saveConfig",
+                    contentType:"application/json",
+                    data:JSON.stringify(data)
+                },function(){
+
+                    $(".nfConfigItemsContainer .nfConfigItems").removeClass("modify")
+                    $(".nfConfigItemsContainer .addItems").hide()
+                    $(".nfConfigOpts[data-opt='save']").html("<i class='iconfont icon-icon_edit'></i> 修改")
+                    $(".nfConfigOpts[data-opt='save']").data("opt", "modify")
+                    $(".nfConfigOpts[data-opt='save']").attr("data-opt", "modify")
+                })
+
+
+            }
+
+        }
+        $.extend(this, $this)
+        this.init()
+    })();
+</script>

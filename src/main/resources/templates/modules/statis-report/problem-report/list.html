@@ -1,0 +1,38 @@
+
+<style>
+#statisreport-prolem-tablelist .td-unqualifiedGrade::after {
+    content: '级'
+}
+</style>
+<div class="mgt20" id="statisreport-prolem-tablelist">
+    <form>
+        <div class="my-filter-line">
+            <div>
+                <#include "../../../tpl/basic-config/hidden-danger-grades.html" />
+            </div>
+            <div>
+                <#include "../../../tpl/basic-config/check-grades.html" />
+            </div>
+            <div>
+                <#include "../../../tpl/basic-config/view-scope.html" />
+            </div>
+            <div class="rgt">
+                <a class="btn ls-btn btn-primary download" href="javascript:;">下载表格</a>
+            </div>
+        </div>
+    </form>
+    <div class="data-list"></div>
+</div>
+<script>
+    var statisreportTablelistElem = '#statisreport-prolem-tablelist';
+    new TableManage({
+        wrapId: statisreportTablelistElem,
+        moduleName: 'problem-report',
+        ecmId: '${ecmId}'
+    })
+    $(statisreportTablelistElem + ' a.download').unbind().click(function(){
+        layer.msg('下载程序已启动，请稍后..')
+        document.getElementById("ifile").src = '${downloadUrl}';
+        return false;
+    });
+</script>

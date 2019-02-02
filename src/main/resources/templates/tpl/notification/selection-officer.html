@@ -1,0 +1,509 @@
+<style>
+	.selection-officer {
+		height: 100%;
+		width: 100%;
+		padding: 0 50px;
+	}
+	.selection-officer .left-box,
+	.selection-officer .selected-box {
+		height: 520px;
+		width: 440px;
+		background: #F1F3F4;
+		padding: 24px 40px;
+	}
+	.selection-officer h4 {
+		font-size:16px;
+		line-height: 50px;
+	}
+	.selection-officer .personal-filter-line input.form-control {
+		width: 320px !important;
+	}
+	.selection-officer .personal-filter-line,
+	.selection-officer .personal-filter-line  button{
+		margin-right: 0px!important;
+	}
+	.selection-officer .selected-box .item {
+		padding: 0;
+	}
+	.selection-officer .selected-box .iconfont {
+		color: #99A3B0;
+		font-size: 14px;
+		margin-right: 18px;
+	}
+	.selection-officer .selected-box span {
+		color: #687789;
+		font-size: 14px;
+		padding: 6px 0;
+	}
+	.selection-officer .left-panle {
+		padding: 0 30px 0 45px;
+	}
+	.selection-officer .right-panle {
+		padding: 0 45px 0 30px;
+	}
+	.selection-officer .btns button {
+		width: 120px;
+		margin: 0 30px;
+	}
+	.selection-officer .btns {
+		margin-top: 32px;
+	}
+	.selection-officer .personTree {
+		margin-top: 16px;
+		height: 360px;
+		overflow: auto;
+	}
+	.selection-officer .types {
+		width: 100%;
+		height: 40px;
+		border-radius: 4px;
+		overflow: hidden;
+	}
+	.selection-officer .types span {
+		float: left;
+		width: 50%;
+		height: 40px;
+		line-height: 40px;
+		background: #D6DBE6;
+		cursor: pointer;
+	}
+	.selection-officer .types span.selected {
+		background: #55A8FD;
+		color: #ffffff;
+	}
+	.selection-officer .list-group-item  {
+		border: 0;
+	}
+	.selection-officer .list-group-item .expand-icon {
+		margin-left: 30px;
+	}
+	.selection-officer .list-group-item .badge {
+		background-color: transparent;
+	}
+	.selection-officer .list-group-item .fa-check-square {
+		color: #55A8FD;
+	}
+	.selection-officer .left-box .path {
+		margin: 10px 0 0 0;
+	}
+	.selection-officer .badge {
+		dispaly: inline-block;
+		width: 120px;
+		text-align: left;
+		font-weight: 500;
+	}
+	.selection-officer .badge .iconfont {
+		color: #55A8FD;
+		margin-left: -15px;
+	}
+	
+</style>
+<script id="selection_officer_tpl" type="text/html">
+<div class="selection-officer">
+	<div class="row">
+		<div class="col-sm-6 left-panle">
+			<h4>选择</h4>
+			<div class="left-box document-manage">
+				<div class="filter-line">
+					<form class="dr-search-form">
+				        <div class="personal-filter-line">
+							<input placeholder="搜索标题关键词" class="form-control ls-input" type="text" name="keyword" role="user-params">
+				            <button type="button" class="btn btn-primary" role="submit"><i class="iconfont icon-icon_search"></i></button>
+				            <span class="iconfont icon-icon_close reset hide"></span>
+				        </div>
+					</form>
+				</div>
+				{{# if(d && d.hasTowType) { }}
+				<div class="types">
+					<span class="text-center" data-type="org">学校架构</span>
+					<span class="text-center" data-type="role">岗位角色</span>
+				</div>
+				{{# } }}
+				<ul class="path"></ul>
+				<div class="personTree"></div>
+			</div>
+		</div>
+		<div class="col-sm-6 right-panle">
+			<h4>已选</h4>
+			<div class="selected-box"></div>
+		</div>
+	</div>
+	<div class="btns text-center">
+		<button class="btn ls-btn btn-primary" opt="ok">确认</button>
+		<button class="btn ls-btn btn-outline btn-default" opt="cancel">取消</button>
+	</div>
+</div>
+</script>
+<script id="selection_officer_path_tpl" type="text/html">
+{{# if(d && d.length > 0) { }}
+	{{# layui.each(d, function(index, item){ }}
+		{{# if(index > 0) { }}
+			<span class="left iconfont icon-icon_to"></span>
+		{{# } }}
+		<li class="left" data-id="{{item.id}}">{{item.name}}</li>	
+	{{# }) }}
+{{# } }}
+</script>
+<script type="text/javascript">
+var SelectionOfficerFn = function(p,callback){
+	let El = null,
+		selectedData = [],
+		oldSelectedData = p.selectedData||[]
+		openIndex = null,
+		title = p.title ? p.title:'发送范围',
+		path = [{name:'北京大学',id:'1'},{name:'法学院',id:'2'}],
+		hasTowType = p.hasTowType,
+		treeview = null,
+		_this = this;
+		_this.cateType = p.cateType;
+	function init(){
+		
+		let tpl = selection_officer_tpl.innerHTML,
+			nowTime = (new Date()).getTime();
+		openIndex = layer.open({
+			type : 1,
+			title : title,
+			shadeClose: false,
+			closeBtn: 1, 
+			anim: 2,
+			skin : 'layui-layer-rim', //加上边框
+			area : [ '1120px', '740px' ], //宽高
+			content : '<div class="selection-officer-open-'+nowTime+'"></div>'
+		});
+		laytpl(tpl).render({hasTowType: hasTowType},function(html){
+			
+			$('.selection-officer-open-' + nowTime).html(html);
+			El = '.selection-officer-open-' + nowTime + ' .selection-officer';
+			eventInit();
+			if(hasTowType) {
+				if(_this.cateType){
+					$(El + ' .types span[data-type="' + _this.cateType + '"]').trigger('click');
+				} else {
+					$($(El + ' .types span')[0]).trigger('click');
+				}
+			} else {
+				initData();
+			}
+			
+		})
+	}
+    function initData() {
+    	let params = _this.params||{};
+        $http.get({
+            url: 'notification-list/get-security-tree', //"notification-config/testPersonTreeData"
+            data: params
+        }, function (res) {
+        	if(!res.success) {
+        		layer.msg(res.message||'获取数据失败',{icon:5});
+        		return false;
+        	}
+        	let result = res.result || [],
+        		newList = collationData(result);
+        	path = res.path;
+        	initTree(newList,function(res){
+            	if(res.level != 1) {
+            		changeSelectedData(res);
+            	}
+            },function(res){
+            	if(res.level != 1) {
+            		changeSelectedData(res,'remove');
+            	}
+            });
+            renderPath({data:path});
+        })
+    }
+	function initTree(data,checkedFn,uncheckedFn) {
+		treeview = $(El + ' .personTree').treeview({
+            showCheckbox: true,
+            hierarchicalCheck: true,//级联勾选
+            propagateCheckEvent: true,
+            multiSelect: true,
+            expandIcon: 'fa fa-angle-right ',
+            collapseIcon: 'fa fa-angle-down ',
+            nodeIcon: '',
+            selectedIcon: '',
+            showTags: true,
+            checkedIcon: 'fa fa-check-square ',
+            partiallyCheckedIcon: 'fa fa-check-square',
+            uncheckedIcon: 'fa fa-square-o ',
+            data: data,
+            onNodeChecked: function (event, node) {
+            	/* console.log(event, node); */
+            	checkedFn(node)
+            },
+            onNodeUnchecked: function (event, node) {
+            	/* console.log(event, node) */
+            	uncheckedFn(node);
+            }
+        })
+        
+        if(oldSelectedData.length > 0){
+        	oldSelectedData.map((item)=>{
+        		$(El + ' .list-group-item[data-nodeid="'+item.id+'"] span.check-icon').trigger('click');
+        	});
+        	oldSelectedData = [];
+        } else {
+        	renderSelectedData(selectedData);
+        }
+        $(El + ' .personTree .list-group-item .badge .iconfont').unbind('click').on('click',function(e){
+        	e.preventDefault();
+        	let ecmId = $(this).attr('data-ecmId');
+        	_this.params = {};
+        	searchFormInit();
+        	getLowerLevelLabs({collegeId:ecmId})
+        })
+      	//$(El + ' .personTree').treeview('checkAll', { silent: true });
+        /* $(El + ' .personTree').treeview('checkNode', selectedData.map((item)=>{return item.id})); */
+    }
+	function changeSelectedData(node,opt){
+		//node 节点信息
+		//opt 操作，add，remove，默认add
+		let temp = {
+			id: node.nodeId,
+			text: node.text,
+			role: node.tags?node.tags[0]:'',
+			userId: node.userId,
+			mobile: node.mobile,
+			type: node.type
+		};
+		if(opt == 'remove') {
+			let tIndex = null;
+			selectedData.forEach(function(value,index){
+				if(value.id == temp.id) {
+					tIndex = index;
+				}
+			})
+			selectedData.splice(tIndex,1);
+		} else {
+			selectedData.push(temp)
+		}
+		renderSelectedData(selectedData);
+	}
+	function renderSelectedData(data) {
+		let view = $(El + ' .selected-box'),
+			html = '';
+		data = data || [];
+		if(data.length == 0) {
+			view.html('<div class="no-data">暂无数据</div>');
+		} else {
+			data.forEach(function(value){
+				html += '<div class="item col-sm-12" data-id="'+value.id+'">'+
+					'<span class="col-sm-6"><i class="iconfont icon-icon_close remove"></i>'+value.text+'</span>'+
+					'<span class="col-sm-6">'+value.role+'</span>'+
+				'</div>';
+			});
+			view.html(html);
+			view.find('.remove').unbind().on('click',function(){
+				let id = $(this).parents('.item').attr('data-id');
+				$(El + ' .list-group-item[data-nodeid="'+id+'"] span.check-icon').trigger('click');
+			});
+		}
+	}
+	function renderPath(p){
+		let tpl = selection_officer_path_tpl.innerHTML,
+			view = $(El + ' ul.path');
+		laytpl(tpl).render(p.data,function(html){
+			view.html(html);
+		})
+	}
+	function getAllJobRoles(){
+		let params = _this.params||{};
+		$http.get({
+            url: "notification-list/get-all-job-roles",
+            data: params
+        }, function (res) {
+        	if(!res.success) {
+        		layer.msg(res.message||'获取数据失败',{icon:5});
+        		return false;
+        	}
+        	let result = res.result || [],
+        		newList = [],
+        		view = $(El + ' .personTree');
+        	path = res.path;
+        	renderPath({data:path});
+        	result.map(item => {
+        		newList.push({
+        			text: item.roleName,
+        			type: item.type,
+        			selectable:false
+        		})
+        	})
+        	if(newList.length == 0) {
+				view.html('<div class="no-data">暂无数据</div>')
+			} else {
+				initTree(newList,function(res){
+					changeSelectedData(res);
+				},function(res){
+					changeSelectedData(res,'remove');
+				});
+			}
+        })
+	}
+	function getLowerLevelLabs(p){
+		let params = _this.params||{};
+		params.collegeId = p.collegeId;
+		$http.get({
+            url: "notification-list/get-lower-level-labs",
+            data: params
+        }, function (res) {
+        	if(!res.success) {
+        		layer.msg(res.message||'获取数据失败',{icon:5});
+        		return false;
+        	}
+        	let result = res.result || [],
+        		newList = collationData(result);
+        		view = $(El + ' .personTree');
+       		path = res.path;
+           	renderPath({data:path});
+        	if(newList.length == 0) {
+				view.html('<div class="no-data">暂无数据</div>')
+			} else {
+				initTree(newList,function(res){
+					if(res.level != 1) {
+	            		changeSelectedData(res);
+	            	}
+				},function(res){
+					if(res.level != 1) {
+						changeSelectedData(res,'remove');
+	            	}
+				});
+				
+			}
+        })
+	}
+	function collationData(data){
+    	let newList = [],
+        	children = [],
+        	temp = null,
+        	securityUserList = null;
+    	data = data || []
+    	data.map(item => {
+    		temp = {};
+    		securityUserList = item.securityUserList||[];
+    		children = [];
+    		if(!(securityUserList == [] && hasChild == false)){
+    			temp = {
+    				selectable: false,
+    				text: item.name,
+    				ecmId: item.ecmId,
+    				id: item.id
+    			}
+    			if(item.collegeFlag){
+    				temp.tags = ['<i class="iconfont icon-icon_tree" data-ecmId="'+item.ecmId+'"> 下级实验室</i>']
+    			}
+    			if(securityUserList != []) {
+    				securityUserList.map(person => {
+    					children.push({
+    						selectable: false,
+    						text: person.realName,
+    						tags: [person.roleName],
+            				userId: person.id,
+            				userName: person.realName,
+            				position: person.roleName,
+            				mobile: person.mobile
+    					})
+    				})
+    				temp.nodes = children;
+    			}
+    			newList.push(temp)
+    		}
+    	})
+    	return newList;
+    }
+	function search(){
+		let keyword = $(El + ' .dr-search-form input[name="keyword"]').val();
+		console.log(_this.cateType)
+		_this.params = {keyword: keyword}
+		if(_this.cateType == 'org') {
+			if(path.length == 1) {
+				initData();
+			} else {
+	        	getLowerLevelLabs({collegeId:path[1].id})
+			}
+		} else {
+			getAllJobRoles();
+		}
+	}
+	function searchFormInit(){
+		$(El + ' .dr-search-form input[name="keyword"]').val('');
+		$(El + ' .dr-search-form .reset').addClass('hide');
+	}
+	function eventInit(){
+		//切换分类
+		$(El + ' .types span').unbind().on('click',function(){
+			let self = $(this),
+				type = self.attr('data-type');
+			if(!self.hasClass('selected')) {
+				$(El + ' .types span').removeClass('selected');
+				self.addClass('selected');
+				selectedData = [];
+				renderSelectedData(selectedData);
+				_this.cateType = type;
+				_this.params = {};
+				searchFormInit();
+				if(type == 'org'){
+					initData();
+				} else {
+					getAllJobRoles();
+				}
+			}
+		});
+		$(El + ' .btns button').unbind().on('click',function(){
+			let opt = $(this).attr('opt');
+			if(opt == 'ok'){
+				if(selectedData.length == 0) {
+					layer.msg('未选中任何人员或者角色',{icon:5});
+					return false;
+				}
+				if(typeof callback == 'function') {
+					callback(selectedData,_this.cateType);
+				}
+				layer.close(openIndex)
+			} else {
+				layer.close(openIndex)
+			}
+		});
+		$(El + ' .path').unbind().on('click','li',function(){
+			let len = path.length;
+			if(len > 1) {
+				let id = $(this).attr('data-id');
+				if(id != path[len-1].id) {
+					oldSelectedData = selectedData;
+					selectedData = [];
+					initData();
+				}
+			}
+		})
+		//搜索
+		$(El + ' .dr-search-form button[role="submit"]').unbind().on('click',function(){
+			let keyword = $(El + ' .dr-search-form input[name="keyword"]').val();
+			if(keyword && $.trim(keyword).length > 0 ) {
+				search();
+			} else {
+				layer.msg('搜索字段不能为空',{icon: 5});
+			}
+		});
+		$(El + ' .dr-search-form input[name="keyword"]').unbind('keyup').keyup('.form-control',function(){
+			let keyword = $(El + ' .dr-search-form input[name="keyword"]').val();
+			if(keyword && $.trim(keyword).length > 0 ) {
+				$(El + ' .dr-search-form .reset').removeClass('hide');
+			} else {
+				$(El + ' .dr-search-form .reset').addClass('hide');
+			}
+		})
+		//搜索框内的回车事件
+		$(El + ' .dr-search-form').unbind('keydown').keydown('.form-control',function(){
+			if(event.keyCode==13){
+				$('#document-searchform button[role="submit"]').trigger('click');
+				return false;
+		    }
+		});
+		//重置
+		$(El + ' .dr-search-form .reset').on('click',function(){
+			searchFormInit();
+			search();
+		});
+	}
+	init();
+}
+</script>

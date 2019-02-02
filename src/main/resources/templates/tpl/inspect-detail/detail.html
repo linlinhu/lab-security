@@ -1,0 +1,15 @@
+<section id="inspect-detail"></section>
+
+<script>
+$http.get({
+    url: 'safety-inspect/detail',
+    data: {
+        id: '${id}',
+        labid: '${labId}',
+        detailTitle: '${detailTitle}'
+    },
+    forbidLoading: true
+}, function(res) {
+    $('#inspect-detail').html(res);
+})
+</script>

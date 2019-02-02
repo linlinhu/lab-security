@@ -1,0 +1,148 @@
+<style>
+.security-accident-form {
+	position: relative;
+}
+.security-accident-form .wrapper-content {
+	margin-top: 37px;
+}
+.security-accident-form .path {
+	position: absolute;
+	top: -36px;
+}
+.security-accident-form .left {
+	float: left;
+	display: inline-block;
+	height: 16px;
+	line-height: 16px;
+	font-size: 14px;
+}
+.security-accident-form .iconfont.left {
+	font-size: 12px;
+	margin: 0 10px;
+}
+.security-accident-form .path li {
+	cursor: pointer;
+}
+.security-accident-form .path li:last-child {
+	color: #55A8FD;
+}
+.security-accident-form .choose-data .item{
+	position: relative;
+	display: inline-block;
+	padding: 1px 16px;
+	margin: 2px 3px;
+	background: #E9F3FD;
+	color: #55A8FD;	
+}
+.security-accident-form .choose-data .item:hover i {
+	display: inline-block;
+}
+.security-accident-form .choose-data .item i {
+	display: none;
+	position: absolute;
+	font-size: 12px;
+	-webkit-transform:scale(0.5);
+	right: 0px;
+	top: -7px;
+	color: #666666;
+	cursor: pointer;	
+}
+.security-accident-form textarea {
+	min-height: 200px;
+}
+</style>
+<div class="security-accident-form" id="security-accident-form-${timestamp}">
+	<ul class="path">
+		<li class="left" onclick="goPage('index')">安全事故管理</li>
+		<span class="left iconfont icon-icon_to"></span>
+		<li class="left">创建安全事故</li>
+	</ul>
+	<#include "../../tpl/form.html"/>
+</div>
+<script type="text/javascript">
+var SecurityAccidentForm = (function(){
+	let moduleId;
+	let init = function(p){
+		moduleId = p.moduleId;
+		eventInit();
+	},
+	renderChooseData = function(data,el){
+		let html = '',
+			newList = [];
+		if(data.length == 0){
+			el.html('<span class="placeholder">请选择发送范围</span>');
+		} else {
+			html = data.map((item)=>{
+				newList.push({
+					position:item.role,
+					userId: item.userId,
+					userName: item.text
+				})
+				return '<span class="item" data-id="'+item.id+'">'+item.text+'<i class="iconfont icon-icon_close1"></i></span>';
+			});
+			el.html(html.join(''));
+		}
+		el.attr('data-value',JSON.stringify(data))
+		el.next().val(JSON.stringify(newList));
+	},
+	eventInit = function(){
+		//时间控件初始化
+		laydate.render({ 
+			elem: moduleId + ' .nyrsfm',
+			type: 'datetime',
+			max: 0,
+			format: 'yyyy-MM-dd HH:mm',
+			done: function(value, date, endDate){
+			  	$(moduleId + ' .nyrsfm').attr('data-value',(new Date(value)).getTime());
+			}
+		});
+		$(moduleId + ' .choose-data').unbind().on('click',function(){
+			let self = $(this),
+				selectedData = self.attr("data-value");
+			if(selectedData && selectedData.length > 0){
+				selectedData = JSON.parse(selectedData);
+			} else {
+				selectedData = [];
+			}
+			new SelectionOfficerFn({selectedData:selectedData,title:'调查组'},function(res){
+				console.log(res);
+				renderChooseData(res,self);
+			})
+		})
+		$(moduleId + ' .choose-data').on('click','.item i',function(e){
+			e.stopPropagation();
+			let self = $(this).parent(),
+				id = self.attr('data-id'),
+				inputEl = self.parents('.choose-data').next(),
+				selectedData = JSON.parse(inputEl.val()),
+				tempIndex = null;
+			
+			selectedData.forEach(function(value,index){
+				if(value.id == id) {
+					tempIndex = index;
+				}
+			})
+			if(tempIndex!=null) {
+				selectedData.splice(tempIndex,1)
+			}
+			renderChooseData(selectedData,$(moduleId + ' .choose-data'));
+		})
+		$(moduleId + ' .empty-content').on('change', 'select[multiple="multiple"]', function(e){
+			let collegeEcmId = $(this).val(),
+				collegeName = '';
+			if(collegeEcmId && collegeEcmId.length == 1) {
+				collegeName = $(this).find('option[value="'+collegeEcmId[0]+'"]').text()
+			}
+			$(moduleId + ' input[name="collegeName"]').val(collegeName);
+		})
+		
+	};
+	return {
+		init: init
+	}
+}())
+SecurityAccidentForm.init({
+	moduleId:'#security-accident-form-${timestamp}',
+	hasTowType: false
+})
+</script>

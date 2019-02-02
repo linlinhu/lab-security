@@ -1,0 +1,58 @@
+
+<style>
+#changed-report-tabs ul.my-tabs {
+    padding: 20px 0 !important;
+}
+ul.my-tabs button.download {
+    position: absolute;
+    right: 60px;
+}
+.statis-report-changed .safety-changed-group > div {
+    padding-top: 0 !important;
+}
+</style>
+<div class="statis-report-changed mgt20  navs_border_b changed-tabs" id="changed-report-tabs">
+    <#include "search-form.html" />
+    <#include "../../../tpl/safety-changed/tabs.html">
+</div>
+<script>
+    var changedDownLoadUrl = JSON.parse('<@obj2json obj=downloadUrl ></@obj2json>');
+    var changedTabsElem = '#changed-report-tabs';
+    new SafetyChanged({
+        wrapId: changedTabsElem,
+        ecmId: '${ecmId}'
+    });
+
+    $(changedTabsElem + ' form button').unbind().click(function() {
+        $(changedTabsElem + ' form').trigger('change');
+    })
+    var layDateElem = changedTabsElem + " #changed-report-datepicker";
+    laydate.render({
+        elem: layDateElem,
+        type: 'date',
+        range: '-',
+        format: 'yyyy/M/d',
+        done: function (value, sd, ed) {
+            var stInput = $($(layDateElem).siblings('input[name="startTime"]')[0]);
+            var etInput = $($(layDateElem).siblings('input[name="endTime"]')[0]);
+            if (sd && ed && sd.year && ed.year) {
+                stInput.val(new Date(sd.year, sd.month, sd.date).getTime());
+                etInput.val(new Date(ed.year, ed.month, ed.date).getTime());
+            } else {
+                stInput.val('');
+                etInput.val('');
+            }
+            $(changedTabsElem + ' form').trigger('change');
+        }
+    });
+
+    
+    $(changedTabsElem + ' a.download').unbind().click(function() {
+        var activeCode = $(changedTabsElem + ' ul.my-tabs > li.active > a').data().code;
+        document.getElementById("ifile").src = changedDownLoadUrl[activeCode];
+        return false;
+    });
+    
+    
+
+</script>

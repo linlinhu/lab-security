@@ -1,0 +1,39 @@
+<div class="record-list" >
+    <div class="text-right m-b-md">
+        <button class="btn btn-primary recordOpts" data-opt="add" data-stage="${stage}"><i class="iconfont icon-icon_"></i> 添加记录</button>
+    </div>
+    <div style="height:calc(100% - 60px);overflow: auto">
+        <#list recordList?sort_by("createTime") as item>
+            <div class="social-feed-box">
+                <div class="social-avatar">
+                    <span class="submitter">提交人： ${item.userName}</span>
+                    <#assign lastModifyTime = item.lastModifyTime?number?number_to_datetime>
+                    <small class="text-muted submitDate">${lastModifyTime}</small>
+                    <#if userId == item.userId>
+                    <span class="text-muted submitDate">
+                        <span class="recordOpts" data-opt="edit" data-id="${item.id}" data-stage="${stage}"><i class="iconfont icon-icon_edit"></i></span>
+                    </span>
+                    </#if>
+                </div>
+                <div class="social-body">
+                    ${item.content}
+
+                     <#if item.files?? && item.files?size gt 0>
+                        <div class="attachment-list">
+                         <#list item.files as file>
+                           <div class="item" title="${file.fileName}"><i class="fa ${file.viewIcon}"></i> <a href="${file.fileUrl}" target="_blank" title="${file.fileName}">${file.fileName}</a></div>
+                         </#list>
+                        </div>
+                     </#if>
+                </div>
+
+            </div>
+        </#list>
+    </div>
+</div>
+<#if stage="handleResult">
+ <div class="text-center m-t-md">
+     <button class="btn btn-primary recordOpts" data-opt="finishAccident">调查完成</button>
+ </div>
+</#if>
+

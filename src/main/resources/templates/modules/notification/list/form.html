@@ -1,0 +1,165 @@
+<style>
+.notification-list-form {
+	position: relative;
+}
+.notification-list-form .wrapper-content {
+	margin-top: 37px;
+}
+.notification-list-form .path {
+	position: absolute;
+	top: -36px;
+}
+.notification-list-form .left {
+	float: left;
+	display: inline-block;
+	height: 16px;
+	line-height: 16px;
+	font-size: 14px;
+}
+.notification-list-form .iconfont.left {
+	font-size: 12px;
+	margin: 0 10px;
+}
+.notification-list-form .path li {
+	cursor: pointer;
+}
+.notification-list-form .path li:last-child {
+	color: #55A8FD;
+}
+.notification-list-form .choose-data .item{
+	position: relative;
+	display: inline-block;
+	padding: 1px 16px;
+	margin: 2px 3px;
+	background: #E9F3FD;
+	color: #55A8FD;	
+}
+.notification-list-form .choose-data .item:hover i {
+	display: inline-block;
+}
+.notification-list-form .choose-data .item i {
+	display: none;
+	position: absolute;
+	font-size: 12px;
+	-webkit-transform:scale(0.5);
+	right: 0px;
+	top: -7px;
+	color: #666666;
+	cursor: pointer;	
+}
+.notification-list-form .empty-content {
+	min-height: 35px;
+}
+
+
+</style>
+<div class="notification-list-form" id="notification-list-form-${timestamp}">
+	<ul class="path">
+		<li class="left" data-type="-1">消息通知</li>
+		<span class="left iconfont icon-icon_to"></span>
+		<li class="left" data-type="${type}">${formName}</li>
+	</ul>
+	<#include "../../../tpl/form.html"/>
+</div>
+<script type="text/javascript">
+var NotificationListForm = (function(){
+	let moduleId,
+		type,
+		hasTowType;
+	let init = function(p){
+		hasTowType = p.hasTowType;
+		moduleId = p.moduleId;
+		notificationType = p.type;
+		new FormTpl({
+	        wrapSelector: p.wrapSelector,
+	        submitCallback: function(res){
+	        	goPage('index',{type:notificationType})
+	        }
+	    })
+		eventInit();
+	},
+	renderChooseData = function(data,el){
+		let html = [],
+			inputValue = {},
+			newList = [],
+			temp = []
+			type = el.attr('data-type');
+		if(data.length == 0){
+			el.html('<span class="placeholder">请选择发送范围</span>');
+		} else {
+			if(type == 'org') {
+				html = data.map((item)=>{
+					temp.push(item.userId);
+					temp.push(item.text);
+					temp.push(item.mobile);
+					newList.push(temp.join(','));
+					return '<span class="item" data-id="'+item.id+'">'+item.text+'<i class="iconfont icon-icon_close1"></i></span>';
+				});
+			} else {
+				html = data.map((item)=>{
+					temp = item.type;
+					newList.push(temp);
+					return '<span class="item" data-id="'+item.id+'">'+item.text+'<i class="iconfont icon-icon_close1"></i></span>';
+				});
+			}
+			
+			el.html(html.join(''));
+		}
+		el.attr('data-value',JSON.stringify(data));
+		inputValue.type = (type == 'org') ? 1: 2;
+		inputValue.receiver = newList.join(';')
+		el.next().val(JSON.stringify(inputValue));
+	},
+	eventInit = function(){
+		$(moduleId + ' .path li').unbind().on('click',function(){
+			let curType = $(this).attr('data-type');
+			if(curType == -1) {
+				goPage('index',{type:notificationType})
+			}
+		})
+		
+		$(moduleId + ' .choose-data').unbind().on('click',function(){
+			let self = $(this),
+				selectedData = self.attr('data-value');
+			if(selectedData && selectedData.length > 0){
+				selectedData = JSON.parse(selectedData);
+			} else {
+				selectedData = [];
+			}
+			new SelectionOfficerFn({selectedData:selectedData,hasTowType:hasTowType,cateType: self.attr('data-type')},function(res,type){
+				self.attr('data-type',type);
+				renderChooseData(res,self);
+			})
+		})
+		$(moduleId + ' .choose-data').on('click','.item i',function(e){
+			e.stopPropagation();
+			let self = $(this).parent(),
+				id = self.attr('data-id'),
+				inputEl = self.parents('.choose-data').next(),
+				selectedData = JSON.parse(inputEl.val()),
+				tempIndex = null;
+			
+			selectedData.forEach(function(value,index){
+				if(value.id == id) {
+					tempIndex = index;
+				}
+			})
+			if(tempIndex!=null) {
+				selectedData.splice(tempIndex,1)
+			}
+			renderChooseData(selectedData,$(moduleId + ' .choose-data'));
+		})
+		
+	};
+	return {
+		init: init
+	}
+}())
+NotificationListForm.init({
+	moduleId:'#notification-list-form-${timestamp}',
+	type: '${info.type}',
+	hasTowType: true,
+	wrapSelector: '#form${timestamp}'
+})
+</script>
+

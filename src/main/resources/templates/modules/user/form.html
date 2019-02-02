@@ -1,0 +1,77 @@
+<div class="wrapper-content">
+    <form class="userForm form-horizontal">
+        <input name="id" type="hidden" value="${(user.id)!''}">
+        <div class="form-group">
+            <label class="control-label col-sm-3">姓名</label>
+            <div class="col-sm-8">
+                <input class="form-control ls-input" type="text" name="name"  value="${(user.name)!''}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3">手机号</label>
+            <div class="col-sm-8">
+                <input class="form-control ls-input" type="text" name="mobile"  value="${(user.mobile)!''}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-3">角色</label>
+            <div class="col-sm-8">
+                <select class="form-control ls-input" name="flockIds" multiple='multiple'>
+                    <#list roleList as role>
+                        <option value="${role.id}">${role.name}</option>
+                    </#list>
+                </select>
+            </div>
+        </div>
+
+        <#--<div class="form-group">
+            <label class="control-label col-sm-3">Email</label>
+            <div class="col-sm-8">
+                <input class="form-control ls-input" type="text" name="email"  value="${(user.email)!''}">
+            </div>
+        </div>-->
+    </form>
+</div>
+<script type="text/javascript">
+    $('.userForm:visible select[name="flockIds"]').select2()
+    <#if user??>
+        var arr = []
+        <#list user.personFlocks as pf>
+            <#if pf.type==1>
+               arr.push("${pf.flock.id}")
+            </#if>
+        </#list>
+        $('.userForm:visible select[name="flockIds"]').val(arr).trigger("change")
+    </#if>
+
+
+        $(".userForm:visible").validate({
+            rules: {
+                name: {
+                    required: true,
+                    rangelength: [2,7]
+                },
+                mobile: {
+                    required: true,
+                    regex: "^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\\d{8}$"
+                }
+
+
+            },
+            messages: {
+                name: {
+                    required: icon + "请输入用户姓名",
+                    rangelength: icon + "用户姓名输入长度限制为2-7个字符"
+                },
+                mobile: {
+                    required: icon + "请输入用户手机号",
+                    regex: icon + "用户手机号格式不正确"
+                }
+
+            }
+        })
+        /*setTimeout(function(){
+            $(".userForm:visible input[name='email']").emailSelector();
+        },1000)*/
+
+</script>

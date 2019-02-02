@@ -1,0 +1,32 @@
+
+<div class="wrapper-content mgt20" id="common-management-${timestamp}">
+    <form>
+        <div class="row">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-3">
+                <#include "../../../tpl/basic-config/view-scope.html" />
+            </div>
+            <div class="col-sm-3">
+                <#include "../../../tpl/basic-config/lab-types.html" />
+            </div>
+                
+            <div class="col-sm-3">
+                <#include "../../../tpl/basic-config/lab-grades.html" />
+            </div>
+        </div>
+    </form>
+    <div class="data-list"></div>
+</div>
+
+<script>
+    var wrapId = '#common-management-${timestamp}'; 
+    new TableManage({
+        wrapId: wrapId,
+        moduleName: 'labs-statis',
+        ecmId: '${ecmId}'
+    }, function(res) {
+        if (res.opt == 'view') {
+            goPage('detail?ecmId=' + res.ecmId);
+        }
+    });
+</script>

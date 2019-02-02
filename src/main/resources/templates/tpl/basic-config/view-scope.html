@@ -1,0 +1,16 @@
+<!-- 查看范围 只会存在安全中心和学校的人进来看，因此其实就是学院列表的筛选 -->
+<input type="hidden" name="ecmId">
+<div class="dropdown" id="view-scope-${timestamp}" style="min-width: 100px"></div>
+<div class="filter-name">查看范围</div>
+<script>
+$http.get({
+    url: 'tpl/view-scope',
+    forbidLoading: true
+}, function(res) {
+    if (res.replace(/\s*/g,"").length == 0) {
+        $('#view-scope-${timestamp}').parent().addClass('hide');
+    } else {
+        $('#view-scope-${timestamp}').html(res);
+    }   
+})
+</script>

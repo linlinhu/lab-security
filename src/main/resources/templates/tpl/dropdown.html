@@ -1,0 +1,25 @@
+<#if items?size gt 0>
+<button class="btn ls-btn btn-default dropdown-toggle" type="button" id="dp${timestamp}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    ${items[0].name} 
+    <span class="caret"></span>
+</button>
+<ul class="dropdown-menu" aria-labelledby="dp${timestamp}">
+    <#list items as item>
+    <li><a href="javascript:void(0)" data-id="${(item.id)!''}" data-value="${(item.value)!''}">${item.name}</a></li>
+    </#list>
+</ul>
+<script>
+    $('#dp${timestamp}').siblings('ul').find('a').unbind('click').click(function() {
+        var data = $(this).data();
+        var button = $(this).parent().parent().siblings('button')[0];
+        var hiddenVal = data.id;
+        if (data.value) {
+            hiddenVal = data.value;
+        }
+        var displayContent = $(this).html();
+        $(button).html(displayContent + ' <span class="caret"></span>');
+        $($(button).parent().siblings('input')[0]).val(hiddenVal);
+        $(button).parent().parent().parent().parent().trigger("change");
+    })
+</script>
+</#if>

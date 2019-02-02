@@ -1,0 +1,147 @@
+<style type="text/css">
+    .security-center-initConfig,
+    .security-center-initConfig .tabs-container{
+        height:100%;
+        background: #fff;
+    }
+
+    .security-center-initConfig .tabs-left,
+    .security-center-initConfig .nav-tabs,
+    .security-center-initConfig .tab-content,
+    .security-center-initConfig .tab-content .tab-pane{
+        height:100%;
+    }
+    .security-center-initConfig .tabs-container .tabs-left{
+        position:relative;
+    }
+    .security-center-initConfig .tabs-container .itemDetail{
+        position:absolute;
+        left:201px;
+        top:1px;
+        right:1px;
+        bottom: 1px;
+        z-index:999;
+        background:#fff;
+        display: none;
+    }
+    .security-center-initConfig .nav-tabs li{
+        border-bottom:1px solid #DCE3E9;
+        margin-bottom: 0px;
+    }
+
+    .security-center-initConfig .nav-tabs > li {
+        height: 70px;
+        line-height: 70px;
+        position:relative;
+        transition: 0.2s all linear;
+    }
+
+
+    .security-center-initConfig .nav-tabs > li.active ~ li:before {
+        top: 0px;
+    }
+    .security-center-initConfig .nav-tabs > li.active:before {
+        height: 100%;
+        left: 0px;
+        top: 0px;
+    }
+
+
+
+    .security-center-initConfig .nav-tabs > li:before{
+        content: "";
+        position: absolute;
+        z-index:5000;
+        top: 100%;
+        left: 0;
+        width: 5px;
+        height: 0;
+        border-left: 5px solid #55A8FD;
+        transition: 0.2s all linear;
+    }
+
+    .security-center-initConfig .nav-tabs > li > a {
+        border: none;
+        height: 100%;
+        color: #3E4956;
+        font-weight: normal;
+        font-size: 16px
+    }
+
+
+    .security-center-initConfig .tab-content .tab-pane .panel-body{
+        margin-left:200px;
+        width:auto
+    }
+    .security-center-initConfig .nav-tabs{
+        max-width:200px;
+    }
+    .security-center-initConfig .nav-tabs > li{
+        height:70px;
+        line-height: 70px;
+    }
+    .security-center-initConfig .categoryContainer{
+        border-top:none;
+        height:100%;
+        border-bottom:none;
+    }
+    .security-center-initConfig .nav-tabs > li > a{
+        border:none;
+        height:100%;
+        color:#3E4956;
+        font-weight: normal;
+        font-size:16px
+    }
+    .security-center-initConfig .nav-tabs > li.active{
+        background: #F5FAFF;
+        --transition: none;
+        --border-left:5px solid #55A8FD;
+
+    }
+    .security-center-initConfig .nav-tabs > li.active > a{
+        --padding-left:20px !important;
+        color:#55A8FD;
+    }
+    .security-center-initConfig .nav-tabs > li.active > a, .security-center-initConfig .nav-tabs > li.active > a:focus,.security-center-initConfig .nav-tabs > li.active > a:hover{
+        border:none !important;
+        border-right: 1px solid #e7eaec !important;
+        background: #F5FAFF;
+    }
+</style>
+
+<div class="security-center-initConfig">
+    <div class="tabs-container">
+
+        <div class="tabs-left">
+            <ul class="nav nav-tabs" >
+                <#list configGroups as group>
+                     <li class="<#if group_index==0>active</#if>">
+                         <a data-toggle="tab" href="#initConfigTab-${group.code}" aria-expanded="false"> ${group.getName()}</a>
+                     </li>
+                </#list>
+            </ul>
+            <div class="tab-content">
+                <#list configGroups as group>
+                    <div id="initConfigTab-${group.code}" class="tab-pane <#if group_index==0>active</#if>">
+                        <div class="panel-body categoryContainer">
+                         <#include "category/index.html">
+                        </div>
+                    </div>
+                </#list>
+            </div>
+            <div class="itemDetail">
+
+            </div>
+        </div>
+
+    </div>
+</div>
+<script type="text/javascript">
+    (function(){
+        $(".security-center-initConfig .nav-tabs a[data-toggle='tab']").on("shown.bs.tab",function(){
+           $(".security-center-initConfig .itemDetail:visible").fadeOut(function(){
+               $(this).empty()
+           })
+        })
+    })()
+</script>

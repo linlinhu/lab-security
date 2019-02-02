@@ -1,0 +1,55 @@
+
+<div class="wrapper-content common-management" id="common-management-${timestamp}">
+    <form>
+        <div class="row">
+            <div class="col-sm-6" style="padding-left:10px">
+                <button class="entityOpts btn ls-btn btn-primary" data-opt="batchPrint" type="button">批量打印</button>
+            </div>
+            <div class="col-sm-3">
+                <#include "../../tpl/basic-config/view-scope.html" />
+            </div>
+            <div class="col-sm-3">
+                <div class="input-group">
+                    <input type="text" placeholder="请输入关键词" class="input-sm form-control ls-input" name="keyword">
+                    <span class="input-group-btn">
+                        <button type="button" onclick="reloadList('keyword')" class="btn ls-btn btn-sm btn-primary"><i class="fa fa-search"></i></button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="table-responsive data-list"></div>
+</div>
+
+<script>
+
+var qrCodeTm = new TableManage({
+    wrapId: '#common-management-${timestamp}',
+    moduleName: 'qrcode',
+    showColumns: ${showColumns!'[]'}
+}, function(res) {
+    if (res.opt == 'qrcode') {
+        new CodesManage().codesShow(res.sn);
+    }
+    if (res.opt == 'print') {
+        new CodesManage().codesPrint(res.sn);
+    }
+    if (res.opt == 'printMsg') {
+        new CodesManage().codesPrint(res.sn);
+    }
+    if (res.opt == 'batchPrint') {
+        new CodesManage().codesPrint("1547518815475,1547518777719");
+    }
+})
+
+function reloadList(key) {
+    if (key == 'keyword') {
+        var val = $('#common-management-${timestamp} form input[name="keyword"]').val();
+        if (val.replace(/\s*/g,"").length == 0) {
+            layer.msg('关键词不能为空！');
+            return false;
+        }
+    }
+    qrCodeTm.loadList(1, 10);
+}
+</script>

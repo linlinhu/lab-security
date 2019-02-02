@@ -1,0 +1,376 @@
+.mobile {
+    width: 100%;
+    height: 530px;
+    background-image: url(../img/mobile.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    padding: 90px 52px 100px 32px;
+}
+.mobile .top {
+    height: 30px;
+    border-bottom: 1px solid #eee;
+    padding: 8px;
+    text-align: center;
+}
+.mobile .top > span.lft {
+    float: left;
+}
+
+.mobile .top > span.rgt {
+    float: right;
+}
+
+.mobile .container {
+    padding: 45px 8px 8px;
+    height: 332px;
+    width: 100%;
+    overflow: hidden;
+    overflow-y: scroll;
+
+}
+.mobile .container > .title {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.mobile .container > .sub-title {
+    color: #999;
+    font-size: 12px;
+    margin: 10px 0;
+}
+
+.mobile .container > .sub-title > .createTime {
+    margin-right: 10px;
+}
+
+
+.mobile .container > .comments {
+    background-color: #eee;
+    padding: 8px;
+    margin: 10px 0;
+    font-size: 13px;
+}
+
+
+.mobile .container > .info {
+    font-size: 13px;
+}
+
+
+.mobile .container > .info img {
+    width: 100% !important;
+}
+
+.lucky-wheel-bg {
+    background-image: url(../img/lucky-wheel/1.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-color: rgb(255, 193, 156);
+    padding-top: 60px;
+    background-position: 0 -80px;
+    position: relative;
+  }
+  .lucky-wheel-bg .lucky-wheel {
+    position: relative;
+    width: 200px;
+    min-height: 200px;
+    font-size: 10px;
+    margin: 0 auto;
+    margin-bottom: 170px;
+  }
+  .lucky-wheel-bg .inner {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border-radius: 100%;
+    top: 50%;
+    left: 50%;
+    margin-left: -30px;
+    margin-top: -40px;
+    z-index: 9;
+  }
+  .lucky-wheel-bg .parts-bg {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+    background-image: url(../img/lucky-wheel/2.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  .lucky-wheel-bg .parts {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    border-radius: 100%;
+    margin: 0px auto;
+    background-color: rgb(245, 245, 245);
+  }
+  
+  .lucky-wheel-bg .part {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    clip: rect(0em, 180px, 180px, 90px);
+  }
+  .lucky-wheel-bg .bing {
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    clip: rect(0px, 90px, 180px, 0px);
+    -moz-border-radius: 90px;
+    -webkit-border-radius: 90px;
+    border-radius: 90px;
+  
+    -moz-transform: rotate(72deg);
+    -webkit-transform: rotate(72deg);
+    -o-transform: rotate(72deg);
+    transform: rotate(72deg);
+  }
+  
+  .lucky-wheel-bg  .bing div.cnt {
+    position: absolute;
+    width: 60px;
+    text-align: center;
+    top: 50%;
+    margin-top: -20px;
+    left: 25%;
+    margin-left: -30px;
+    transform: rotate(-90deg);
+    padding: 15px;
+  }
+  
+  .lucky-wheel-bg  .parts-2 div.cnt {
+    top: 50%;
+    transform: rotate(-90deg);
+    margin-top: -25px;
+    margin-left: -40px;
+  }
+  .lucky-wheel-bg  .parts-3 div.cnt {
+    top: 33%;
+    margin-left: -50px;
+    transform: rotate(-60deg);
+  }
+  
+  .lucky-wheel-bg .parts-4 div.cnt {
+    top: 20%;
+    left: 26%;
+    transform: rotate(-45deg);
+  }
+  
+  .lucky-wheel-bg .parts-5 div.cnt {
+    top: 20%;
+    transform: rotate(-40deg);
+    margin-left: -25px;
+  }
+  
+  .lucky-wheel-bg  .parts-6 div.cnt {
+    top: 18%;
+    margin-left: -10px;
+    transform: rotate(-30deg);
+    padding: 10px;
+  }
+  
+  .lucky-wheel-bg .parts-7 div.cnt {
+    top: 14%;
+    margin-left: -13px;
+    margin-top: -15px;
+    transform: rotate(-25deg);
+    padding: 8px;
+  }
+  
+  .lucky-wheel-bg .parts-8 div.cnt {
+    top: 14%;
+    margin-left: -10px;
+    margin-top: -15px;
+    transform: rotate(-25deg);
+    padding: 5px;
+  }
+  .lucky-wheel-bg i.split {
+    height: 100%;
+    display: block;
+    left: 50%;
+    position: absolute;
+    border-left: 2px dotted rgb(248, 165, 87);
+  }
+  .lucky-wheel-bg .inner > i {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background-image: url(../img/lucky-wheel/3.png);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  .lucky-wheel-bg i.people {
+    display: block;
+    width: 70px;
+    height: 70px;
+    background-image: url(../img/lucky-wheel/4.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    position: absolute;
+    bottom: -35px;
+    left: 20px;
+  }
+  .lucky-wheel-bg i.tray {
+    display: block;
+    width: 200px;
+    height: 100%;
+    background-image: url(../img/lucky-wheel/5.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    position: absolute;
+    top: 30px;
+  }
+  .lucky-wheel-bg i.brochure {
+    width: 40px;
+    height: 40px;
+    background-image: url(../img/brochure.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+    
+  }
+  .brochure {
+    position: absolute;
+    right: 5px;
+    top: 10px;
+    z-index: 99;
+    color: #fff;
+  } 
+.shake-it-bg {
+  position: relative;
+  background-image: url(../img/shake-it/4.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-color: rgb(255, 193, 156);
+}
+.shake-it-bg i.shake-it {
+  position: absolute;
+  width: 180px;
+  height: 250px;
+  background-image: url(../img/shake-it/1.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.shake-it-bg i.lft-voice {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  top: 150px;
+  left: 20px;
+  background-image: url(../img/shake-it/2.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+
+.shake-it-bg i.rgt-voice {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  top: 150px;
+  right: 20px;
+  background-image: url(../img/shake-it/3.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  
+}
+.brochure-bg {
+  position: absolute;
+  top: 120px;
+  bottom: 78px;
+  left: 46px;
+  right: 64px;
+  background-color: rgba(0,0,0,.3);
+  z-index: 999;
+}
+
+.brochure-cnt {
+  background-color: #fff;
+  width: 94%;
+  height: 94%;
+  overflow: hidden;
+  margin: 3%;
+  position: relative;
+}
+.brochure-cnt i.close {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  font-size: 16px;
+  line-height: 20px;
+  text-align: center;
+  z-index: 999;
+}
+
+.brochure-cnt .layui-tab-content {
+  height: 260px;
+  overflow: hidden;
+  overflow-y: scroll;
+}
+.award-items-lst li {
+  overflow: hidden;
+  border-bottom: 1px solid #eee;
+  padding: 8px 0;
+}
+
+.award-items-lst li i.icon-img {
+  width: 60px;
+  height: 60px;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  float: left;
+}
+.award-items-lst li div.info {
+  padding-left: 88px;
+  width: 100%;
+}
+.award-items-lst li div.info .name {
+  height: 40px;
+  line-height: 20px;
+}
+
+.award-items-lst li div.info .totalCount {
+  color: #999;
+  font-size: 12px;
+}
+
+
+.contextmenu {
+	width: 0; /*设置为0 隐藏自定义菜单*/
+	height: auto;
+	overflow: hidden;
+	position: absolute; /*自定义菜单相对与body元素进行定位*/
+	background-color: #eee;
+	z-index: 99
+}
+.contextmenu > .item{
+	width: 100%;
+	height: 30px;
+	line-height: 30px;
+	padding: 0 10px;
+	border-bottom: 1px solid #fff;
+}
+.contextmenu > .item > a {
+	color: #000;
+}
+.contextmenu > .item i,
+.device-points i,
+#fd-device-system .panel-title i {
+	width: 20px;
+	height: 20px;
+}
+.contextmenu > .item:last-child {
+	border-bottom: 0;
+}

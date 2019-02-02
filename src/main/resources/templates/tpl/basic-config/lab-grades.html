@@ -1,0 +1,12 @@
+<!-- 实验室等级 -->
+<input type="hidden" name="labGrade">
+<div class="dropdown" id="lab-grades-${timestamp}" style="min-width: 100px"></div>
+<div class="filter-name">实验室等级</div>
+<script>
+$http.get({
+    url: 'tpl/lab-grades',
+    forbidLoading: true
+}, function(res) {
+    $('#lab-grades-${timestamp}').html(res);
+})
+</script>

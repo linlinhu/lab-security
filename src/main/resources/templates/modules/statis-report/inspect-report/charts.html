@@ -1,0 +1,16 @@
+    <div class="statis-report-chart">
+        <div class="row">
+            <div class="col-sm-4">
+                <#assign name = '本年总检查数'>
+                <#assign count = statisData.yearSum >
+                <#assign color = 'purple' >
+                <#include "../../../tpl/statis-report/report-chart-box.html" />
+            </div>
+            <div class="col-sm-4">
+                <#assign name = '本年检查总数'>
+                <#assign count = statisData.monthSum >
+                <#assign color = 'blue' >
+                <#include "../../../tpl/statis-report/report-chart-box.html" />
+            </div>
+        </div>
+    </div>

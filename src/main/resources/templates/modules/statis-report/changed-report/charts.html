@@ -1,0 +1,23 @@
+    <div class="statis-report-chart">
+        <div class="row">
+            <div class="col-sm-4">
+                <#assign name = '本月整改总数'>
+                <#assign count = statisData.monthSum >
+                <#assign color = 'purple' >
+                <#include "../../../tpl/statis-report/report-chart-box.html" />
+            </div>
+            <div class="col-sm-4">
+                <#assign name = '本年整改总数'>
+                <#assign count = statisData.yearSum >
+                <#assign color = 'blue' >
+                <#include "../../../tpl/statis-report/report-chart-box.html" />
+            </div>
+            <div class="col-sm-4">
+                <#assign name = '复查率'>
+                <#assign count = (statisData.reviewRate * 100) >
+                <#assign unit = "%" />
+                <#assign color = 'orange' >
+                <#include "../../../tpl/statis-report/report-chart-box.html" />
+            </div>
+        </div>
+    </div>

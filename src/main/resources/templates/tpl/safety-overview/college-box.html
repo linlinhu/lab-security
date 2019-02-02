@@ -1,0 +1,10 @@
+<input type="hidden" name="ecmId">
+<div class="dropdown" id="view-scope-${chartId}" style="min-width: 100px"></div>
+<script>
+    $http.get({
+        url: 'tpl/view-scope',
+        forbidLoading: true
+    }, function(res) {
+        $('#view-scope-${chartId}').html(res);
+    })
+</script>

@@ -1,0 +1,38 @@
+<div class="nfConfigItems">
+    <span class="itemIcon"><i class="iconfont icon-icon_team"></i></span>
+    <span class="itemName">所属实验室</span>
+</div>
+<#assign typeMap = {"1":"学校层","2":"安全中心","3":"所属学院"}>
+<#list list as item>
+
+    <#if item.noticeType==2>
+        <div class="nfConfigItems custom" data-user-name="${item.userName}" data-user-phone="${item.userPhone}" data-notice-type="${item.noticeType}" >
+            <span class="itemIcon"><i class="iconfont icon-icon_user"></i></span>
+            <span class="itemName">
+            ${item.userName}<br>
+                <small>${item.userPhone}</small>
+            </span>
+            <span class="deleteBtn"><i class="fa fa-times"></i></span>
+        </div>
+    <#else>
+        <div class="nfConfigItems custom" data-dept-type="${item.deptType}" data-notice-type="${item.noticeType}" >
+            <span class="itemIcon"><i class="iconfont icon-icon_user"></i></span>
+            <span class="itemName">
+                ${typeMap["${item.deptType}"]}
+            </span>
+            <span class="deleteBtn"><i class="fa fa-times"></i></span>
+        </div>
+    </#if>
+
+
+
+
+</#list>
+<div class="addItems nfConfigOpts" data-opt="addItem" data-level-name="${level.name}">
+    <i class="iconfont icon-icon_ "></i>
+</div>
+<script type="text/javascript">
+    (function(){
+
+    })()
+</script>

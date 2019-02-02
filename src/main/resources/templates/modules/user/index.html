@@ -1,0 +1,258 @@
+<div class="wrapper-content userManagement" >
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title" style="border:none">
+                    <h5>用户列表</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-7" style="padding-left:10px">
+                            <#if !showOperations?? || showOperations?seq_contains("add")>
+                                 <button class="btn ls-btn btn-sm btn-primary userOpts" data-opt="add"><i class="fa fa-plus"></i> 新增用户</button>
+                            </#if>
+                            <!-- <#if !showOperations?? || showOperations?seq_contains("resetPassword")>
+                                 <button class="btn btn-sm btn-default  userOpts" data-opt="resetPassword"><i class="fa fa-unlock-alt"></i> 重置密码</button>
+                            </#if> -->
+                            <#if !showOperations?? || showOperations?seq_contains("disableUser")>
+                                 <button class="btn ls-btn btn-sm btn-warning  userOpts" data-opt="disableUser"><i class="fa fa-ban"></i> 停用</button>
+                            </#if>
+                            <#if !showOperations?? || showOperations?seq_contains("enableUser")>
+                                 <button class="btn ls-btn btn-sm btn-success userOpts" data-opt="enableUser"><i class="fa fa-check-circle-o"></i> 启用</button>
+                            </#if>
+                            <#if !showOperations?? || showOperations?seq_contains("deleteUser")>
+                                 <button class="btn ls-btn btn-sm btn-danger userOpts" data-opt="deleteUser"><i class="fa fa-trash"></i> 删除</button>
+                            </#if>
+                        </div>
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-3">
+                            <div class="input-group">
+                                <input type="text" placeholder="请输入关键词" class="input-sm form-control ls-input">
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn ls-btn btn-sm btn-primary"><i class="fa fa-search"></i></button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive userList">
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script type="text/javascript">
+    (function(){
+        var showColumns = ${showColumns!'[]'};
+        var ecmId = "${ecmId!''}",ecmDeep = ${ecmDeep?string("true","false")},flockIds = ${queryFlockIds!'[]'},additionFlockId = ${additionFlockId!'null'}
+        this.optData = {}
+        var that = this;
+        var currentPage = 1;
+        var defaultLimit = 10;
+
+        var $this = {
+            init:function(){
+                this.loadList();
+                this.bindEvent();
+            },
+            bindEvent:function(){
+                $(".userManagement:visible .userOpts").unbind("click").click(function(){
+                    var opt = $(this).data("opt");
+                    that.optData = $(this).data();
+                    eval("that."+opt+"()");
+                })
+                $(".userManagement:visible .userList:visible .selectAll").on("ifChanged",function(event){
+                   // console.log(this.checked)
+                    if($(this).data("childEvent")){
+                       return
+                    }
+
+                    $(".userManagement:visible .userList:visible .itemSelect").iCheck(this.checked?"check":"uncheck")
+                    event.stopPropagation();
+                    event.preventDefault();
+                })
+                $(".userManagement:visible .userList:visible .itemSelect").on("ifChanged",function(event){
+                    var allLength = $(".userManagement:visible .userList:visible tbody tr").length
+                    var checkedLength = $(".userManagement:visible .userList:visible .itemSelect:checked").length
+
+                    $(".userManagement:visible .userList:visible .selectAll").data("childEvent",true);
+                    $(".userManagement:visible .userList:visible .selectAll").iCheck(checkedLength==allLength?"check":"uncheck")
+                    $(".userManagement:visible .userList:visible .selectAll").data("childEvent",false);
+
+                    event.stopPropagation();
+                    event.preventDefault();
+                })
+            },
+            _form:function(id){
+                $http.get({
+                    url:"user/form",
+                    data:{
+                        id:id
+                    }
+                },function(res){
+                    layer.open({
+                        title:id?"编辑用户":"新增用户",
+                        type:1,
+                        zIndex:20,
+                        area:"400px",
+                        btn:["保存"],
+                        content:res,
+                        yes:function(index,layero){
+                            var form = $(layero).find(".userForm")
+                            if(form.valid()){
+                                var data = form.serializeObject();
+                                console.log(data)
+                                if(additionFlockId!=null){
+                                    if(typeof data.flockIds == "array"){
+                                        data.flockIds.push(additionFlockId)
+                                    }else{
+                                        data.flockIds = data.flockIds.join("").push(additionFlockId);
+                                    }
+
+                                }
+
+                                $http.post({
+                                    url:"user/save",
+                                    data:data
+                                },function(res){
+                                    layer.close(index)
+                                    that.loadList(data.id?undefined:1)
+                                })
+                            }
+                        }
+                    })
+                })
+            },
+            add:function(){
+                this._form()
+            },
+            edit:function(){
+                this._form(this.optData.id)
+            },
+            disableUser:function(){
+                var ids = []
+                if(!that.optData.id){
+                    //批量
+                    $(".userManagement:visible .userList:visible .itemSelect:checked").each(function(){
+                        ids.push(this.value)
+                    })
+                }else{
+                    ids.push(that.optData.id)
+                }
+                if(ids.length==0){
+                    layer.msg("请选择要停用的用户",{icon:0})
+                    return
+                }
+                $http.post({
+                    url:"user/disable",
+                    oper_cn:"停用",
+                    traditional: true,
+                    data:{
+                        ids:ids
+                    }
+                },function(res){
+                    that.loadList()
+                })
+            },
+            enableUser:function(){
+                var ids = []
+                if(!that.optData.id){
+                    //批量
+                    $(".userManagement:visible .userList:visible .itemSelect:checked").each(function(){
+                        ids.push(this.value)
+                    })
+                }else{
+                    ids.push(that.optData.id)
+                }
+                if(ids.length==0){
+                    layer.msg("请选择要启用的用户",{icon:0})
+                    return
+                }
+                $http.post({
+                    oper_cn:"启用",
+                    url:"user/enable",
+                    traditional:true,
+                    data:{
+                        ids:ids
+                    }
+                },function(res){
+                    that.loadList()
+                })
+            },
+            deleteUser:function(){
+                var ids = []
+                if(!that.optData.id){
+                    //批量
+                    $(".userManagement:visible .userList:visible .itemSelect:checked").each(function(){
+                        ids.push(this.value)
+                    })
+                }else{
+                    ids.push(that.optData.id)
+                }
+                if(ids.length==0){
+                    layer.msg("请选择要删除的用户",{icon:0})
+                    return
+                }
+                $http.post({
+                    url:"user/delete",
+                    oper_cn:"删除",
+                    traditional:true,
+                    data:{
+                        ids:ids
+                    }
+                },function(res){
+                    that.loadList()
+                })
+            },
+            loadList:function(page,limit){
+                var arg = arguments;
+                if(!page){
+                    page = currentPage;
+                }
+                if(!limit){
+                    limit = defaultLimit;
+                }
+                $http.get({
+                    url:"user/list",
+                    data:{
+                        page:page,
+                        limit:limit,
+                        showColumns:showColumns.join(','),
+                        ecmId:ecmId,
+                        ecmDeep:ecmDeep,
+                        flockIds:flockIds.join(",")
+                    }
+                },function(res){
+
+                    $(".userManagement:visible .userList:visible").html(res);
+                    that.bindEvent();
+                    $(".userManagement:visible .userList:visible .i-checks").iCheck({checkboxClass: "icheckbox_square-green", radioClass: "iradio_square-green",})
+                    var pagingContainer = $(".userManagement:visible .userList:visible .pageContainer")
+                    var pageData = pagingContainer.data()
+                    laypage.render({
+                        elem:pagingContainer[0],
+                        count:pageData.total,
+                        curr:pageData.page,
+                        limit:limit,
+                        limits:true,
+                        layout:['prev', 'page', 'next','limit','skip'],
+                        theme: '#55A8FD',
+                        //theme: '#1E9FFF',
+                        jump: function(obj, first){
+                            if(!first){
+                                defaultLimit = obj.limit;
+                                arg.callee(obj.curr,obj.limit)
+                            }
+                        }
+                    })
+
+                })
+            }
+        }
+        $.extend(this,$this)
+        this.init()
+    })()
+</script>

@@ -1,0 +1,150 @@
+<style type="text/css">
+    .security-center-checkConfig,
+    .security-center-checkConfig .tabs-container {
+        height: 100%;
+        background: #fff;
+    }
+
+    .security-center-checkConfig .tabs-left,
+    .security-center-checkConfig .nav-tabs,
+    .security-center-checkConfig .tab-content,
+    .security-center-checkConfig .tab-content .tab-pane {
+        height: 100%;
+    }
+
+    .security-center-checkConfig .tabs-container .tabs-left {
+        position: relative;
+    }
+
+    .security-center-checkConfig .tabs-container .itemDetail {
+        position: absolute;
+        left: 201px;
+        top: 1px;
+        right: 1px;
+        bottom: 1px;
+        z-index: 999;
+        background: #fff;
+        display: none;
+    }
+
+    .security-center-checkConfig .nav-tabs li {
+        border-bottom: 1px solid #DCE3E9;
+        margin-bottom: 0px;
+    }
+
+    .security-center-checkConfig .tab-content .tab-pane .panel-body {
+        margin-left: 200px;
+        width: auto
+    }
+
+    .security-center-checkConfig .nav-tabs {
+        max-width: 200px;
+    }
+
+    .security-center-checkConfig .categoryContainer {
+        border-top: none;
+        height: 100%;
+        border-bottom: none;
+    }
+
+    .security-center-checkConfig .nav-tabs > li {
+        height: 70px;
+        line-height: 70px;
+        position:relative;
+        transition:none;
+    }
+
+
+    .security-center-checkConfig .nav-tabs > li.active ~ li:before {
+        top: 0px;
+    }
+    .security-center-checkConfig .nav-tabs > li.active:before {
+        height: 100%;
+        left: 0px;
+        top: 0px;
+    }
+
+
+
+    .security-center-checkConfig .nav-tabs > li:before{
+        content: "";
+        position: absolute;
+        z-index:5000;
+        top: 100%;
+        left: 0;
+        width: 5px;
+        height: 0;
+        border-left: 5px solid #55A8FD;
+        transition: 0.2s all linear;
+    }
+
+    .security-center-checkConfig .nav-tabs > li > a {
+        border: none;
+        height: 100%;
+        color: #3E4956;
+        font-weight: normal;
+        font-size: 16px
+    }
+
+    .security-center-checkConfig .nav-tabs > li.active {
+       background: #F5FAFF;
+    }
+    .security-center-checkConfig .nav-tabs > li.active > a:hover,.security-center-checkConfig .nav-tabs > li.active > a:focus{
+        background: #F5FAFF;
+    }
+    .security-center-checkConfig .nav-tabs > li.active > a {
+        color: #55A8FD;
+        background: #F5FAFF;
+    }
+
+    .security-center-checkConfig .nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
+        border: none !important;
+        border-right: 1px solid #e7eaec !important;
+    }
+</style>
+
+<div class="security-center-checkConfig">
+    <div class="tabs-container">
+
+        <div class="tabs-left">
+            <ul class="nav nav-tabs">
+
+
+                <li class="active">
+                    <a data-toggle="tab" href="#checkConfigTab-1"
+                       aria-expanded="false"> 检查项配置</a>
+                </li>
+                <li class="">
+                    <a data-toggle="tab" href="#checkConfigTab-2"
+                       aria-expanded="false"> 问题等级配置</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div id="checkConfigTab-1" class="tab-pane active">
+                    <div class="panel-body categoryContainer">
+                         <#include "checkItem/index.html">
+                    </div>
+                </div>
+                <div id="checkConfigTab-2" class="tab-pane">
+                    <div class="panel-body categoryContainer levelConfig">
+                         <#include "potentialHazard/index.html">
+                    </div>
+                </div>
+            </div>
+           <#-- <div class="itemDetail">
+
+            </div>-->
+        </div>
+
+    </div>
+</div>
+<script type="text/javascript">
+    (function () {
+        /*$(".security-center-checkConfig .nav-tabs a[data-toggle='tab']").on("shown.bs.tab", function () {
+            $(".security-center-checkConfig .itemDetail:visible").fadeOut(function () {
+                $(this).empty()
+            })
+        })*/
+
+    })()
+</script>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="renderer" content="webkit">
+	<title>银玺·实验室安全检查管理系统</title>
+	<meta name="keyword" content="">
+	<meta name="description" content="">
+
+	<!--[if lt IE 8]>
+		<script>
+			alert('H+已不支持IE6-8，请使用谷歌、火狐等浏览器\n或360、QQ等国产浏览器的极速模式浏览本页面！');
+		</script>
+		<![endif]-->
+	<link href="${base}css/plugins/ztree/zTreeStyle/zTreeStyle.css"
+		rel="stylesheet">
+	<link href="${base}img/favicon.ico" rel="shortcut icon">
+	<link href="${base}css/bootstrap.min.css?v=3.4.0" rel="stylesheet">
+	<link href="${base}css/font-awesome.min.css?v=4.3.0" rel="stylesheet">
+	<link href="${base}css/animate.css" rel="stylesheet">
+	<link href="${base}css/style.css" rel="stylesheet">
+	<link href="${base}css/index.css" rel="stylesheet">
+	<link href="${base}css/plugins/footable/footable.bootstrap.css"
+		rel="stylesheet">
+	<link href="${base}css/plugins/iCheck/custom.css" rel="stylesheet">
+
+	<link href="${base}css/plugins/periodsPicker/periodsPicker.css"
+		rel="stylesheet">
+	<link href="${base}js/plugins/layui/css/layui.css" rel="stylesheet">
+	<link href="${base}js/plugins/layer/theme/default/layer.css" rel="stylesheet">
+	<link href="${base}js/plugins/layer/laydate/theme/default/laydate.css"
+		rel="stylesheet">
+	<script src="${base}js/plugins/layer/laydate/laydate.js"></script>
+
+	<link href="${base}css/plugins/chosen/chosen.css" rel="stylesheet">
+	<link href="${base}css/plugins/steps/jquery.steps.css" rel="stylesheet">
+	<link href="${base}css/plugins/switchery/switchery.css" rel="stylesheet">
+	<link href="${base}css/plugins/webuploader/webuploader.css" rel="stylesheet" type="text/css">
+	<link href="${base}css/plugins/laypage/laypage.css" rel="stylesheet">
+	<link href="${base}css/plugins/labels/labels.css" rel="stylesheet">
+	<link href="${base}js/plugins/duallistbox/bootstrap-duallistbox.min.css" rel="stylesheet">
+	<link href="${base}js/plugins/treeGrid/jquery.treegrid.css" rel="stylesheet">
+	<link href="${base}js/plugins/blueimp/blueimp-gallery.min.css" rel="stylesheet">
+	<link href="${base}js/plugins/selectpage/selectpage.bootstrap3.css" rel="stylesheet">
+	<link href="${base}js/plugins/context/context.standalone.css" rel="stylesheet">
+	<link href="${base}js/plugins/ipicture/iPicture.css" rel="stylesheet">
+	<link href="${base}js/plugins/date-time/daterangepicker.css" rel="stylesheet">
+
+	<link href="${base}css/plugins/mag/mag.css" rel="stylesheet">
+	<link href="${base}css/plugins/mag/theme/default.css" rel="stylesheet">
+
+	<link href="${base}plugins/smartWizard/css/smart_wizard.css" rel="stylesheet">
+	<link href="${base}plugins/smartWizard/css/smart_wizard_theme_circles.css" rel="stylesheet">
+	<link href="${base}plugins/summernote/css/summernote.css" rel="stylesheet">
+	<#--<link href="${base}css/plugins/summernote/summernote-bs3.css" rel="stylesheet">-->
+	<link href="${base}plugins/map-selection/css/map-selection.css" rel="stylesheet">
+	<link href="${base}plugins/tree-table/css/jquery.treetable.css" rel="stylesheet">
+	<link href="${base}plugins/tree-table/css/jquery.treetable.theme.default.css" rel="stylesheet">
+	<link href="${base}plugins/treeview/bootstrap-treeview.min.css" rel="stylesheet">
+    <link href="${base}plugins/x-editable/css/bootstrap-editable.css" rel="stylesheet">
+	<link href="${base}css/tindex.css" rel="stylesheet">
+	<link href="${base}css/iconfont.css" rel="stylesheet">
+	<link href="${base}css/document.css" rel="stylesheet">
+	<link href="${base}css/subject-info.css" rel="stylesheet">
+	<link href="${base}css/extension.css" rel="stylesheet">
+	<link href="${base}css/index.css" rel="stylesheet">
+    <link href="${base}css/safety-overview.css" rel="stylesheet">
+    <link href="${base}css/statis-report-chart.css" rel="stylesheet">
+
+    <link href="${base}plugins/select2/css/select2.css" rel="stylesheet" />
+
+</head>
+<body class="fixed-sidebar full-height-layout gray-bg">
+	<div class="fixed-loading"
+		style="position: fixed; left: 0; top: 0; right: 0; bottom: 0;">
+		<img alt="" src="${base}img/loading-0.gif"
+			style="position: absolute; left: 45%; top: 45%;">
+	</div>
+	<div id="wrapper">
+		<!--左侧导航开始-->
+		<nav class="navbar-default navbar-static-side" role="navigation">
+			<div class="nav-close">
+				<i class="fa fa-times-circle"></i>
+			</div>
+			<div class="sidebar-collapse">
+				<ul class="nav" id="side-menu">
+					<li class="nav-header">
+						<div class="prject-info">
+							<img src="img/logo.png" width="45" height="46">
+							<div>实验室安全检查</div>
+						</div>
+					</li>
+					<li class="<#if !userClaim.schoolEcmId?? >hide</#if>">
+                        <a href="#">
+                            <i class="fa fa-university"></i>
+                            <span class="nav-label">学校管理</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a class="J_menuItem" href="school">学校信息</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem" href="branchs">学院管理</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem" href="security-system">安全体系</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem" href="school-users">人员信息</a>
+                            </li>
+                        </ul>
+					</li>
+
+					<li class="<#if !userClaim.schoolEcmId?? >hide</#if>">
+						<a href="#">
+							<i class="fa fa-university"></i>
+							<span class="nav-label">安全总览</span>
+							<span class="fa arrow"></span>
+						</a>
+						<ul class="nav nav-second-level">
+							<li>
+								<a class="J_menuItem" href="labs-statis">实验室统计</a>
+								<a class="J_menuItem" href="hazards-statis">危险源统计</a>
+								<a class="J_menuItem" href="hidden-danger-statis">问题统计</a>
+								<a class="J_menuItem" href="changed-statis">整改统计</a>
+								<a class="J_menuItem" href="inspect-statis">检查统计</a>
+								<a class="J_menuItem" href="accident-statis">安全事故统计</a>
+								<a class="J_menuItem" href="security-users">安全责任人</a>
+							</li>
+						</ul>
+					</li>
+					<li class="<#if !userClaim.branchEcmId?? >hide</#if>">
+						<a href="#">
+							<i class="fa fa-university"></i>
+							<span class="nav-label">学院管理</span>
+							<span class="fa arrow"></span>
+						</a>
+						<ul class="nav nav-second-level">
+							<li>
+								<a class="J_menuItem" href="branch">学院信息</a>
+								<a class="J_menuItem" href="branch-labs">实验室信息</a>
+								<a class="J_menuItem" href="branch-user">人员信息</a>
+							</li>
+						</ul>
+					</li>
+                    <li class="<#if !userClaim.schoolEcmId?? >hide</#if>">
+                        <a href="#">
+                            <i class="fa fa-shield"></i>
+                            <span class="nav-label">安全中心管理</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                            <li>
+								<a class="J_menuItem" href="security-center">安全中心信息</a>
+								<a class="J_menuItem" href="qrcode">二维码管理</a>
+								<a class="J_menuItem" href="checkItem">检查项配置</a>
+                                <a class="J_menuItem" href="security-center-initConfig">初始化配置</a>
+                            </li>
+                        </ul>
+                    </li>
+					<li class="<#if !userClaim.labEcmId?? >hide</#if>">
+						<a href="#">
+							<i class="fa fa-university"></i>
+							<span class="nav-label">实验室管理</span>
+							<span class="fa arrow"></span>
+						</a>
+						<ul class="nav nav-second-level">
+							<li>
+								<a class="J_menuItem" href="lab">实验室信息</a>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<a class="J_menuItem" href="examination">
+							<i class="fa fa-deviantart"></i>
+							<span class="nav-label">审核管理</span>
+						</a>
+					</li>
+					<li>
+						<a class="J_menuItem" href="safety-inspect">
+							<i class="fa fa-university"></i>
+							<span class="nav-label">安全检查管理</span>
+						</a>
+					</li>
+					<li>
+						<a class="J_menuItem" href="safety-changed">
+							<i class="fa fa-university"></i>
+							<span class="nav-label">安全整改管理</span>
+						</a>
+					</li>
+					<li>
+						<a class="J_menuItem" href="safety-accident">
+							<i class="fa fa-university"></i>
+							<span class="nav-label">安全事故管理</span>
+						</a>
+					</li>
+                    <li>
+                        <a href="#">
+                            <i class="fa fa-volume-up"></i>
+                            <span class="nav-label">通知管理</span>
+                            <span class="fa arrow"></span>
+                        </a>
+                        <ul class="nav nav-second-level">
+                        	<li>
+                                <a class="J_menuItem" href="notification-list">通知列表</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem" href="notification-config">隐患通知配置</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li >
+						<a class="J_menuItem" href="document">
+							<i class="fa fa-book"></i>
+							<span class="nav-label">档案库管理</span>
+						</a>
+					</li>
+					
+                    <li class="<#if !userClaim.schoolEcmId?? >hide</#if>">
+						<a class="J_menuItem" href="statis-report">
+							<i class="fa fa-book"></i>
+							<span class="nav-label">统计报表</span>
+						</a>
+					</li>
+                    <li>
+						<a class="J_menuItem" href="user">
+							<i class="fa fa-user"></i>
+							<span class="nav-label">用户管理</span>
+						</a>
+					</li>
+                    <li>
+						<a class="J_menuItem hide" href="my-message">
+							<i class="fa fa-book"></i>
+							<span class="nav-label">个人中心</span>
+						</a>
+					</li>
+					 <#--<#if menus??>
+						 <#list menus as menu>
+                    		<li >
+                                <a <#if menu.leaf>class="J_menuItem"</#if> href="${menu.leaf?string(menu.code,'#')}">
+                                    <i class="fa fa-menu-${menu.code}"></i>
+                                    <span class="nav-label">${menu.name}</span>
+		                            <#if !menu.leaf>
+		                            	<span class="fa arrow subMenuArrow"></span>
+									</#if>
+                                </a>
+		                        <#if !menu.leaf>
+		                            <ul  class="nav nav-second-level">
+		                            	<#list menu.children as child>
+                                            <li>
+												<a class="J_menuItem" href="${child.code}">
+                                                    <i class="fa fa-menu-${child.code}"></i>
+                                                    <span class="nav-label">${child.name}</span>
+												</a>
+											</li>
+										</#list>
+                                    </ul>
+
+								</#if>
+                            </li>
+						 </#list>
+					 </#if>-->
+				</ul>
+			</div>
+		</nav>
+		<!--左侧导航结束-->
+
+		<!--右侧部分开始-->
+		<div id="page-wrapper" class="gray-bg dashbard-1">
+			<div class="page-top">
+				<div class="fold-menu">
+					<a class="navbar-minimalize minimalize-styl-2 btn btn-primary ls-btn" href="#"><i class="fa fa-bars"></i> </a>
+				</div>
+				<div class="login-info">
+					<div class="dropdown my-msg-dp">
+						<!-- <a class="my-msg" id="my-msg" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<i class="iconfont icon-icon_notice2"></i>
+						</a> -->
+						<a class="my-msg">
+							<i class="iconfont icon-icon_notice1"></i>
+						</a>
+						<a class="hide" id="my-msg" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
+						<ul class="dropdown-menu" aria-labelledby="my-msg">
+						</ul>
+						<span class="hide num"></span>
+					</div>
+					<div class="user-pic"><img src="img/male.png"  width="45" height="45"/></div>
+					<div class="dropdown">
+						<button class="btn ls-btn btn-default dropdown-toggle" type="button" id="login-user-dpdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							${reanName!mobile} <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" aria-labelledby="login-user-dpdown">
+							<!-- <li><a href="#">修改密码</a></li>
+							<li role="separator" class="divider"></li> -->
+							<li><a href="javascript:void(0)" class="logout">注销</a></li>
+						</ul>
+					</div>
+					
+				</div>
+			</div>
+			<div id="content-main"></div>
+			<div class="footer">
+				<div class="pull-right">&copy; 银玺·实验室安全检查</div>
+			</div>
+		</div>
+		<#include "tpl/fileUploaderTpl.html"/>
+		<#include "tpl/treeTableTpl.html"/>
+		<#include "tpl/notification/selection-officer.html"/>
+		<#include "tpl/myMessageTpl.html"/>
+	</div>
+
+	<script src="http://api.map.baidu.com/api?v=2.0&ak=YXCZieRrBD8dAfXj7eUp5oF4EA6UAIrl"></script>
+	<#--<script type="text/javascript" src="http://api.map.baidu.com/library/AreaRestriction/1.2/src/AreaRestriction_min.js"></script>
+	<script type="text/javascript" src="http://api.map.baidu.com/library/TextIconOverlay/1.2/src/TextIconOverlay_min.js"></script>
+	<script type="text/javascript" src="http://api.map.baidu.com/library/MarkerClusterer/1.2/src/MarkerClusterer_min.js"></script> -->
+	<!-- 全局js -->
+	<script src="${base}js/jquery-2.1.1.min.js"></script>
+    <script src="${base}js/jquery-ui-1.10.4.min.js"></script>
+    <script src="${base}js/jquery.mousewheel.min.js"></script>
+	<script src="${base}js/bootstrap.min.js?v=3.4.0"></script>
+	<script src="${base}js/plugins/metisMenu/jquery.metisMenu.js"></script>
+	<script src="${base}js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+	<script src="${base}js/plugins/layer/layer.min.js"></script>
+	<script src="${base}js/plugins/layui/layui.all.js"></script>
+	<script src="${base}js/qrcode.min.js"></script>
+	<style>
+		
+	</style>
+	<script type="text/javascript">
+		var base = "${base}";
+		
+	</script>
+	<!-- 自定义js -->
+	<script src="${base}js/hplus.js?v=3.2.0"></script>
+	<script src="${base}js/contabs1.js"></script>
+	<script src="${base}js/modules/util/common-util.js"></script>
+	<script src="${base}js/modules/util/date-util.js"></script>
+	<script src="${base}js/$http.js"></script>
+
+	<!-- 第三方插件 -->
+	<script src="${base}js/plugins/pace/pace.min.js"></script>
+	<script src="${base}js/jquery.cityselect.js"></script>
+	<script src="${base}js/plugins/selectpage/selectpage.js"></script>
+	<script src="${base}js/plugins/footable/footable.js"></script>
+	<script src="${base}js/plugins/validate/jquery.validate.min.js"></script>
+	<script src="${base}plugins/x-editable/js/bootstrap-editable.min.js"></script>
+
+    <#--<script src="${base}js/js/validate/additional-methods.min.js"></script>-->
+	<script src="${base}js/plugins/validate/messages_zh.min.js"></script>
+	<script src="${base}js/plugins/validate/compatible_bootstrap.js"></script>
+	<script src="${base}js/plugins/validate/validate_method.js"></script>
+	<script src="${base}js/plugins/iCheck/icheck.min.js"></script>
+	<script src="${base}js/plugins/laypage/laypage.js"></script>
+	<script src="${base}js/plugins/periodsPicker/periodsPicker.js"></script>
+	<!-- CHOSEN -->
+	<script src="${base}js/plugins/chosen/chosen.jquery.js"></script>
+	<!-- Steps -->
+	<script src="${base}js/plugins/steps/jquery.steps.js"></script>
+	<!-- Switchery -->
+	<script src="${base}js/plugins/switchery/switchery.js"></script>
+    <script src="${base}js/plugins/mag/jquery.event.drag.js"></script>
+    <script src="${base}js/plugins/mag/jquery.bridget.js"></script>
+    <script src="${base}js/plugins/mag/PreventGhostClick.js"></script>
+	<script src="${base}js/plugins/mag/mag.js"></script>
+    <script src="${base}js/plugins/mag/mag-analytics.js"></script>
+    <script src="${base}js/plugins/mag/mag-control.js"></script>
+    <script src="${base}js/plugins/mag/mag-jquery.js"></script>
+	<!-- ztree -->
+	<script src="${base}js/plugins/ztree/jquery.ztree.core.js"></script>
+	<script src="${base}js/plugins/ztree/jquery.ztree.excheck.js"></script>
+	<script src="${base}js/plugins/ztree/jquery.ztree.exedit.js"></script>
+	<script type="text/javascript" src="${base}js/plugins/webuploader/webuploader.js"></script>
+	<script type="text/javascript" src="${base}js/plugins/webuploader/upload.js"></script>
+	<script type="text/javascript" src="${base}plugins/treeview/bootstrap-treeview.js"></script>
+	<script type="text/javascript" src="${base}plugins/smartWizard/js/jquery.smartWizard.js"></script>
+	<!-- tree-table -->
+	<script src="${base}plugins/tree-table/js/jquery.treetable.js"></script>
+	
+	<script src="${base}js/plugins/labels/labels.js"></script>
+	
+	<!-- emin封装js -->
+	<script src="${base}js/emin/dataLoad.js"></script>
+	<script type="text/javascript" src="${base}js/emin/common.js"></script>
+
+	<script type="text/javascript" src="${base}js/emin/dataChosen.js"></script>
+	<script type="text/javascript" src="${base}js/emin/emin.ztree.js"></script>
+	<script type="text/javascript" src="${base}js/emin/emin.fileUpload.js"></script>
+	<script type="text/javascript" src="${base}js/plugins/duallistbox/jquery.bootstrap-duallistbox.js"></script>
+	<script type="text/javascript" src="${base}js/plugins/treeGrid/jquery.treegrid.min.js"></script>
+	<script type="text/javascript" src="${base}js/plugins/treeGrid/jquery.treegrid.extension.js"></script>
+	<script type="text/javascript" src="${base}js/plugins/blueimp/jquery.blueimp-gallery.min.js"></script>
+    <script type="text/javascript" src="${base}js/plugins/context/context.js"></script>
+	<script type="text/javascript" src="${base}js/plugins/ipicture/jquery.ipicture.js"></script>
+	<script type="text/javascript" src="${base}js/plugins/date-time/moment.min.js"></script>
+    <script type="text/javascript" src="${base}js/plugins/date-time/daterangepicker.js"></script>
+	<script type="text/javascript" src="${base}js/plugins/echarts/echarts.common.min.js"></script>
+    <script type="text/javascript" src="${base}js/plugins/echarts/macarons.js"></script>
+    <script type="text/javascript" src="${base}js/plugins/heatmap/heatmap.min.js"></script>
+    <#--<script type="text/javascript" src="http://webapi.amap.com/maps?v=1.4.4&key=d5e8c87c7bcf226f5ce2d643083dd809&plugin=AMap.CitySearch"></script>-->
+	<script type="text/javascript" src="${base}plugins/summernote/js/summernote.js"></script>
+    <script type="text/javascript" src="${base}plugins/summernote/js/summernote-zh-CN.js"></script>
+
+	<script type="text/javascript" src="${base}plugins/map-selection/js/map-selection.js"></script>
+	<script type="text/javascript" src="${base}js/extension.js"></script>
+
+    <script type="text/javascript" src="${base}plugins/select2/js/select2.min.js"></script>
+    <script type="text/javascript" src="${base}plugins/select2/js/i18n/zh-CN.js"></script>
+
+	<!-- 项目逻辑js -->
+	<script type="text/javascript" src="${base}js/index.js"></script>
+	<script type="text/javascript" src="${base}js/document/manage.js"></script>
+	<script type="text/javascript" src="${base}js/tpl/TableManage.js"></script>
+	<script type="text/javascript" src="${base}js/tpl/FormTpl.js"></script>
+	<script type="text/javascript" src="${base}js/qrcode/CodesManage.js"></script>
+	<script type="text/javascript" src="${base}js/document/document-table.js"></script>
+
+    <!-- ECharts -->
+    <script type="text/javascript" src="${base}plugins/echarts/echarts.js"></script>
+    <script type="text/javascript" src="${base}js/safetyOverview/chartUtil.js"></script>
+
+</body>
+<script>
+	var icon = "<i class='fa fa-times-circle'></i> ", basePath = '${base}';
+    moment.locale("zh-cn");
+	$("#personNickName").unbind('click').click(function(){
+        $http.get({
+            url : "user/detail"
+        },function(data){
+            layer.open({
+                title:"个人信息",
+                type: 1,
+                skin: 'layui-layer-rim', //加上边框
+                area: ['520px', '560px'], //宽高
+                content: data,
+				offset: 't'
+            });
+        })
+	})
+	$(".logout").unbind('click').click(function() {
+		layer.confirm('是否确定注销登录？', {
+			btn : [ '确定', '取消' ]
+		//按钮
+		//  shade: true //不显示遮罩
+		}, function() {
+			$http.get({
+				url : "logout"
+			},function(data){
+				console.log('用户退出', data)
+				window.location.replace("/login");
+
+			})
+		}, function() {
+		});
+	})
+
+	//监听加载状态改变
+	document.onreadystatechange = completeLoading;
+
+	//加载状态为complete时移除loading效果
+	function completeLoading() {
+		if (document.readyState == "complete") {
+			$('.fixed-loading').addClass('hide');
+		}
+	}
+</script>
+</html>

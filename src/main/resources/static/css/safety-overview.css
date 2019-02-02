@@ -1,0 +1,135 @@
+/* 安全总览共通样式表 */
+.safety-charts {
+    padding-top: 5px;
+}
+
+.safety-charts .opts {
+    top: 15px !important;
+}
+
+.safety-charts .seperate-title .title {
+    font-size: 16px;
+    color: #3E4956;
+    font-weight: Bold;
+}
+
+.safety-charts .select-box {
+    margin-top: 0;
+}
+
+.safety-charts .select-box .btn-default {
+    border: 0 !important;
+    color: #3E4956;
+    font-size: 14px;
+}
+
+/* 整改统计样式表 */
+.safety-charts .change-chart-desc {
+    margin-top: 50%;
+    text-align: right;
+    font-size: 16px;
+    color: #3E4956;
+}
+
+.safety-charts.change-chart-desc .count {
+    font-size: 20px;
+    color: #333;
+}
+.safety-charts .change-chart-desc .count .done-count {
+    color: #3E4956;
+    font-size: 42px;
+}
+
+/* 图表右边的左右翻页 */
+.safety-charts .collapse-link-area {
+    margin-top: 10px;
+}
+
+/* 图表右边的描述*/
+.safety-charts .collapse-desc {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #99A3B0;
+}
+
+.safety-charts  .collapse-desc .count {
+    font-size: 18px;
+    color: #FF4D77;
+}
+
+
+
+
+
+/* 源样式*/
+.safety-overview {
+    padding-top: 5px;
+}
+
+.safety-overview .echarts {
+    top: 10px;
+    height: 350px;
+
+.safety-overview .echarts-lab-bar {
+    --width: 600px;
+}
+
+.safety-overview .ibox-title {
+    border-top: 0;
+}
+
+.safety-overview .ibox-title h5 {
+    font-size: 16px;
+    color: #3E4956;
+    font-weight: Bold;
+    --font-family: PingFang-SC-Bold;
+}
+
+.safety-overview .ibox-tools {
+    margin-top: 0;
+}
+
+/* 图表右边的下拉框*/
+.safety-overview .select-box {
+    margin-top: 0;
+}
+
+.safety-overview .select-box .btn-default {
+    border: 0;
+    color: #3E4956;
+    font-size: 14px;
+}
+
+/* 图表右边的左右翻页 */
+.safety-overview .ibox-tools .collapse-link {
+    margin-top: 10px;
+}
+
+/* 图表右边的描述*/
+.safety-overview .ibox-tools .collapse-desc {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #99A3B0;
+}
+
+.safety-overview .ibox-tools .collapse-desc .count {
+    font-size: 18px;
+    color: #FF4D77;
+}
+
+/* 整改统计样式表 */
+.safety-overview .change-chart-desc {
+    margin-top: 50%;
+    text-align: right;
+    font-size: 16px;
+    color: #3E4956;
+}
+
+.safety-overview .change-chart-desc .count {
+    font-size: 20px;
+    color: #333;
+}
+.safety-overview .change-chart-desc .count .done-count {
+    color: #3E4956;
+    font-size: 42px;
+}

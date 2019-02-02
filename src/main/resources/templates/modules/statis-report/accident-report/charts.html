@@ -1,0 +1,66 @@
+<div class="safety-overview">
+    <div class="graphic-statis-area">
+        <div class="basic-box">
+            <div class="seperate-title">
+                <span>安全事故总数统计</span>
+                <div class="opts">
+                    <a class="collapse-desc">总数&nbsp<span class="count">125</span></a>
+                </div>
+            </div>
+            <div class="echarts" id="echarts-accident-report"></div>
+        </div>
+        <!-- <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>安全事故总数统计</h5>
+                        <div class="ibox-tools">
+                            <div class="collapse-desc">
+                                总数&nbsp<span class="count">125</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="echarts" id="echarts-accident-report" style=""></div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
+    </div>
+</div>
+
+<script>
+    (function() {
+        var that = this;
+        this.optData = {};
+        // 统计数据
+        var statisData = JSON.parse('<@obj2json obj=statisData ></@obj2json>');
+        var $this = {
+            init: function() {
+                this.initAccidentChart();
+            },
+            // 安全事故统计图表
+            initAccidentChart: function () {
+                var chart = echarts.init(document.getElementById('echarts-accident-report'));
+                var xAxisData = [];
+                var seriesData = [];
+                for (var i in statisData) {
+                    if (statisData[i].name) {
+                        xAxisData.push(statisData[i].name);
+                        seriesData.push(statisData[i].count);
+                    }
+                }
+                var chartOption = ChartUtil.buildVerticalBarChartOption({
+                    xAxisData: xAxisData,
+                    seriesData: seriesData
+                });
+                chart.setOption(chartOption);
+                $(window).resize(chart.resize);
+            }
+        };
+        $.extend(this,$this);
+        this.init();
+    })();
+
+</script>

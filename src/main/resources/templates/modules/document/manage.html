@@ -1,0 +1,45 @@
+<style>
+
+</style>
+<div class="document-manage vertical-tabs" id="${moculeCode}-manage">
+	<div class="cate-area text-center">
+		<ul class="nav nav-tabs"></ul>
+		<a class="btn ls-btn btn-primary add-cate" title="添加分类"><span class="iconfont icon-icon_"></span></a>
+	</div>
+	<div class="right-area">
+		<ul class="path"></ul>
+		<div class="filter-line">
+        	<form method="get" class="dr-search-form document-searchform">
+        		<input class="form-control ls-input" type="hidden" name="page" value="${page!''}" role="user-params">
+                <div class="personal-filter-line">
+                	<input placeholder="搜索文档名" class="form-control" type="text" name="keyword" value="${keyword!''}" role="user-params">
+                	<button type="button" class="btn btn-primary" role="submit"><i class="iconfont icon-icon_search"></i></button>
+                	<span class="iconfont icon-icon_close reset hide"></span>
+                </div>
+         	</form>
+    		<div class="ibox-tools">
+    			<a class="btn ls-btn btn-primary" href="javascript:" title="上传文件" oper="file-upload"><span class="iconfont icon-icon_upload"></span>&nbsp;&nbsp;上传文件</a>
+    			<a class="btn ls-btn btn-primary btn-yellow" href="javascript:" title="新建文件夹" oper="folder-create"><span class="iconfont icon-icon_"></span>&nbsp;&nbsp;新建文件夹</a>
+    		</div>
+        </div>
+		<div class="table-box"></div>
+		<div class="batch-oper hide">
+			<a class="text-navy" oper="move">移动</a>
+			<a class="text-navy" oper="remove">删除</a>
+		</div>
+	</div>
+	
+	<div class="right-menu hide"></div>
+</div>
+
+<script>
+new DocumentManage({
+	moduleCode: '${moculeCode}',
+	cateEdit: true,
+	cateAdd: true,
+	folderEdit: true,
+	hasCheckbox:true,
+	ecmId: '${ecmId}',
+	domainIsSelected: ''
+})
+</script>

@@ -1,0 +1,30 @@
+
+
+<div class="wrapper-content" id="changed-statis-redo-${timestamp}">
+    <div class="data-list"></div>
+</div>
+<script>
+    
+var changedTmElem = '#changed-statis-redo-${timestamp}';
+var changedTm = new TableManage({
+    wrapId: changedTmElem,
+    moduleName: 'changed-statis-redo',
+    params: {
+        ecmId: '${ecmId}',
+        hiddenDangerGrade: '${hiddenDangerGrade}',
+        keyword: '${keyword}'
+    }
+}, function(res) {
+    if (res.opt == 'eye') {
+        res.detailTitle = '安全整改统计';
+        res.id = res.checkId;
+        goPage('detail', res);
+    }
+})
+
+$($(changedTmElem).parent().parent().parent().siblings('form')[0]).unbind('change').change(function() {
+    changedTm.params = $(this).serializeObject();
+    changedTm.loadList(1, 10);
+});
+
+</script>

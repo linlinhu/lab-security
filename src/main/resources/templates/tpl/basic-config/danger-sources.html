@@ -1,0 +1,12 @@
+<!-- 危险源 -->
+<input type="hidden" name="dangerSource">
+<div class="dropdown" id="danger-sources-${timestamp}" style="min-width: 100px"></div>
+<div class="filter-name">危险源</div>
+<script>
+$http.get({
+    url: 'tpl/danger-sources',
+    forbidLoading: true
+}, function(res) {
+    $('#danger-sources-${timestamp}').html(res);
+})
+</script>

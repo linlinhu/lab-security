@@ -1,0 +1,45 @@
+<style>
+.table.treetable tbody tr{
+	background: #ffffff;
+}
+.table.treetable tbody tr td{
+	border-bottom: 1px solid #DCE3E9;
+}
+.table.treetable tr.collapsed span.indenter a {
+    background-image: url('/img/security-system/icon_up.png');
+}
+.table.treetable tr.expanded span.indenter a {
+    background-image: url('/img/security-system/icon_down.png');
+}
+.table-box .table .text-right {
+	text-align: right;
+}
+
+</style>
+<div class="document-manage vertical-tabs" id="${moculeCode}-manage">
+	<div class="cate-area text-center">
+		<ul class="nav nav-tabs"></ul>
+	</div>
+	<div class="right-area">
+		<ul class="path"></ul>
+		<div class="filter-line">
+        	<form method="get" class="dr-search-form document-searchform">
+            	<div class="personal-filter-line">
+                	<input placeholder="搜索文档名" class="form-control ls-input" type="text" name="keyword" value="${keyword!''}" role="user-params">
+                	<button type="button" class="btn btn-primary" role="submit"><i class="iconfont icon-icon_search"></i></button>
+                	<span class="iconfont icon-icon_close reset hide"></span>
+                </div>
+         	</form>
+        </div>
+		<div class="table-box">
+		</div>
+	</div>
+	
+</div>
+<script type="text/javascript" src="${base}js/document/security-tree.js"></script>
+<script>
+new DocumentManage({
+	moduleCode: '${moculeCode}',
+	domainIsSelected: true
+})
+</script>

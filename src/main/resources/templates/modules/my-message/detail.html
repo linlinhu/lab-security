@@ -1,0 +1,55 @@
+<style>
+.my-message-detail.wrapper-content {
+	position: relative;
+	margin-top: 37px;
+}
+.my-message-detail .path {
+	position: absolute;
+	top: -36px;
+	left: 0;
+}
+.my-message-detail .left {
+	float: left;
+	display: inline-block;
+	height: 16px;
+	line-height: 16px;
+	font-size: 14px;
+}
+.my-message-detail .iconfont.left {
+	font-size: 12px;
+	margin: 0 10px;
+}
+.my-message-detail .path li {
+	cursor: pointer;
+}
+.my-message-detail .path li:last-child {
+	color: #55A8FD;
+}
+.my-message-detail .content-container {
+	line-height: 24px;
+}
+.my-message-detail .title{
+	font-size: 18px;
+	font-weight:bold;
+}
+.my-message-detail .time{
+	font-size: 14px;
+	color: #99A3B0;
+	padding: 15px 0 28px 0;
+}
+</style>
+<#setting datetime_format = 'yyyy-MM-dd HH:mm'>
+<div class="wrapper-content my-message-detail">
+	<ul class="path">
+		<li class="left" data-type="-1" onclick="goPage('index',{type: ${type!'1'}})">${moduleName}</li>
+		<span class="left iconfont icon-icon_to"></span>
+		<li class="left" data-type="0">查看详情</li>
+	</ul>
+	<box class="text-center">
+		<div class="title">${data.title}</div>
+		<div class="time">${data.createTime?number_to_datetime}</div>
+		<div class="content-container text-left summernote">
+			${data.content?replace("&lt;","<")?replace("&gt;",">")?replace("”","'")?replace("&amp;","&")}
+		</div>
+	</box>
+</div>

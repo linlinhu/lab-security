@@ -1,0 +1,35 @@
+<ul data-index="${listIndex}">
+<#list list as item>
+
+    <li class="${item.children?string('parent','child')}"
+         <#list item?keys as key>
+             <#if key=="children">
+                 <#continue >
+             </#if>
+             <#assign value=item['${key}']>
+            data-${key?string?replace("([a-z])([A-Z]+)","$1-$2","r")?lower_case}="<#if value?is_boolean>${value?string('true','false')}<#else>${value}</#if>"
+         </#list>
+    >
+
+        <#assign listIndex=listIndex+1>
+        <span class="name" data-target-ul-index="${listIndex}">
+            <span class="title col-sm-6">
+                ${item.name}
+                <#if item.children?? && item.children?size gt 0>
+                    <span class="toggleExpand fa fa-angle-down"></span>
+                </#if>
+            </span>
+
+            <#if item.children?? && item.children?size gt 0>
+                <span class="badge count-level1"><span class="number">${item.count}</span>项</span>
+            <#else>
+                <span class="badge count-level2"><span class="number">${item.count}</span>项</span>
+            </#if>
+        </span>
+        <#if item.children?? && item.children?size gt 0>
+            <#assign list = item.children>
+            <#include "statis-tree.html">
+        </#if>
+    </li>
+</#list>
+</ul>

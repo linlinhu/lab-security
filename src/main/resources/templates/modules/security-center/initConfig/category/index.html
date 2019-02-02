@@ -1,0 +1,142 @@
+<style class="wrapper-content">
+
+    .categoryManagement .categoryList{
+        display: grid;
+        grid-template-columns: 22% 22% 22% 22%;
+        grid-column-gap: 4%;
+        grid-row-gap: 40px;
+    }
+    .categoryManagement .categoryList .categoryItem{
+        box-shadow:0px 3px 12px 1px  rgba(34,83,133,0.16);
+        border-radius: 8px;
+        height:120px;
+        position:relative;
+        padding-left:20px;
+        padding-top:20px;
+        background: url("/img/security-center/category_background.png") no-repeat left bottom;
+    }
+    .categoryManagement .categoryList .categoryItem .deleteBtn{
+        position:absolute;
+        right:-8px;
+        top:-8px;
+    }
+    .categoryManagement .categoryList .categoryItem .categoryItemContent{
+        display: table;
+    }
+    .categoryManagement .categoryList .categoryItem .name{
+        display: table-cell;
+        font-weight: 550;
+        color:#3E4956;
+        font-size: 18px;
+        vertical-align: middle;
+    }
+
+    .categoryManagement .categoryList .categoryItem .categoryIcon{
+        display: inline;
+        margin-right:10px;
+    }
+
+</style>
+<div class="wrapper-content categoryManagement">
+
+    <div class="row" style="height:60px">
+        <div class="col-sm-9"></div>
+        <div class="col-sm-3 text-right">
+            <button class="btn ls-btn btn-sm btn-primary configOpts" data-group-code="${group.code}" data-group-name="${group.getName()}" data-opt="add"><i class="iconfont icon-icon_"></i> 新建分类</button>
+        </div>
+    </div>
+    <div class="categoryList"  data-group-code="${group.code}" data-group-name="${group.getName()}">
+
+    </div>
+</div>
+<script type="text/javascript">
+    (function(){
+
+        var that = this
+        this.groupName ="${group.getName()}";
+        this.optData = {}
+        var $this = {
+            init:function(){
+
+                this.loadList("${group.code}","${group.getName()}")
+
+            },
+            bindEvent:function(){
+
+                $(".categoryManagement .configOpts").unbind("click").click(function(){
+                    var opt = $(this).data("opt");
+                    that.optData = $(this).data();
+                    eval("that."+opt+"()");
+                })
+                $(".categoryList").each(function(){
+                    $(this).unbind("refresh").bind("refresh",function(){
+                        $(".security-center-initConfig .itemDetail").fadeOut(function(){
+                            $(this).empty()
+                        })
+                        var data = $(this).data()
+                        that.loadList(data.groupCode,data.groupName)
+
+                    })
+                })
+            },
+            add:function(){
+
+                layer.prompt({
+                    title: '新建'+that.optData.groupName
+                },function(value, index, elem){
+                    $http.post({
+                        url:"security-center-initConfig/addCategory",
+                        data:{
+                            groupCode:that.optData.groupCode,
+                            name:value
+                        }
+                    },function(res){
+                        that.loadList(that.optData.groupCode,that.optData.groupName)
+                        layer.close(index);
+                    })
+
+                });
+            },
+            delete:function(){
+                $http.post({
+                    url:"security-center-initConfig/deleteCategory",
+                    oper_cn:"删除",
+                    data:{
+                        id:that.optData.id
+                    }
+                },function(res){
+                    that.loadList(that.optData.groupCode,that.optData.groupName)
+                })
+            },
+            detail:function(){
+                $http.get({
+                    url:"security-center-initConfig/detail",
+                    data:{
+                        groupCode:that.optData.groupCode,
+                        itemCode:that.optData.itemCode,
+                        groupName:"${group.getName()}",
+                    }
+                },function(res){
+                    $(".security-center-initConfig .itemDetail").html(res)
+                    $(".security-center-initConfig .itemDetail").fadeIn()
+                })
+            },
+            loadList:function(groupCode,groupName){
+                $http.get({
+                    url:"security-center-initConfig/list",
+                    data:{
+                        groupCode:groupCode,
+                        groupName:groupName
+                    }
+                },function(res){
+
+                    $(".categoryManagement .categoryList[data-group-code='"+groupCode+"']").html(res)
+                    that.bindEvent()
+                })
+            }
+
+        }
+        $.extend(this,$this)
+        this.init()
+    })()
+</script>

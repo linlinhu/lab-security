@@ -1,0 +1,76 @@
+<style>
+.notification-list .filter-line {
+	overflow: visible;
+}
+.notification-list .filter-line form {
+	height: 30px;
+}
+.notification-list .filter-line .publish-notify {
+	position: absolute;
+    right: 0;
+    top: 0;
+}
+.notification-list .dropdown > button {
+	position: relative;
+	min-width: 160px;
+	padding-right: 28px!important;
+}
+.notification-list .dropdown > button .caret {
+	position: absolute;
+	right: 8px;
+	top: 18px;
+}
+.notification-list .dr-search-form .layui-input {
+	width: 260px!important;
+	padding: 2px 20px 2px 30px!important;
+}
+.notification-list .time-select {
+	position: relative;
+}
+.notification-list .time-select i {
+	position: absolute;
+	z-index: 999;
+}
+.notification-list .time-select i:first-child {
+	top: 12px;
+	left: 10px;
+	color: #55A8FD;
+	font-size: 16px;
+}
+.notification-list .time-select i:last-child {
+	top: 14px;
+	right: 12px;
+}
+</style>
+<div class="document-manage vertical-tabs notification-list" id="notification-list-${timestamp}">
+	<div class="cate-area text-center">
+		<ul class="cates nav nav-tabs">
+			<li class="cate-item" data-type="1">
+				<a data-toggle="tab" href="javascript:void(0)" aria-expanded="true">检查通知</a>
+			</li>
+			<li class="cate-item" data-type="2">
+				<a data-toggle="tab" href="javascript:void(0)" aria-expanded="true">整改通知</a>
+			</li>
+			<li class="cate-item" data-type="3">
+				<a data-toggle="tab" href="javascript:void(0)" aria-expanded="true">复查通知</a>
+			</li>
+			<li class="cate-item" data-type="4">
+				<a data-toggle="tab" href="javascript:void(0)" aria-expanded="true">系统公告</a>
+			</li>
+		</ul>
+	</div>
+	<div class="right-area">
+		<div class="filter-line"></div>
+        <div class="table-responsive data-list"></div>
+	</div>
+</div>
+<script type="text/javascript" src="${base}js/notification/list/manage.js"></script>
+<script>
+NotificationList.init({
+	 wrapId: '#notification-list-${timestamp}',
+	 moduleName: 'notification-list',
+	 showColumns: ${showColumns!'[]'},
+	 ecmId: '${ecmId}',
+	 type: '${type}'
+})
+</script>

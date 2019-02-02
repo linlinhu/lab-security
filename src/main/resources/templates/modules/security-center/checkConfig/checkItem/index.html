@@ -1,0 +1,245 @@
+<style type="text/css">
+    .checkItemConfig{
+        height:100%;
+    }
+    .checkItemConfig .tips{
+        padding:13px 25px;
+        background:#F1F3F4;
+        border:1px solid #D6DBE6 ;
+        margin-bottom:30px;
+    }
+    .checkItemTree{
+        height:calc(100% - 150px);
+        padding:0;
+        overflow: auto;
+    }
+    .checkItemTree{
+        border-top:1px solid #D6DBE6;
+        border-bottom:1px solid #D6DBE6;
+    }
+    .checkItemTree ul{
+        margin: auto;
+    }
+    .checkItemTree ul li{
+        width:100%;
+        margin-bottom: 5px;
+    }
+    .checkItemTree ul li span.name{
+        display: grid;
+        grid-template-columns: 86% 2% 2%;
+        grid-column-gap: 5%;
+        width:100%;
+        height:auto;
+        padding:5px 15px;
+        line-height: 100%;
+    }
+    .checkItemTree ul li span.name .title{
+        line-height:2;
+        height:auto;
+    }
+
+    .checkItemTree ul li .nodeOperations{
+        visibility: hidden;
+        float:right;
+    }
+    .checkItemTree ul li .nodeOperations .operation{
+        margin-right:15px;
+        cursor: pointer;
+    }
+    .checkItemTree ul li span.toggleExpand{
+        margin-left: 20px;
+    }
+    .checkItemTree ul li.parent{
+        cursor: pointer;
+    }
+    .checkItemTree ul li span.name:hover{
+        background: rgba(233,233,233,0.7);
+    }
+    .checkItemTree ul li span.name:hover .nodeOperations{
+        visibility: visible;
+        color:#55A8FD !important
+    }
+    .checkItemTree ul li span.name span{
+        display: flex;
+
+        align-items: center;
+    }
+
+    .checkItemTree ul li ul{
+        padding-left: 20px;
+        --display: none;
+    }
+
+    .checkItemTree .checkDataItemsPanel .panel-heading .collapseIcon i:before{
+        content:"\f106"
+    }
+    .checkItemTree .checkDataItemsPanel .panel-heading.collapsed .collapseIcon i:before{
+        content : "\f107";
+    }
+    .checkItemTree .checkItemTitle{
+        height:65px;
+        line-height: 65px;
+        font-size:16px;
+        padding-left:24px;
+        border:1px solid rgba(214,219,230,1);
+        border-bottom: none;
+        color:#3E4956
+    }
+    .checkItemTree .checkDataItemsPanel{
+        border-radius: 0px !important;
+        margin-top: 0 !important;
+        border-top:none;
+        border-bottom: none;
+    }
+
+    .checkItemTree .checkDataItemsPanel .panel-heading{
+        border-radius: 0px;
+        height:50px;
+        padding: 11px 23px 16px 23px;
+    }
+    .checkItemTree .checkDataItemsPanel .panel-heading .groupTitle{
+        font-size:18px;
+    }
+</style>
+<#assign colorMap= {"1":"#28D582","2":"#92A2CA","3":"#7D68FF","4":"#FFBE32","5":"#FF80B9","6":"#FF4D77"}>
+<div class="wrapper-content checkItemConfig">
+    <div class="col-sm-6 tips p-sm">
+        提醒：上传安全检查模板，配置<span style="color:#199ED8">检查项的等级</span>。等级为<span style="color:#199ED8">1~6级</span>，数字越大涉及问题越严重
+    </div>
+
+    <div class="col-sm-6 text-right">
+        <button class="btn ls-btn btn-info checkDataItemOpts" data-opt="upload"><i class="iconfont icon-icon_upload"></i> 上传Excel</button>
+    </div>
+    <div class="checkItemTree col-sm-12 panel-group">
+        <#assign list = checkItemList>
+        <#assign listIndex = 0>
+        <#list list as item>
+            <div class="panel panel-default checkDataItemsPanel"
+                  <#list item?keys as key>
+                      <#if key=="children">
+                          <#continue >
+                      </#if>
+                      <#assign value=item['${key}']>
+            data-${key?string?replace("([a-z])([A-Z]+)","$1-$2","r")?lower_case}="<#if value?is_boolean>${value?string('true','false')}<#else>${value}</#if>"
+                  </#list>
+                 data-target-ul-index="${listIndex}"
+            >
+                <div class="panel-heading" data-toggle="collapse" data-parent="#checkDataGroups" href="#checkItem_${item.seq}" style="cursor:pointer">
+                    <h5 class="panel-title" >
+                        <span class="groupTitle">${item.name}</span>
+                        <span class="collapseIcon pull-right"><i class="fa"></i></span>
+                    </h5>
+                </div>
+                <div class="panel-collapse collapse in" id="checkItem_${item.seq}">
+                    <#assign list = item.children>
+                    <#include "treeList.html">
+                </div>
+                 <#assign listIndex=listIndex+1>
+            </div>
+        </#list>
+    </div>
+
+    <div class="col-sm-12 text-center">
+        <button class="btn ls-btn btn-primary checkDataItemOpts" data-opt="save"><i class="fa fa-save"></i> 保存</button>
+    </div>
+
+
+</div>
+<script type="text/javascript">
+    (function(){
+        var that = this;
+        this.optData = {}
+        var colorMap = {"1": "#28D582", "2": "#92A2CA", "3": "#7D68FF", "4": "#FFBE32", "5": "#FF80B9", "6": "#FF4D77"}
+        var $this = {
+            _uploadWin:new EminAontherFileUpload(),
+            init:function(){
+                this.initTreeEvent()
+                this.bindEvent()
+            },
+            upload:function(){
+              this._uploadWin.init({
+                  title: '上传不合格项数据',
+                  forbidConfirm: true,
+                  confirmMsg: '是否确定上传不合格项数据，此操作会覆盖已有数据',
+                  fileNumLimit: 1,
+                  fileSingleSizeLimit: 1,
+                  uploadUrl: 'checkItem/upload',
+                  filesType: ['excel']
+              },function(res){
+                    if(res.success){
+                        goPage("index")
+                    }else{
+                        layer.msg(res.message,{icon:5})
+                    }
+              })
+            },
+            bindEvent:function(){
+                $(".checkItemConfig .checkDataItemOpts").unbind("click").click(function(){
+                    var opt = $(this).data("opt")
+                    that.optData = $(this).data()
+                    eval("that."+opt+"()");
+                })
+            },
+            editGrade:function(){
+                var seq = that.optData.seq
+                var item = $(".checkItemTree ul li[data-seq='"+seq+"']")
+
+                layer.prompt({
+                    formType: 0,
+                    value: item.data("grade"),
+                    title: '修改等级',
+                    maxlength:1,
+                }, function(value,index){
+                    item.attr("data-grade",value);
+                    item.find(".badge").html(value).css({background:colorMap[value]});
+                    $.cleanData(item)
+                    layer.close(index);
+                });
+
+            },
+            save:function(){
+                var items = this._handleData($(".checkItemTree .checkDataItemsPanel"));
+
+                $http.post({
+                    url:"checkItem/save",
+                    contentType: 'application/json',
+                    data:JSON.stringify(items)
+                },function(res){
+
+                })
+            },
+            _handleData:function($arr){
+                var items = []
+                $arr.each(function(){
+                    var item = $(this).data()
+                    if(item.hasChild){
+                        var index = $(this).data("targetUlIndex");
+                        item.children = that._handleData($(this).find("ul[data-index='"+index+"'] > li"));
+
+                    }else{
+                        delete item.children
+                    }
+                    items.push(item);
+                })
+                return items;
+            },
+            initTreeEvent:function(){
+                $(".checkItemConfig .checkItemTree span.name").unbind("click").click(function(){
+                    var targerIndex = $(this).parent().data("targetUlIndex");
+                    var targetUL = $(".checkItemConfig .checkItemTree ul[data-index='"+targerIndex+"']");
+                    var toggleIcon = $(this).find(".toggleExpand")
+                    if(targetUL.is(":visible")){
+                        toggleIcon.removeClass("fa-angle-down").addClass("fa-angle-right")
+                        targetUL.slideUp("fast")
+                    }else{
+                        toggleIcon.removeClass("fa-angle-right").addClass("fa-angle-down")
+                        targetUL.slideDown("fast")
+                    }
+
+                })
+            }
+        }
+        $.extend(this,$this)
+        this.init()
+    })()
+</script>

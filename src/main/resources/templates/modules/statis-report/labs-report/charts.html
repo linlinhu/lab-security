@@ -1,0 +1,17 @@
+    <div class="statis-report-chart">
+        <div class="row">
+            <div class="col-sm-4">
+                <#assign name = '全校实验室总数'>
+                <#assign count = statisData.sum >
+                <#assign color = 'purple' >
+                <#include "../../../tpl/statis-report/report-chart-box.html" />
+            </div>
+
+            <div class="col-sm-4">
+                <#assign name = '存在危险源实验室总数'>
+                <#assign count = statisData.hsSum >
+                <#assign color = 'blue' >
+                <#include "../../../tpl/statis-report/report-chart-box.html" />
+            </div>
+        </div>
+    </div>

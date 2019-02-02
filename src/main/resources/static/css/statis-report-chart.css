@@ -1,0 +1,52 @@
+
+.statis-report-chart .report-box {
+    margin-bottom: 5px;
+}
+
+.statis-report-chart .ibox-content {
+    border: 0;
+    min-height: 130px;
+    background:rgba(255,255,255,1);
+    box-shadow:0 3px 12px 1px rgba(34,83,133,0.16);
+    border-radius:8px;
+
+    -moz-box-orient: horizontal;
+    -webkit-box-orient: horizontal;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+    display: -moz-box;
+    display: -webkit-box;
+
+}
+
+.statis-report-chart .report-box-content .content {
+    margin-left: 25px;
+    margin-top: 15px;
+}
+
+.statis-report-chart .report-box-content .title {
+    font-size:18px;
+    font-weight:400;
+    color: #3E4956;
+}
+
+.statis-report-chart .report-box-content .sum {
+    font-size:16px;
+    font-weight:400;
+    color: #3E4956;
+}
+
+.statis-report-chart .report-box-content .sum .number{
+    font-size:36px;
+    font-weight:bold;
+    color:#7D68FF;
+}
+
+.statis-report-chart .report-box-content .media img {
+    width: 74px;
+    height: 17px;
+    margin-left: 20px;
+    margin-top: 30px;
+}
+

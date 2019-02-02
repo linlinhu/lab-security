@@ -1,0 +1,76 @@
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: false
+        isolation:
+          thread:
+            timeoutInMilliseconds: 30000
+feign:
+  hystrix:
+    enabled: false
+ribbon:
+  ReadTimeout: 600000
+  ConnectTimeout: 600000
+  MaxAutoRetries: 0
+  MaxAutoRetriesNextServer: 1
+spring:
+  application:
+    code: Activity
+    name: lab-security
+  http:
+    encoding:
+      force : true
+      charset : UTF-8
+      enabled : true
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  redis:
+    database: 3
+    host: 192.168.10.202
+    port: 37001
+    pool:
+      min-idle: 0
+      max-idle: 8
+      max-wait: -1
+      max-active: 8
+    timeout: 0
+  freemarker:
+    allow-request-override: false
+    cache: true
+    checkTemplateLocation: true
+    charset: UTF-8
+    contentType: text/html
+    exposeRequestAttributes: true
+    exposeSessionAttributes: true
+    exposeSpringMacroHelpers: false
+    suffix: .html
+    templateLoaderPath: classpath:/templates
+    prefer-file-system-access: false
+    settings:
+      #templateUpdateDelay: 300
+      templateExceptionHandler: ignore
+    enabled: true
+  aop:
+    auto: true
+server:
+  port : 6161
+  servlet:
+    session:
+      timeout: 30M
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: http://192.168.10.202:38761/eureka/ # http://192.168.10.202:16000/eureka/
+cookieDomain: localhost # 192.168.10.215
+
+merisApiGateway: http://192.168.10.202:10004 # http://192.168.10.202:8881 面向Meris平台的网关 服务诸如：Ecm，User，Common,Document,Storage,MEL等
+
+labApiGateway: http://192.168.10.202:38881 # http://192.168.10.202:16666 面向实验室安全检查系统的服务 诸如:基础信息，检查记录，整改记录等
+
+defaultErrorMsg: 服务器繁忙

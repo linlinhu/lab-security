@@ -1,0 +1,104 @@
+
+<section class="emin-diagrams safety-charts">
+    <div class="emin-diagram emin-diagram-4">
+        <#include "byBranch.html" />
+    </div>
+    <div class="emin-diagram emin-diagram-4">
+        <#include "byCategory.html" />
+    </div>
+    <div class="emin-diagram emin-diagram-4">
+        <#include "byGrade.html" />
+    </div>
+    <div style="clear:both"></div>
+</section>
+<#include "labs-list.html" />
+
+<script>
+    (function() {
+        var that = this;
+        this.optData = {};
+        var $this = {
+            init: function() {
+                this.initCollegeChart();
+                this.initCategoryChart();
+                this.initLabLevelChart();
+            },
+            // 按学院统计图表
+            initCollegeChart: function () {
+                var chart = echarts.init(document.getElementById('echarts-college'));
+                var yAxisData = ['历史学院','化学学院','物理学院','工商学院','外语学院', '考古学院','计算机学院'];
+                var seriesData = [13, 10, 4, 3, 18, 23, 15];
+
+                <#if collegeData??>
+                    var collegeData = ${collegeData};
+                    yAxisData = collegeData.yAxisData;
+                    seriesData = collegeData.seriesData;
+                </#if>
+
+                var chartOption = ChartUtil.buildHorizonBarChartOption({
+                    yAxisData: yAxisData,
+                    seriesData: seriesData
+                });
+                chart.setOption(chartOption);
+                $(window).resize(chart.resize);
+            },
+            // 按分类统计图表
+            initCategoryChart: function () {
+                var chart = echarts.init(document.getElementById('echarts-category'));
+                var legendData = ['化学类', '生物类', '机电类', '电子类'];
+                var seriesData = [
+                    {value:10,name:'化学类'},
+                    {value:25, name:'生物类'},
+                    {value:15, name:'机电类'},
+                    {value:35, name:'电子类'}
+                ];
+                var total = 100;
+                <#if categoryData??>
+                    var categoryData = ${categoryData};
+                    legendData = categoryData.legendData;
+                    seriesData = categoryData.seriesData;
+                    total = categoryData.total;
+                </#if>
+                var chartOption = ChartUtil.buildRingChartOption({
+                    legendData: legendData,
+                    seriesName: '分类',
+                    seriesData: seriesData,
+                    centerText: total + '\n 总数 '
+                });
+                chart.setOption(chartOption);
+                $(window).resize(chart.resize);
+            },
+            // 按实验室等级统计图表
+            initLabLevelChart: function () {
+                var chart = echarts.init(document.getElementById('echarts-lab-level'));
+                var legendData = ['化学类', '生物类', '机电类', '电子类'];
+                var seriesData = [
+                    {value:25,name:'化学类'},
+                    {value:25, name:'生物类'},
+                    {value:15, name:'机电类'},
+                    {value:35, name:'电子类'}
+                ];
+                var total = 200;
+                <#if labLevelData??>
+                    var labLevelData = ${labLevelData};
+                    legendData = labLevelData.legendData;
+                    seriesData = labLevelData.seriesData;
+                    total = labLevelData.total;
+                </#if>
+
+                var chartOption =  ChartUtil.buildRingChartOption({
+                    legendData: legendData,
+                    seriesName: '分类',
+                    seriesData:seriesData,
+                    centerText: total + '\n 总数 '
+                });
+                chart.setOption(chartOption);
+                $(window).resize(chart.resize);
+            }
+        };
+        $.extend(this,$this);
+        this.init();
+    })();
+
+</script>
+

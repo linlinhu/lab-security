@@ -1,0 +1,150 @@
+<style>           
+	.table tr th:first-child,
+	.table tr td:first-child {
+	    display: none;
+	}
+	.table tr.not-read,
+	.table tr.undeal {
+		background-image: url(img/icon_dot.png);
+    	background-repeat: no-repeat;
+    	background-position: 1px 25px;
+	}
+	.table .readCount-sendCount,
+	.table .sendSuccess-sendCount{
+		color: #55A8FD;
+	}
+	<#if showColumns?? && showColumns?seq_contains('select')>
+	    .table tr th:first-child,
+	    .table tr td:first-child {
+	        display: table-cell;
+	    }
+	</#if>
+	
+</style>
+    <#setting datetime_format = 'yyyy-MM-dd HH:mm'>
+    <table class="table m-t-sm">
+        <thead>
+            <tr>
+                <#list tpl.items as item>
+                    <#if !showColumns?? || showColumns?seq_contains("select")>
+                        <#if item.type == 99 >
+                            <th class="th-${item.dataKey}">
+                                <input type="checkbox" class="i-checks selectAll">
+                            </th>
+                        <#else>
+                            <th class="th-${item.dataKey}">${item.title}</th>
+                        </#if>
+                    </#if>
+                </#list>
+            </tr>
+        </thead>
+        <tbody>
+        	<#if data.resultList?size gt 0>
+            <#list data.resultList as entity>
+                <tr class="<#if entity.readStatus?? && entity.readStatus == 0>not-read</#if><#if entity.applyUserId?? && entity.applyStatus == 0>undeal</#if>">
+                    <#list tpl.items as item>
+                        <#if !showColumns?? || showColumns?seq_contains("select")>
+                        <td class="td-${item.dataKey}">
+                            <#if item.type=99>
+                                <#assign hiddenEls = item.dataKey?split('-')>
+                                <#if hiddenEls?size gt 1>
+                                    <#list hiddenEls as hiddenEl>
+                                        <#if hiddenEl_index == 0>
+                                            <input type="checkbox" class="i-checks itemSelect" name="${hiddenEl}" value="${entity[hiddenEl]}">
+                                        <#else>
+                                            <input type="hidden" name="${hiddenEl}" value="${entity[hiddenEl]}">
+                                        </#if>
+                                    </#list>
+                                <#else>
+                                    <input type="checkbox" class="i-checks itemSelect" name="${item.dataKey}" value="${entity[item.dataKey]}">
+                                </#if>
+                            </#if>
+                            <#if item.type==90>
+                            	<#if entity.applyUserId??>
+                            		<#if entity.applyStatus == 0>
+                                        <a href="javascript:;" class="entityOpts" data-opt="agree" data-tr-index="${entity_index}" title="通过"><i class="iconfont icon-icon_yes green">&nbsp;</i></a>
+                                        <a href="javascript:;" class="entityOpts" data-opt="refuse" data-tr-index="${entity_index}" title="拒绝"><i class="iconfont icon-icon_no red">&nbsp;</i></a>
+                                    <#elseif entity.applyStatus == 2>
+                                        <span>已拒绝</span>
+                                    <#elseif entity.applyStatus == 1>
+                                        <span class="green">已通过</span>
+                                    </#if>
+                            	<#else>
+                            		<#if entity.type == 5>
+                                        <a href="javascript:;" class="entityOpts" data-opt="handler" data-tr-index="${entity_index}" title="详情"><i class="iconfont icon-icon_turnto">&nbsp;</i></a>
+                                    <#else>
+                                        <a href="javascript:;" class="entityOpts" data-opt="detail" data-tr-index="${entity_index}" title="详情"><i class="iconfont icon-icon_eye">&nbsp;</i></a>
+                                    </#if>
+                                    <a href="javascript:;" class="entityOpts" data-opt="remove" data-tr-index="${entity_index}" title="删除"><i class="iconfont icon-icon_delate">&nbsp;</i></a>
+                            	</#if>
+                            </#if>
+                            <#if item.type == 3>
+                                <#assign dkParams = item.dataKey?split('-') />
+                                <#if dkParams?size == 3>
+                                    <#assign dkey = dkParams[0]/>
+                                    <#assign dindex = dkParams[1]?eval/>
+                                    <#assign dname = dkParams[2]/>
+                                    ${entity[dkey][dindex][dname]}
+                                </#if>
+                                <#if dkParams?size == 2>
+                                    <#assign dkey = dkParams[0]/>
+                                    <#assign dname = dkParams[1]/>
+                                    ${entity[dkey][dname]}
+                                </#if>
+                                <#if dkParams?size == 1>
+                                    ${entity[dkParams]}
+                                </#if>
+                            </#if>
+                            <#if item.type == 5>
+                                <#assign dkParams = item.dataKey?split('-') />
+                                <#if dkParams?size gt 1>
+                                    <#assign dkey = dkParams[0]>
+                                    <#assign dname = dkParams[1]>
+                                    <#list entity[dkey] as _c>
+                                        ${_c[dname]}<#if _c_index != entity[dkey]?size -1>,</#if>
+                                    </#list>
+                                <#else>
+                                    ${entity[dkParams]}
+                                </#if>
+                            </#if>
+                            <#if item.type == 9>
+                                ${(entity[item.dataKey])?number_to_datetime}
+                            </#if>
+                            <#if item.type == 1 || item.type == 2>
+                            	<#if item.dataKey == 'type'>
+                            		<#switch item.type>
+                                        <#case 1>
+                                           	 检查通知
+                                        <#break>
+                                        <#case 2>
+                                           	 整改通知
+                                        <#break>
+                                        <#case 3>
+                                        	复查通知
+                                        <#break>
+                                        <#case 4>
+                                           	 系统公告
+                                        <#break>
+                                        <#case 5>
+                                           	 申请通知
+                                        <#break>
+                                    </#switch>
+                                <#elseif item.dataKey == 'readCount-sendCount'>
+                                	已读<span class="${item.dataKey}">${entity.readCount}/${entity.sendCount}</span>人
+                            	<#elseif item.dataKey == 'sendSuccess-sendCount'>
+                                	成功<span class="${item.dataKey}">${entity.sendSuccess}/${entity.sendCount}</span>人
+                            	<#else>
+                                    ${(entity[item.dataKey])!'-'}
+                                </#if>
+                            </#if>
+                        </td>
+                        </#if>
+                    </#list>
+                </tr>
+            </#list>
+            <#else>
+            	<tr class="no-data"><td></tb><td colspan="7" class="text-center">暂无数据</td></tr>
+            </#if>
+        </tbody>
+    </table>
+    <div class="pageContainer text-right" data-total="${data.totalCount}" data-page="${data.currentPage}"></div>

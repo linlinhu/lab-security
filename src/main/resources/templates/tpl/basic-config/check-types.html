@@ -1,0 +1,13 @@
+<!-- 查看范围 只会存在安全中心和学校的人进来看，因此其实就是学院列表的筛选 -->
+
+<input type="hidden" name="checkType">
+<div class="dropdown" id="check-types-${timestamp}" style="min-width: 100px"></div>
+<div class="filter-name">检查类型</div>
+<script>
+$http.get({
+    url: 'tpl/check-types',
+    forbidLoading: true
+}, function(res) {
+    $('#check-types-${timestamp}').html(res);
+})
+</script>

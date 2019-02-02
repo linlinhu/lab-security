@@ -1,0 +1,23 @@
+
+<div class="statis-report-chart">
+    <div class="row">
+        <div class="col-sm-4">
+            <#assign name = statisData[0].name>
+            <#assign count = statisData[0].count >
+            <#assign color = 'purple' >
+            <#include "../../../tpl/statis-report/report-chart-box.html" />
+        </div>
+        <div class="col-sm-4">
+            <#assign name = statisData[1].name>
+            <#assign count = statisData[1].count >
+            <#assign color = 'blue' >
+            <#include "../../../tpl/statis-report/report-chart-box.html" />
+        </div>
+        <div class="col-sm-4">
+            <#assign name = statisData[2].name>
+            <#assign count = statisData[2].count >
+            <#assign color = 'orange' >
+            <#include "../../../tpl/statis-report/report-chart-box.html" />
+        </div>
+    </div>
+</div>

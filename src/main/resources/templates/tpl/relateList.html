@@ -1,0 +1,38 @@
+<div class="wrapper-content relateSelection" id="relate-slection-${timestamp}">
+    <div class="relate-list">
+
+    </div>
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <a class="btn ls-btn btn-primary confirm">确定</a>
+        </div>
+    </div>
+</div>
+<script>
+    var relateSelection = function(p) {
+        $.extend(this, p);
+        var that = this;
+        that.loadRelateList = function() {
+            $http.get({
+                url: that.dataUrl,
+                data: {
+                    showColumns: that.showColumns
+                },
+                forbidLoading: true
+            }, function(res) {
+                
+            });
+        };
+
+        that.init = function() {
+
+        };
+        that.init();
+    };
+
+    new relateSelection({
+        wrapSelector: '#relate-slection-${timestamp}',
+        dataUrl: '${dataUrl}',
+        showColumns: ${showColumns!'[]'}
+    })
+</script>

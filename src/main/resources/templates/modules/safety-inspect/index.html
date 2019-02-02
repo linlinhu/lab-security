@@ -1,0 +1,55 @@
+<div class="wrapper-content" id="common-management-${timestamp}">
+    <form>
+        <div class="row">
+            <div class="col-md-3"></div>
+            
+            <#if schoolEcmId?? >
+            <div class="col-sm-3 col-md-2">
+                <#include "../../tpl/basic-config/view-scope.html" />
+            </div>
+            <#else>
+            <div class="col-sm-3 col-md-2"></div>
+            </#if>
+            <div class="col-sm-3 col-md-2">
+                <#include "../../tpl/basic-config/check-types.html" />
+            </div>
+
+            <div class="col-sm-3 col-md-2">
+                <#include "../../tpl/basic-config/hidden-danger-grades.html" />
+            </div>
+
+            <div class="col-sm-3">
+                <div class="input-group">
+                    <input type="hidden" name="startTime" />
+                    <input type="hidden" name="endTime" />
+                    <input type="text" placeholder="选择时间" id="safety-inspect-datepicker" class="input-sm form-control ls-input">
+                    <span class="input-group-btn">
+                        <button type="button" data-opt="reloadList" class="btn ls-btn btn-sm btn-primary"><i class="fa fa-search"></i></button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="data-list"></div>
+</div>
+
+<script>
+    new TableManage({
+        wrapId: '#common-management-${timestamp}',
+        moduleName: "safety-inspect",
+        ecmId: '${ecmId}'
+    }, function (res) {
+        goPage('detail', res);
+    })
+    var layDateElem = '#safety-inspect-datepicker';
+    laydate.render({
+        elem: layDateElem,
+        type: 'date',
+        range: '-',
+        format: 'yyyy/M/d',
+        done: function (value, sd, ed) {
+            $($(layDateElem).siblings('input[name="startTime"]')[0]).val(new Date(sd.year, sd.month, sd.date).getTime());
+            $($(layDateElem).siblings('input[name="endTime"]')[0]).val(new Date(ed.year, ed.month, ed.date).getTime());
+        }
+    }); 
+</script>

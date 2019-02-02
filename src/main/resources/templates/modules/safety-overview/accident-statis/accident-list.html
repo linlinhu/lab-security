@@ -1,0 +1,26 @@
+
+<div class="wrapper-content mgt20" id="safetyoverview-accident-tablelist">
+    <form>
+        <div class="row">
+            <div class="col-sm-9"></div>
+            <div class="col-sm-3">
+                <div class="input-group">
+                    <input type="text" placeholder="搜索实验室名，安全责任人名，电话" class="input-sm form-control ls-input">
+                    <span class="input-group-btn">
+                        <button type="button" class="btn ls-btn btn-sm btn-primary"><i class="fa fa-search"></i></button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="data-list"></div>
+</div>
+
+
+<script>
+    new TableManage({
+        wrapId: '#safetyoverview-accident-tablelist',
+        moduleName: 'accident-statis',
+        ecmId: '${ecmId}'
+    })
+</script>

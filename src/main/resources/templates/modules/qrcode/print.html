@@ -1,0 +1,51 @@
+<style>
+.qrCode {
+    padding: 20px 0 0 20px;
+}
+
+div.qrCode-item {
+    width: 320px;
+    height: 320px;
+    text-align: center;
+    color: #3E4956;
+    float: left;
+    padding-right: 20px;
+    padding-bottom: 20px;
+    
+
+}
+
+div.qrCode-item .lab-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+div.qrCode-item .branch-name {
+    font-size: 16px;
+    margin-bottom: 32px;
+}
+div.qrCode-item .code {
+    box-sizing: border-box;
+    width: 220px;
+    height: 220px;
+    border: 5px solid;
+    padding: 8px;
+    margin: 0 auto;
+
+}
+div.qrCode-item .code > img {
+    width: 199px;
+    height: 199px;
+}
+</style>
+<div class="qrCode">
+    <#list codes as code>
+    <div class="qrCode-item">
+        <div class="lab-name">${code.labName}</div>
+        <div class="branch-name">${code.collegeName}</div>
+        <div class="code">
+            <img src="${code.qrCode}"/>
+        </div>
+    </div>
+    </#list>
+</div>

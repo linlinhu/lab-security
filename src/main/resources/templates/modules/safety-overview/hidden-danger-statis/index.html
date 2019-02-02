@@ -1,0 +1,221 @@
+<style type="text/css">
+    .checkItemConfig{
+        height:100%;
+    }
+    .checkItemTree{
+        height:calc(100% - 40px);
+        margin-top:35px;
+        overflow: auto;
+    }
+    .checkItemTree ul{
+        margin: auto;
+    }
+    .checkItemTree ul li{
+        width:100%;
+        margin-bottom: 5px;
+    }
+    .checkItemTree ul li span.name{
+        display: flex;
+        justify-content: space-between;
+        /*侧轴居中对齐*/
+        align-items: center;
+        width:100%;
+        height:auto;
+        padding:5px 15px;
+        line-height: 100%;
+    }
+    .checkItemTree ul li span.name .title{
+        line-height:2;
+        height:auto;
+    }
+
+    .checkItemTree ul li div.nodeOperations{
+        visibility: hidden;
+        float:right;
+    }
+    .checkItemTree ul li div.nodeOperations .operation{
+        margin-right:15px;
+        cursor: pointer;
+    }
+    .checkItemTree ul li span.toggleExpand{
+        margin-left: 20px;
+    }
+    .checkItemTree ul li.parent{
+        cursor: pointer;
+    }
+    .checkItemTree ul li span.name:hover{
+        background: rgba(233,233,233,0.7);
+    }
+    .checkItemTree ul li span.name:hover .nodeOperations{
+        visibility: visible;
+    }
+
+    .checkItemTree ul li ul{
+        padding-left: 20px;
+        --display: none;
+    }
+
+    .badge {
+        border-radius: 0;
+        color: #3E4956;
+        font-size: 14px;
+        background-color: #fff;
+    }
+    .count-level1 .number {
+        color: #FF4D77;
+        font-size: 18px;
+        font-weight: bold;
+        margin-right: 8px;
+    }
+    .count-level2 .number {
+        font-size: 16px;
+        font-weight: bold;
+        margin-right: 8px;
+    }
+</style>
+
+<section class="emin-diagrams safety-charts">
+    <div class="emin-diagram emin-diagram-6">
+        <div class="basic-box">
+            <div class="seperate-title">
+                <span class="title">按检查项等级统计</span>
+                <div class="opts">
+                    <div class="select-box">
+                        <#assign chartId = 'check-item-level'>
+                        <#include "../../../tpl/safety-overview/college-box.html" />
+                    </div>
+                </div>
+            </div>
+            <div class="echarts" id="echarts-check-item-level"></div>
+        </div>
+    </div>
+
+    <div class="emin-diagram emin-diagram-6">
+        <div class="basic-box">
+            <div class="seperate-title">
+                <span class="title">按问题等级</span>
+                <div class="opts">
+                    <div class="select-box">
+                        <#assign chartId = 'problem-level'>
+                        <#include "../../../tpl/safety-overview/college-box.html" />
+                    </div>
+                </div>
+            </div>
+            <div class="echarts" id="echarts-problem-level"></div>
+        </div>
+    </div>
+    <div style="clear:both"></div>
+</section>
+
+
+<div class="wrapper-content">
+    <div class="tabs-container">
+        <ul class="nav nav-tabs">
+            <li class="active">
+                <a data-toggle="tab" href="#hidden-danger-tab0" aria-expanded="true">按不合格项</a>
+            </li>
+            <li class="">
+                <a data-toggle="tab" href="#hidden-danger-tab1" aria-expanded="true">按隐患等级</a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            
+            <div id="hidden-danger-tab0" class="tab-pane active">
+                <div class="panel-body qrcode-group checkItemConfig">
+                    <!--按不合格项树形统计列表-->
+                    <div class="checkItemTree col-sm-12">
+                    <#assign list = unqualifiedList>
+                    <#assign listIndex = 0>
+                    <#include "statis-tree.html">
+                    </div>
+                </div>
+            </div>
+            
+            <div id="hidden-danger-tab1" class="tab-pane">
+                <div class="panel-body qrcode-group">
+                    <!--按隐患等级树形统计列表-->
+                    <div class="checkItemTree col-sm-12">
+                    <#assign list = dangerGradeList>
+                    <#assign listIndex = 0>
+                    <#include "statis-tree.html">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    (function(){
+        var that = this;
+        this.optData = {};
+        var $this = {
+            init:function(){
+                this.initTreeEvent();
+                this.bindEvent();
+                this.initCheckItemLevelChart();
+                this.initProblemLevelChart();
+            },
+            bindEvent:function(){
+                $(".checkItemConfig .checkDataItemOpts").unbind("click").click(function(){
+                    var opt = $(this).data("opt");
+                    that.optData = $(this).data();
+                    eval("that."+opt+"()");
+                })
+            },
+            initTreeEvent:function(){
+                $(".checkItemConfig .checkItemTree span.name").unbind("click").click(function(){
+                    var targetIndex = $(this).data("targetUlIndex");
+                    var targetUL = $(".checkItemConfig .checkItemTree ul[data-index='"+targetIndex+"']");
+                    var toggleIcon = $(this).find(".toggleExpand");
+                    if(targetUL.is(":visible")){
+                        toggleIcon.removeClass("fa-angle-down").addClass("fa-angle-right");
+                        targetUL.slideUp("fast");
+                    }else{
+                        toggleIcon.removeClass("fa-angle-right").addClass("fa-angle-down");
+                        targetUL.slideDown("fast");
+                    }
+                })
+            },
+            // 按检查项等级统计图表
+            initCheckItemLevelChart: function () {
+                var chart = echarts.init(document.getElementById('echarts-check-item-level'));
+                var chartOption = ChartUtil.buildRingChartOption({
+                    legendData: ['1级', '2级', '3级', '4级', '5级', '6级'],
+                    seriesName: '等级',
+                    seriesData: [
+                        {value:30, name:'1级'},
+                        {value:20, name:'2级'},
+                        {value:15, name:'3级'},
+                        {value:35, name:'4级'},
+                        {value:40, name:'5级'},
+                        {value:60, name:'6级'}
+                    ],
+                    centerText: '200\n 总数 '
+                });
+                chart.setOption(chartOption);
+                window.onresize = chart.resize;
+            },
+            // 按问题等级统计图表
+            initProblemLevelChart: function () {
+                var chart = echarts.init(document.getElementById('echarts-problem-level'));
+                var chartOption = ChartUtil.buildRingChartOption({
+                    legendData: ['严重隐患', '一般隐患', '管理问题'],
+                    seriesName: '问题等级',
+                    seriesData: [
+                        {value:30, name:'严重隐患'},
+                        {value:25, name:'一般隐患'},
+                        {value:15, name:'管理问题'}
+                    ],
+                    centerText: '100\n 总数 '
+                });
+                chart.setOption(chartOption);
+                window.onresize = chart.resize;
+            }
+        };
+        $.extend(this,$this);
+        this.init();
+    })();
+</script>
+

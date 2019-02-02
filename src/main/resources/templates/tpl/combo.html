@@ -1,0 +1,32 @@
+<style>
+.search-field input.default {
+	padding-right: 0px!important;
+}
+</style>
+<select class="form-control" name="${itemToken}" multiple='multiple'>
+    <#list data as item>
+        <option value="${item.value}">${item.name}</option>
+    </#list>
+</select>
+<div style="clear:both"></div>
+<script>
+    
+
+    $('select[name="${itemToken}"]').chosen({
+        allow_single_deselect: true, //删除选项
+        max_selected_options: ${max_selected_options}, //多选上限
+        disable_search:true, //禁用搜索框
+        placeholder_text_multiple:'请选择' //提示值
+    });
+    var value = "${value!''}";
+    if (value.split(',').length > 1) {
+        $.each(value.split(','), function(i) {
+            var v = value.split(',')[i];
+            $('select[name="${itemToken}"] > option[value="' + v +'"]').attr('selected', 'selected');
+        });
+    } else {
+        $('select[name="${itemToken}"]').val(value);
+    }
+
+    $('select[name="${itemToken}"]').trigger("chosen:updated");
+</script>

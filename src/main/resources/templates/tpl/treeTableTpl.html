@@ -1,0 +1,251 @@
+<style>
+.treetable-component table span.file,
+.treetable-component table span.folder {
+	cursor: pointer;
+	padding-left: 0px;
+	border: 0;
+}
+.treetable-component table span.filename {
+	padding-left: 3px;
+}
+.treetable-component table td i {
+	font-size:18px;
+}
+.treetable-component table td input {
+	padding-left: 5px;
+}
+.treetable-component table .color-yellow {
+	color: #FFD658;
+}
+
+
+.treetable-component table span.file {
+	background: none;
+}
+.treetable-component table .iconfont {
+	font-size: 16px;
+}
+table tr.no-data {
+	height: 280px!important;
+    background: url(img/security-system/no-data.png);
+    background-repeat: no-repeat;
+    background-position: 50% 100px;
+    border-bottom: 0!important;
+}
+table tr.no-data td {
+	padding-top: 260px;
+	font-size:14px;
+	font-family:PingFang-SC-Medium;
+	color:rgba(153,163,176,1);
+	text-align: center!important;
+	border-bottom: 0!important;
+}
+
+</style>
+
+<iframe id="ifile" style="display:none"></iframe>
+<script id="document_path_tpl" type="text/html">
+{{# if(d.path && d.path.length > 0) { }}
+	{{# layui.each(d.path, function(index, item){ }}
+		{{# if(index > 0) { }}
+			<span class="left iconfont icon-icon_to"></span>
+		{{# } }}
+		<li class="left" data-id="{{item.k}}">{{item.v}}</li>	
+	{{# }) }}
+{{# } else { }}
+	<li class="left" data-id="1">文档库</li>
+{{# } }}
+</script>
+<script id="tree_table_header_tpl" type="text/html">
+<div class="treetable-component">
+	<table class="table">
+		<thead>
+			<tr>
+				{{# layui.each(d, function(index, item){ }}	
+					<th>{{item.title}}</th>
+				{{# }) }}
+				<th>操作</th>
+			</tr>
+		</thead>
+		<tbody></tbody>
+	</table>
+	<div class="text-right table-page pageContainer"></div>
+</div>
+</script>
+<!-- table的内容 -->
+<script id="tree_table_body_tpl" type="text/html">
+{{# if(d.data && d.data.length > 0) { }}
+	{{# layui.each(d.data, function(index,item) { }}
+		<tr data-tt-id="{{item.id}}" data-tt-parent-id="{{item.pid}}" {{# if(item.directory > 0) { }}
+				data-tt-branch='true'
+			{{# } }}>
+			{{# layui.each(d.mel, function(index2,mel) { }}
+				{{# if(mel.dataKey == 'name') { }}
+					<td>
+						{{# if(d.hasCheckbox == true) { }}
+							<input class="i-checks nodeType-{{item.nodeType}}" type="checkbox" value="{{item.id}}" name="{{item.id}}-all" pid="{{item.pid}}">
+						{{# } }}
+						{{# if(item.nodeType == 10) { }}
+							<span class="box folder">
+								<i class="fa fa-folder color-yellow"></i>	
+		        				<span class='filename'>{{item.name}}</span>
+		        				<input type="hidden" value="{{item.name}}">
+	        				</span>
+						{{# } else { }}
+							<span class="box file">
+								{{# if(item.viewFileType) { }}
+									<i class="fa {{item.viewFileType}}"></i>
+								{{# } else { }}
+									<i class="fa fa-file-o"></i>
+								{{# } }}
+								<span class='filename'>{{item.name}}</span>
+							</span>
+						{{# } }}
+		    		</td>
+				{{# } }}
+				{{# if(mel.dataKey == 'type') { }}
+					<td>
+						{{# if(item.nodeType == 10) { }}
+							文件夹
+						{{# } else { }}
+							{{item.fileType}}
+						{{# } }}
+					</td>
+				{{# } }}
+				{{# if(mel.dataKey == 'available') { }}
+					<td data-available="{{item.available}}">
+						{{# if(item.available) { }}
+							{{new Number(item.available/1024).toFixed(2)}}KB
+						{{# } else { }}
+							0KB
+						{{# } }}
+					</td>
+				{{# } }}
+				{{# if(mel.dataKey == 'lastModifyTime') { }}
+					<td>{{new Date(item.lastModifyTime).Format("yyyy-MM-dd hh:mm")}}</td>
+				{{# } }}
+			{{# }) }}
+			<td>
+				{{# if(item.nodeType == 50) { }}
+					<i class="iconfont icon-icon_download text-navy file-download" title="下载" data-url="{{item.storePath}}" data-nodeType="{{item.nodeType}}"></i>&nbsp;&nbsp;
+					<i class="iconfont icon-icon_eye text-navy preview" title="预览" data-fileType="{{item.fileType}}"></i>
+				{{# } else {}}
+					<i class="iconfont icon-icon_download text-navy file-download" title="打包下载" data-nodeType="{{item.nodeType}}"></i>&nbsp;&nbsp;
+				{{# } }}
+			</td>
+		</tr>
+	{{# }) }}
+{{# }else{ }}
+	<tr class="no-data"><td class="text-center" colspan="7">暂无数据</td></tr>
+{{# } }}
+</script>
+<!-- 分类的新建和编辑 -->
+<style>
+.cate-create-or-edit {
+	padding: 20px 16px;
+}
+.cate-create-or-edit .cate-name{
+	width: 200px;
+	height: 32px;
+	display: inline-block;
+}
+.cate-create-or-edit button {
+	padding: 5px 8px;
+	margin: 0 5px;
+}
+input::-webkit-input-placeholder{
+	color:#aaaaaa;
+}
+</style>
+<!-- 分类的添加与编辑 -->
+<script id="cate_panel_tpl" type="text/html">
+<div class="cate-create-or-edit">
+	<input class="form-control cate-name ls-input" name="name" value="{{d.name?d.name:''}}" placeholder="请输入分类名">
+	<button type="button" class="btn btn-primary" oper="save">确认</button>
+    <button type="button" class="btn btn-default" oper="cancel">取消</button>
+</div>
+</script>
+<!-- 移动文件时选择文件夹 -->
+<style>
+/* 移动文件的弹框 */
+.document-change-folder {
+	margin: 15px;
+}   
+.document-change-folder i{
+	color: #f5c424;	
+}
+.document-change-folder .above span {
+	float: left;
+}
+
+.document-change-folder .below {
+	margin-top: 12px;
+	padding: 10px;
+	width: 100%;
+	min-height: 230px;
+	border: 1px solid #D9E2EB;
+}
+.document-change-folder .folders li {
+	margin:5px 0 5px 15px;
+}
+.document-change-folder .folders .item {
+	display: inline-block;
+	cursor: pointer;
+}
+.document-change-folder .folders .item.selected span{
+	text-decoration: underline;
+	color: #3A8FE2;
+}
+</style>
+<div class="document-change-panel hide">
+	<div class="document-change-folder">
+		<div class="above clear">
+			<span>请选择移动的位置</span>
+		</div>
+		<div class="below">
+			<ul class="folders"></ul>
+		</div>
+	</div>
+</div>
+<script id="document_change_folder_tpl" type="text/html">
+{{# layui.each(d, function(index, item){ }}
+<li class="retracted" data-id="{{item.id}}" {{# if(item.nodeDomain) { }}data-nodeDomain="{{item.nodeDomain}}"{{# } }}>
+	<p class="item">
+		<i class="fa fa-folder"></i>
+		<span>{{item.name}}</span>
+	</p>
+	<ul></ul>
+</li>
+{{# }) }}
+</script>
+
+<script id="user_tree_table_header_tpl" type="text/html">
+<div class="treetable-component">
+	<table class="table treetable">
+		<thead>
+			<tr>
+				{{# layui.each(d, function(index, item){ }}	
+					<th class="{{item.typeExtend.code}}">{{item.title}}</th>
+				{{# }) }}
+			</tr>
+		</thead>
+		<tbody></tbody>
+	</table>
+</div>
+</script>
+<script id="user_tree_table_body_tpl" type="text/html">
+{{# if(d.data && d.data.length > 0) { }}
+	{{# layui.each(d.data, function(index,item) { }}
+		<tr data-tt-id="{{item.nodeId}}" data-tt-parent-id="{{item.parentId}}" {{# if(item.hasChild == "true") { }}
+				data-tt-branch='true'
+			{{# } }}>
+			{{# layui.each(d.mel, function(index2,mel) { }}
+				<td class="{{mel.typeExtend.code}}">{{item[mel.dataKey] == null ? '暂无' : item[mel.dataKey]}}</td>
+			{{# }) }}
+		</tr>
+	{{# }) }}
+{{# }else{ }}
+	<tr class="no-data"><td colspan="7" class="text-center">暂无数据</td></tr>
+{{# } }}
+</script>
+

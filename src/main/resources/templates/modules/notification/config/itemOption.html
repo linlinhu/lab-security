@@ -1,0 +1,226 @@
+<div class="tabs-container" style="height:calc(100% - 40px);margin:auto;">
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a data-toggle="tab" data-type="d" href="#notificationType-1" aria-expanded="true"> 按部门</a>
+        </li>
+        <li class="">
+            <a data-toggle="tab" data-type="p" href="#notificationType-2" aria-expanded="false"> 指定人员</a>
+        </li>
+    </ul>
+    <div class="tab-content" style="height:calc(100% - 45px)">
+        <div id="notificationType-1" class="tab-pane active" style="height:100%">
+            <div class="panel-body" style="height:100%^">
+                <div class="dept">
+                    <div class=" i-checks">
+                        <label>
+                            <input type="checkbox" name="nfByD" value="3" data-name="所属学院">
+                            所属学院
+                        </label>
+                    </div>
+                    <div class=" i-checks">
+                        <label>
+                            <input type="checkbox" name="nfByD" value="2" data-name="安全中心">
+                            安全中心
+                        </label>
+                    </div>
+                    <div class=" i-checks">
+                        <label>
+                            <input type="checkbox" name="nfByD" value="1" data-name="学校层">
+                            学校层
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="notificationType-2" class="tab-pane" style="height:100%">
+            <div class="panel-body" style="height:100%">
+                <div style="height:40px;width:100%">
+                    <div class="input-group searchInputGroup">
+                        <span class="input-group-addon">
+                            <i class="fa fa-search"></i>
+                        </span>
+                        <input type="search" placeholder="姓名搜索" class="input-sm form-control ls-input searchPerson">
+
+                    </div>
+                </div>
+                <div class="personTree col-sm-12" style="height:420px;overflow: auto">
+
+                </div>
+                <div class="selectedPersons" style="height:170px;overflow: auto">
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+ <div class="btn-group" style="width:100%;margin: auto;text-align: center;padding: 0">
+     <button class="btn ls-btn btn-primary saveBtn" style="width:50%;border:none;border-radius:0">保存</button>
+     <button class="btn ls-btn btn-default cancelBtn" style="width:50%;border:none;border-radius:0">取消</button>
+ </div>
+
+
+<script type="text/javascript">
+    (function () {
+
+        var t = null;
+       /* var type = "d"
+        $(".addItemOption .nav-tabs a[data-toggle='tab']").on("shown.bs.tab",function(){
+                type = $(this).data("type")
+        })*/
+        function hide(){
+            $(".nfConfigContainer .addItemOption").removeClass("slideInRight").addClass("slideOutRight")
+            $(".nfConfigContainer .mask").hide()
+            $(".addItemOption .i-checks").iCheck("uncheck")
+            $(".nfConfigContainer .addItemOption .personTree").treeview("uncheckAll")
+            $(".selectedPersons").empty()
+        }
+        function getNfByD(){
+            var data = []
+            $(".addItemOption input[name='nfByD']:checked").each(function(){
+                data.push({
+                    value:this.value,
+                    name:$(this).data("name")
+                })
+            })
+            return data;
+        }
+        function getSelectedPerson(){
+           var data = []
+           $.each($(".nfConfigContainer .addItemOption .personTree").treeview("getChecked"),function(i,n){
+                n.type=="p" && data.push(n)
+            })
+            return data;
+        }
+        $(".addItemOption .cancelBtn").click(function(){
+
+            hide()
+
+        })
+        $(".addItemOption .saveBtn").click(function(){
+
+
+            var nfToD = getNfByD()
+            var nfToPersons = getSelectedPerson()
+            var levelName = $(".nfConfigContainer .addItemOption").data("levelName")
+            $(".nfConfigItemsContainer[data-name='"+levelName+"'] .nfConfigItems.custom").remove()
+            for(var i=0;i<nfToPersons.length;i++){
+                var p = nfToPersons[i];
+                let tpl = `<div class="nfConfigItems modify custom" data-user-name="${r'${p.name}'}" data-user-phone="${r'${p.mobile}'}" data-notice-type="2">`
+                        +`<span class="itemIcon"><i class="iconfont icon-icon_user"></i></span>`
+                        +`<span class="itemName">${r'${p.name}'}<br><small>${r'${p.mobile}'}</small></span>`
+                        +`<span class="deleteBtn"><i class="fa fa-times"></i></span>`
+                        +`</div>`
+                $(tpl).insertBefore(".nfConfigItemsContainer[data-name='"+levelName+"'] .addItems")
+            }
+
+            for(var i=0;i<nfToD.length;i++){
+                var d = nfToD[i];
+                let tpl = `<div class="nfConfigItems modify custom"  data-dept-type="${r'${d.value}'}" data-notice-type="1">`
+                        +`<span class="itemIcon"><i class="iconfont icon-icon_team"></i></span>`
+                        +`<span class="itemName">${r'${d.name}'}</span>`
+                        +`<span class="deleteBtn"><i class="fa fa-times"></i></span>`
+                        +`</div>`
+                $(tpl).insertBefore(".nfConfigItemsContainer[data-name='"+levelName+"'] .addItems")
+            }
+
+
+            hide()
+        })
+        $(".addItemOption .i-checks").iCheck({
+            checkboxClass: "icheckbox_square-green",
+            radioClass: "iradio_square-green"
+        })
+        $(".nfConfigContainer .addItemOption .searchPerson").keyup(function () {
+            var val = $(this).val()
+            clearTimeout(t)
+            if (val == "") {
+                $(".nfConfigContainer .addItemOption .personTree").treeview("clearSearch")
+            } else {
+                t = setTimeout(function () {
+                    $(".nfConfigContainer .addItemOption .personTree").treeview('search', [val, {
+                        ignoreCase: true,     // case insensitive
+                        exactMatch: false,    // like or equals
+                        revealResults: true,  // reveal matching nodes
+                    }]);
+                }, 500)
+
+            }
+
+        })
+        $(".nfConfigContainer .addItemOption").on("init",function(){
+            initCheckStatus();
+
+        })
+        function initCheckStatus(){
+            var levelName = $(".nfConfigContainer .addItemOption").data("levelName")
+
+            $(".nfConfigItemsContainer[data-name='"+levelName+"'] .nfConfigItems.custom").each(function(){
+                var data = $(this).data()
+                if(data.noticeType==1){
+                    $(`.addItemOption input[name="nfByD"][value="${r'${data.deptType}'}"]`).iCheck("check")
+                }else{
+                    var nodes = $(".nfConfigContainer .addItemOption .personTree").treeview("findNodes",[data.userPhone,"mobile"])
+                    $(".nfConfigContainer .addItemOption .personTree").treeview("toggleNodeChecked",[nodes,{ silent: true }])
+                    $(`<div class="listItem" data-mobile="${r'${data.userPhone}'}" title="${r'${data.userName}\r\n${data.userPhone}'}">${r'${data.userName}'}<span class="closeBtn"><i class="fa fa-times"></i></span></div>`).appendTo($(".selectedPersons"))
+                            .find(".closeBtn").click(function () {
+                        var mobile = $(this).parent().data("mobile");
+                        var nodes =   $(".nfConfigContainer .addItemOption .personTree").treeview('findNodes', [mobile, 'mobile']);
+                        $(".nfConfigContainer .addItemOption .personTree").treeview("toggleNodeChecked",[nodes])
+                        $(this).parent().remove()
+                    })
+                }
+            })
+        }
+        function initData() {
+            $http.get({
+                url: "notification-config/getPersonTree"
+            }, function (res) {
+                initTree(res.result)
+            })
+        }
+
+        function initTree(data) {
+            console.log(data)
+            $(".nfConfigContainer .addItemOption .personTree").treeview({
+                showCheckbox: true,
+                hierarchicalCheck: true,//级联勾选
+                propagateCheckEvent: true,
+                highlightSelected:false,
+                multiSelect: true,
+                expandIcon: 'fa fa-angle-right ',
+                collapseIcon: 'fa fa-angle-down ',
+                nodeIcon: '',
+                selectedIcon: '',
+                showTags: true,
+                checkedIcon: 'fa fa-check-square ',
+                partiallyCheckedIcon: 'fa fa-check-square',
+                uncheckedIcon: 'fa fa-square-o ',
+                data: data,
+                onNodeChecked: function (event, node) {
+                    if (node.type != "p") {
+                        return
+                    }
+                    $(`<div class="listItem" data-mobile="${r'${node.mobile}'}" title="${r'${node.text}\r\n${node.mobile}'}">${r'${node.text}'}<span class="closeBtn"><i class="fa fa-times"></i></span></div>`).appendTo($(".selectedPersons"))
+                            .find(".closeBtn").click(function () {
+                        var mobile = $(this).parent().data("mobile");
+                        var nodes =   $(".nfConfigContainer .addItemOption .personTree").treeview('findNodes', [mobile, 'mobile']);
+                        $(".nfConfigContainer .addItemOption .personTree").treeview("toggleNodeChecked",[nodes])
+                        $(this).parent().remove()
+                    })
+
+                },
+                onNodeUnchecked: function (event, node) {
+                    if (node.type != "p") {
+                        return
+                    }
+                    $(`.selectedPersons .listItem[data-mobile="${r'${node.mobile}'}"]`).remove()
+                }
+            })
+        }
+
+        initData()
+    })()
+</script>

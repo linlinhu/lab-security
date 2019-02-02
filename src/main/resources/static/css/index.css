@@ -1,0 +1,45 @@
+/**首页的样式**/
+.login-info .my-msg-dp.dropdown {
+	position: relative;
+}
+.login-info .my-msg-dp .my-msg {
+	display:inline-block;
+	padding: 0 16px;
+	margin: 3px 16px 10px 16px;
+	border-right: 1px solid #D6DBE6;
+}
+.login-info .my-msg-dp .iconfont {
+	font-size: 26px;
+}
+.login-info .my-msg-dp .dropdown-menu {
+	width: 210px;
+}
+.login-info .my-msg-dp .dropdown-menu li {
+	border-bottom: 1px solid #D6DBE6;
+}
+.login-info .my-msg-dp .dropdown-menu li:last-child {
+	border: 0;
+}
+.login-info .my-msg-dp .dropdown-menu li a {
+	word-wrap: break-word;
+    white-space: pre-wrap;
+    padding: 3px;
+}
+.login-info .my-msg-dp .dropdown-menu li a.more {
+	text-align: center;
+}
+.login-info .my-msg-dp .num {
+	position: absolute;
+	display: inline-block;
+	height: 16px;
+	min-width: 16px;
+	top: 0px;
+	right: 31px;
+	line-height: 16px;
+	border-radius: 8px;
+	text-align: center;
+	background: #FF4D77;
+	color: #ffffff;
+	font-size: 12px;
+	cursor: pointer;
+}

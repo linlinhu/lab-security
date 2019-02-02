@@ -1,0 +1,457 @@
+html{
+    -webkit-text-size-adjust:none;
+}
+#blueimp-gallery{
+    z-index: 100000000;
+}
+.nav li > a{
+    display: flex;
+    position:relative;
+    align-items:center;
+}
+.subMenuArrow{
+    position: absolute;
+    right:10px;
+}
+.dot{
+    display: inline-block;
+    margin-left: 10px;
+    height: 15px;
+    width: 15px;
+    border-radius: 100% 100%;
+    background: gray;
+}
+.lightgreen {
+    background: lightgreen;
+}
+.navbar-static-side,
+.nav-header,
+body.mini-navbar .nav-header {
+    background: #1F2E54;
+}
+
+body.mini-navbar .nav-header .prject-info > div {
+    display: none;
+}
+#side-menu .arrow {
+    position: absolute;
+    right: 20px;
+    margin-top: 0px;
+}
+
+#side-menu a {
+    outline: none;
+}
+#side-menu a:hover,
+#side-menu a:focus {
+    background-color: #192749
+}
+
+.nav > li.active {
+    background: #192749;
+    border: 0;
+}
+#side-menu li > a.selected {
+    background: #121F3E;
+    color: #55A8FD;
+}
+.nav-second-level li:last-child {
+    margin-bottom: 0;
+}
+
+.prject-info {
+    font-size: 16px;
+    text-shadow: none;
+    color: #fff;
+    text-align: center;
+    padding: 30px 0;
+}
+
+.prject-info > div {
+    margin-top: 22px;
+    margin-left: -5px;
+}
+
+#page-wrapper {
+    padding: 0;
+}
+#page-wrapper > .page-top {
+    height:65px;
+    background:rgba(255,255,255,1);
+    border-bottom: 1px solid #D6DBE6;
+    padding: 10px 40px;
+    position: relative;
+}
+
+.fold-menu {
+    position: absolute;
+
+    overflow: hidden;
+
+    left: 40px;
+
+    top: 10px;
+}
+
+.fold-menu > a {
+    margin: 0
+}
+.login-info {
+    float: right;
+}
+
+.login-info > div {
+    float: left;
+}
+
+.login-info > div.dropdown {
+    margin-top: 8px;
+}
+.login-info > div.dropdown > button {
+    background-color: #fff;
+    color: #333;
+    border: 0;
+    border-radius: 0;
+}
+#content-main {
+    height: calc(100% - 102px);
+    background-color: #F6F7FA;
+    padding: 20px 40px;
+}
+
+#content-main > div {
+    background-color: #fff;
+}
+
+
+.basic-box {
+    margin-bottom: 20px; 
+    background-color: #fff;
+}
+
+.basic-box > div.seperate-title {
+    padding: 20px 32px 20px 60px;
+    border-bottom: 1px solid #D6DBE6;
+    position: relative;
+}
+
+.basic-box > div.seperate-title > span {
+    font-size: 18px;
+    font-weight: bold;   
+}
+.basic-box > div.seperate-title > div.opts {
+    position: absolute;
+    right: 32px;
+    top: 22px;
+    font-size: 16px;
+}
+
+form div.filter-name,
+form div.dropdown {
+    float: right;
+    color: #3E4956;
+}
+
+form div.filter-name {
+    line-height: 40px;
+    margin-right: 9px;
+    
+}
+
+form div.dropdown > button,
+form div.dropdown > button:focus {
+    background-color: #fff;
+    color: #3E4956 !important;
+    font-size: 14px;
+}
+
+form div.dropdown a,
+form div.dropdown a:hover,
+form div.dropdown a:focus {
+    background: #fff !important;
+    color: #3E4956 !important; 
+}
+
+form div.dropdown a:hover {
+    font-weight: bold;
+}
+.mgt20 {
+    margin-top: 20px;
+}
+
+.bread-crumb {
+    line-height: 14px;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+
+
+
+.vertical-tabs,
+.vertical-tabs .tabs-container{
+    height:100%;
+    background: #fff;
+}
+
+.vertical-tabs .tabs-left,
+.vertical-tabs .nav-tabs,
+.vertical-tabs .tab-content,
+.vertical-tabs .tab-content .tab-pane{
+    height:100%;
+}
+.vertical-tabs .tabs-container .tabs-left{
+    position:relative;
+}
+.vertical-tabs .tabs-container .itemDetail{
+    position:absolute;
+    left:201px;
+    top:1px;
+    right:1px;
+    bottom: 1px;
+    z-index:999;
+    background:#fff;
+    display: none;
+}
+.vertical-tabs .nav-tabs li{
+    border-bottom:1px solid #DCE3E9;
+    margin-bottom: 0px;
+}
+
+.vertical-tabs .nav-tabs > li {
+    height: 70px;
+    line-height: 70px;
+    position:relative;
+    transition: 0.2s all linear;
+}
+
+
+.vertical-tabs .nav-tabs > li.active ~ li:before {
+    top: 0px;
+}
+.vertical-tabs .nav-tabs > li.active:before {
+    height: 100%;
+    left: 0px;
+    top: 0px;
+}
+
+
+
+.vertical-tabs .nav-tabs > li:before{
+    content: "";
+    position: absolute;
+    z-index:5000;
+    top: 100%;
+    left: 0;
+    width: 5px;
+    height: 0;
+    border-left: 5px solid #55A8FD;
+    transition: 0.2s all linear;
+}
+
+.vertical-tabs .nav-tabs > li > a {
+    border: none;
+    height: 100%;
+    color: #3E4956;
+    font-weight: normal;
+    font-size: 16px
+}
+
+
+.vertical-tabs .tab-content .tab-pane .panel-body{
+    margin-left:200px;
+    width:auto;
+    height: 100%;
+    box-sizing: border-box;
+    border: 0;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+.vertical-tabs .nav-tabs{
+    max-width:200px;
+    border-right: 1px solid #D6DBE6;
+}
+.vertical-tabs .nav-tabs > li{
+    height:70px;
+    line-height: 70px;
+}
+.vertical-tabs .categoryContainer{
+    border-top:none;
+    height:100%;
+    border-bottom:none;
+}
+.vertical-tabs .nav-tabs > li > a{
+    border:none;
+    height:100%;
+    color:#3E4956;
+    font-weight: normal;
+    font-size:16px
+}
+.vertical-tabs .nav-tabs > li.active{
+    background: #F5FAFF;
+    --transition: none;
+    --border-left:5px solid #55A8FD;
+
+}
+.vertical-tabs .nav-tabs > li.active > a{
+    --padding-left:20px !important;
+    color:#55A8FD;
+}
+.vertical-tabs .nav-tabs > li.active > a, .nav-tabs > li.active > a:focus,.nav-tabs > li.active > a:hover{
+    border:none !important;
+    border-right: 1px solid #e7eaec !important;
+    background: #F5FAFF;
+}
+
+
+.horizontal-tabs .tabs-container .tab-pane .panel-body {
+    border: 0;
+    padding: 0;
+}
+
+.horizontal-tabs .nav-tabs {
+    padding: 10px 60px 0 60px;
+}
+.horizontal-tabs .nav-tabs > li.active {
+    background: #fff !important;
+}
+.horizontal-tabs .nav-tabs > li > a {
+    font-size: 18px
+}
+.horizontal-tabs .nav-tabs > li.active > a,
+.horizontal-tabs .nav-tabs > li.active > a:hover,
+.horizontal-tabs .nav-tabs > li.active > a:focus {
+    border: 0 !important;
+    background: #fff !important;
+    outline: none !important;
+    color: #55A8FD;
+    position: relative;
+}
+
+.horizontal-tabs .nav-tabs > li.active > a::after {
+    content: '';
+    width: 100%;
+    height: 4px;
+    background: #55A8FD;
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+}
+
+
+
+.my-filter-line {
+    height: 40px;
+    position: relative;
+}
+.my-filter-line > div,
+.my-filter-line div.input-group,
+.my-filter-line span.input-group-btn {
+    display: inline-block;
+    vertical-align: bottom
+}
+
+
+.my-filter-line > div.rgt {
+    position: absolute;
+    right: 0;
+}
+
+
+.my-filter-line input {
+    width: 300px !important;
+}
+
+
+
+ul.my-tabs {
+    display: block;
+    overflow: hidden;
+    position: relative;
+    padding: 20px 60px;
+    font-size: 16px;
+}
+
+.my-tabs > li {
+    float: left;
+    margin-right: 40px;
+    position: relative;
+}
+
+.my-tabs > li.active > a {
+    color: #55A8FD
+}
+
+.my-tabs > li.active > a::after {
+    content: '';
+    display: block;
+    width: 30px;
+    height: 4px;
+    border-radius: 2px;
+    background-color: #55A8FD;
+    margin-top: 8px;
+}
+.my-tab-content .my-tab-pane {
+    display: none;
+}
+
+.my-tab-content div.active {
+    display: block;
+}
+
+.navs_border_b ul.my-tabs{
+    border-bottom: 1px solid #D6DBE6;
+}
+
+
+.changed-tabs{
+    position: relative;
+}
+
+.changed-tabs form {
+    position: absolute;
+    width: 60%;
+    right: 60px;
+    top: 15px;
+    z-index: 11;
+}
+
+
+/** 图表宽度自适应*/
+.emin-diagrams {
+    margin: 0 -10px;
+    overflow: hidden;
+}
+.emin-diagrams > div.emin-diagram {
+    padding: 0 10px;
+    float: left;
+}
+.emin-diagram-4,
+.emin-diagram-6,
+.emin-diagram-8 {
+    width: 100%;
+}
+@media (min-width: 1900px) {
+    .emin-diagram-4 {
+        width: 33.33%;
+    }
+    .emin-diagram-6 {
+        width: 50%;
+    }
+    .emin-diagram-8 {
+        width: 66.66%;
+    }
+}
+@media (min-width: 1000px) and (max-width: 1899px) {
+    .emin-diagram-4 {
+        width: 50%;
+    }
+    
+    .emin-diagram-6,
+    .emin-diagram-8 {
+        width: 100%
+    }
+}
+.emin-diagrams .echarts {
+    min-height: 340px;
+}

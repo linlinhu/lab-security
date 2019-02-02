@@ -1,0 +1,170 @@
+
+<style>
+    .waterfall-list  {
+        color: #3E4956;
+    }
+    
+    .waterfall-list .seperate-date {
+        font-size: 17px;
+        line-height: 17px;
+        padding: 10px 0;
+    }
+    
+    .waterfall-list > .item  {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        padding-left: 70px;
+        margin-bottom: 40px;
+    }
+    .waterfall-list > .item > div {
+        float: left;
+    }
+    
+    .waterfall-list > .item > div.lft-level {
+        width: 50px;
+        height: 50px;
+        font-size: 14px;
+        text-align: center;
+        line-height: 14px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        border-radius: 50px;
+        background-color: #92A2CA;
+        color: #fff;
+        padding: 12px 0;
+    }
+    .waterfall-list div.level-1 {
+
+        background-color: #FF4D77 !important;
+    }
+    .waterfall-list div.level-2 {
+
+        background-color: #FFBE32 !important;
+    }
+    
+    .waterfall-list > .item > div.rgt-info {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #D6DBE6;
+        padding: 15px 30px;
+    }
+    
+    .waterfall-list > .item > div.rgt-info > .opts {
+        float: right;
+    }
+    .waterfall-list > .item > div.rgt-info > div {
+        margin-bottom: 15px;
+        font-size: 14px;
+    }
+    
+    .waterfall-list > .item > div.rgt-info > div:last-child {
+        margin-bottom: 0;
+    }
+
+    .field-unqualifiedLevelTwo {
+        font-size: 16px;
+        font-weight: bold;
+    }
+    .field-unqualifiedLevelTwo > span {
+        display: none;
+    }
+</style>
+<#if data.resultList?size gt 0>
+
+<#assign colorMap= {"1":"#28D582","2":"#92A2CA","3":"#7D68FF","4":"#FFBE32","5":"#FF80B9","6":"#FF4D77"}>
+<#setting date_format = 'yyyy/MM/dd'>
+<div class="waterfall-list">
+    <#assign inspectDate = "">
+    <#list data.resultList as entity>
+        <#if entity.createTime?number_to_date + "" != inspectDate>
+            <div class="seperate-date">
+                <#assign inspectDate = entity.createTime?number_to_date + "">
+                ${inspectDate}
+            </div>
+        </#if>
+        <div class="item mgt20">
+            <#assign itemLevel = entity.unqualifiedGrade?split(",")>
+            <#assign maxLevel = (itemLevel?reverse)[0]>
+            <div class="lft-level" style="background-color:${colorMap[maxLevel]}">
+                ${entity.unqualifiedProGrade?substring(0, 2)}<br>
+                ${entity.unqualifiedProGrade?substring(2, 4)}
+            </div>
+            <div class="rgt-info" 
+            <#list tpl.items as item>
+            <#if item.type== 99>
+                <#assign hiddenVars = item.dataKey?split('-') />
+                <#list hiddenVars as var>
+                    data-${var}="<#if entity[var]?is_boolean>${entity[var]?string('1','2')}<#else>${entity[var]}</#if>" 
+                </#list>
+            </#if>
+            
+            </#list>
+            >
+                    <div class="opts">
+                    <#list tpl.items as item>
+                    <#if item.type == 90>
+                        <#list item.typeExtend.code?split(',') as code>
+                            <#assign opt = code>
+                            <#assign optName = ''>
+                            <#if code?split('-')?size gt 1>
+                                <#assign opt = code?split('-')[0]>
+                                <#assign optName = code?split('-')[1]>
+                            </#if>
+                            <a href="javascript:;" class="entityOpts text-navy" data-opt="${opt}" ><i class="fa fa-${opt}">&nbsp;</i>${optName}</a>
+                        </#list>
+                    </#if>
+                    </#list>
+                    </div>
+                <#list tpl.items as item>
+                <#if item.type != 90 && item.type !=99>
+                    <div class="field field-${item.dataKey}"><span>${item.title}：</span>
+                        
+                        <#if item.type == 3>
+                            <#assign dkParams = item.dataKey?split('-') />
+                            <#if dkParams?size == 3>
+                                <#assign dkey = dkParams[0]/>
+                                <#assign dindex = dkParams[1]?eval/>
+                                <#assign dname = dkParams[2]/>
+                                ${entity[dkey][dindex][dname]}
+                            </#if>
+                            <#if dkParams?size == 2>
+                                <#assign dkey = dkParams[0]/>
+                                <#assign dname = dkParams[1]/>
+                                ${entity[dkey][dname]}
+                            </#if>
+                            <#if dkParams?size == 1>
+                                ${entity[dkParams]}
+                            </#if>
+                        </#if>
+                        <#if item.type == 5>
+                            <#assign dkParams = item.dataKey?split('-') />
+                            <#if dkParams?size gt 1>
+                                <#assign dkey = dkParams[0]>
+                                <#assign dname = dkParams[1]>
+                                <#list entity[dkey] as _c>
+                                    ${_c[dname]}<#if _c_index != entity[dkey]?size -1>,</#if>
+                                </#list>
+                            <#else>
+                                ${entity[dkParams]}
+                            </#if>
+                        </#if>
+                        
+                        <#if item.type == 8>
+                            ${entity[item.dataKey]?number_to_date}
+                        </#if>
+                        <#if item.type == 1>
+                            ${entity[item.dataKey]}
+                        </#if>
+                    </div>
+                </#if>
+                </#list>
+            </div>
+        </div>
+    </#list>
+</div>
+<div class="pageContainer text-right" data-total="${data.totalCount}" data-page="${data.currentPage}"></div>
+<#else>
+    <div class="empty">查无数据</div>
+</#if>

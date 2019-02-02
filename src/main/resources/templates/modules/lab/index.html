@@ -1,0 +1,94 @@
+
+<style>
+    
+.lab-info .mel-info > div.qrcode > .name {
+    display: none;
+}
+.lab-info .mel-info > div.qrcode a {
+    float: left;
+    margin-right: 17px;
+    font-size: 14px;
+    color: #55A8FD;
+}
+
+.lab-info .mel-info > div.qrcode i.icon-icon_QRcode {
+    font-size: 28px;
+    color: #3E4956
+}
+
+.lab-info .mel-info > div.name,
+.lab-info .mel-info > div.qrcode {
+    width: auto;
+}
+.opts .iconfont {
+	font-size: 16px;
+}
+</style>
+<section id="labs-${timestamp}">
+        <div class="basic-box sc-info lab-info">
+            <div class="seperate-title">
+                <span>基本信息</span>
+                <div class="opts">
+                    <#if !showOperations?? || showOperations?seq_contains("add")>
+                        <a  class="text-navy" href="javascript:goPage('form?ecmId=${data.ecmId}');" style="width: 150px;"><span class="iconfont icon-icon_edit"></span></a>
+                    </#if>
+                </div>
+            </div>
+            <#include "../../tpl/detail.html"/>
+        </div>
+        <div class="basic-box">
+            <div class="seperate-title">
+                <span>人员信息</span>
+                <div class="opts">
+                    <#if !showOperations?? || showOperations?seq_contains("add")>
+                    <a class="text-navy" href="javascript:;"><span class="iconfont icon-icon_"></span></a>
+                    </#if>
+                </div>
+            </div>
+            <div class="relate-users"></div>
+        </div>
+    </section>
+<script>
+    <#if existApplyId??>
+        $('#labs-${timestamp} a[data-opt="apllicationPrint"]').remove();
+    </#if>
+
+
+    var optData = {};
+    $('#labs-${timestamp} .entityOpts').unbind().click(function() {
+        var opt = $(this).data("opt");
+        optData = $(this).data();
+        eval(opt + '()');
+    });
+
+    function getQrCode() {
+        new CodesManage().codesShow('${data.sn}');
+    }
+
+    function apllicationPrint() {
+        $http.post({
+            url: 'lab/applyPrint',
+            data: {
+                ecmId: ${data.ecmId}
+            }
+        }, function(res) {
+            $('#labs-${timestamp} a[data-opt="apllicationPrint"]').addClass('hide');
+        });
+    }
+
+    $http.get({
+        url: 'user/index',
+        data: {
+            page: 1,
+            limit: 10,
+            ecmId: ${data.ecmId},
+            ecmDeep: false,
+            showColumns: '${showColumns}',
+            showOperations: '${showOperations}'
+        },
+        forbidLoading: true
+    }, function(res) {
+        $('#labs-${timestamp} .relate-users').html(res);
+    })
+</script>
+

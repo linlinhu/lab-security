@@ -1,0 +1,120 @@
+
+<style>
+                
+        .table tr th:first-child,
+        .table tr td:first-child {
+            display: none;
+        }
+        <#if showColumns?? && showColumns?seq_contains('select')>
+            .table tr th:first-child,
+            .table tr td:first-child {
+                display: table-cell;
+            }
+        </#if>
+    </style>
+    <#setting datetime_format = 'yyyy-MM-dd HH:mm'>
+    <#setting date_format = 'yyyy-MM-dd'>
+    <table class="table m-t-sm">
+        <thead>
+            <tr>
+                <#list tpl.items as item>
+                        <#if item.type == 99 >
+                            <#if !showColumns?? || showColumns?seq_contains("select")>
+                                <th class="th-${item.dataKey}">
+                                    <input type="checkbox" class="i-checks selectAll">
+                                </th>
+                            </#if>
+                        <#else>
+                            <#if !showColumns?? || showColumns?seq_contains(item.dataKey)>
+                                <th class="th-${item.dataKey}">${item.title}</th>
+                            </#if>
+                        </#if>
+                </#list>
+            </tr>
+        </thead>
+        <tbody>
+            <#list data.resultList as entity>
+            	<#if entity?? && entity?size gt 0>
+                <tr>
+                    <#list tpl.items as item>
+                        <#if !showColumns?? || showColumns?seq_contains("select")>
+                        <td class="td-${item.dataKey}">
+                            <#if item.type=99>
+                                <#assign hiddenEls = item.dataKey?split('-')>
+                                <#if hiddenEls?size gt 1>
+                                    <#list hiddenEls as hiddenEl>
+                                        <#if hiddenEl_index == 0>
+                                            <input type="checkbox" class="i-checks itemSelect" name="${hiddenEl}" value="${entity[hiddenEl]}">
+                                        <#else>
+                                            <input type="hidden" name="${hiddenEl}" value="${entity[hiddenEl]}">
+                                        </#if>
+                                    </#list>
+                                <#else>
+                                    <input type="checkbox" class="i-checks itemSelect" name="${item.dataKey}" value="${entity[item.dataKey]}">
+                                </#if>
+                            </#if>
+                            <#if item.type==90>
+                                <#list item.typeExtend.code?split(',') as code>
+                                
+                                    <#assign opt = code>
+                                    <#assign optName = ''>
+                                    <#if code?split('-')?size gt 1>
+                                        <#assign opt = code?split('-')[0]>
+                                        <#assign optName = code?split('-')[1]>
+                                    </#if>
+                                    <a href="javascript:;" class="entityOpts" data-opt="${opt}" data-tr-index="${entity_index}"><i class="fa fa-${opt}">&nbsp;</i>${optName}</a>
+                                </#list>
+                            </#if>
+                            <#if item.type == 3>
+                                <#assign dkParams = item.dataKey?split('-') />
+                                <#if dkParams?size == 3>
+                                    <#assign dkey = dkParams[0]/>
+                                    <#assign dindex = dkParams[1]?eval/>
+                                    <#assign dname = dkParams[2]/>
+                                    ${entity[dkey][dindex][dname]}
+                                </#if>
+                                <#if dkParams?size == 2>
+                                    <#assign dkey = dkParams[0]/>
+                                    <#assign dname = dkParams[1]/>
+                                    ${entity[dkey][dname]}
+                                </#if>
+                                <#if dkParams?size == 1>
+                                    ${entity[dkParams]}
+                                </#if>
+                            </#if>
+                            <#if item.type == 5>
+                                <#assign dkParams = item.dataKey?split('-') />
+                                <#if dkParams?size gt 1>
+                                    <#assign dkey = dkParams[0]>
+                                    <#assign dname = dkParams[1]>
+                                    <#list entity[dkey] as _c>
+                                        ${_c[dname]}<#if _c_index != entity[dkey]?size -1>,</#if>
+                                    </#list>
+                                <#else>
+                                    ${entity[dkParams]}
+                                </#if>
+                            </#if>
+                            <#if item.type == 8>
+                                ${(entity[item.dataKey])?number_to_date}
+                            </#if>
+                            <#if item.type == 9>
+                                ${(entity[item.dataKey])?number_to_datetime}
+                            </#if>
+                            <#if item.type == 1 || item.type == 2>
+                                ${(entity[item.dataKey])!'-'}
+                            </#if>
+                        </td>
+                        </#if>
+                    </#list>
+                </tr>
+                <#else>
+                	<tr class="no-data"><td class="text-center" colspan="7">暂无数据</td></tr>
+                </#if>
+            </#list>
+        </tbody>
+    </table>
+    <div class="pageContainer text-right" data-total="${data.totalCount}" data-page="${data.currentPage}"></div>
+    
+    <#if data.resultList?size == 0>
+    查无数据
+    </#if>

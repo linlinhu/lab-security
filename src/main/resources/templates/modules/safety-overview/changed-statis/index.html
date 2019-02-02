@@ -1,0 +1,192 @@
+
+<section class="emin-diagrams safety-charts">
+    <div class="emin-diagram emin-diagram-6">
+        <div class="basic-box">
+            <div class="seperate-title">
+                <span class="title">整改</span>
+                <div class="opts">
+                    <div class="select-box">
+                        <#assign chartId = 'rectify'>
+                        <#include "../../../tpl/safety-overview/college-box.html" />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="change-chart-desc">
+                        <div class="count"><span class="done-count">${unRectifyCount!'0'}</span>/${rectifyTotal!'0'}</div>
+                        <div class="text">未整改占比</div>
+                    </div>
+                </div>
+                <div class="col-sm-8">
+                    <div class="echarts" id="echarts-rectify"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="emin-diagram emin-diagram-6">
+        <div class="basic-box">
+            <div class="seperate-title">
+                <span class="title">复查</span>
+                <div class="opts">
+                    <div class="select-box">
+                        <#assign chartId = 'review'>
+                        <#include "../../../tpl/safety-overview/college-box.html" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <div class="change-chart-desc">
+                        <div class="count"><span class="done-count">${unReviewCount!'0'}</span>/${reviewTotal!'0'}个</div>
+                        <div class="text">不通过占比</div>
+                    </div>
+                </div>
+                <div class="col-sm-8">
+                    <div class="echarts" id="echarts-review"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="clear:both"></div>
+</section>
+
+<#--
+<div class="wrapper-content safety-overview">
+    <div class="graphic-statis-area">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>整改</h5>
+                        <div class="ibox-tools">
+                            <div class="select-box">
+                                <#assign chartId = 'rectify'>
+                                <#include "../../../tpl/safety-overview/college-box.html" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="change-chart-desc">
+                                    <div class="count"><span class="done-count">${unRectifyCount!'0'}</span>/${rectifyTotal!'0'}</div>
+                                    <div class="text">未整改占比</div>
+                                </div>
+                            </div>
+                            <div class="col-sm-9">
+                                <div class="echarts" id="echarts-rectify"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>复查</h5>
+                        <div class="ibox-tools">
+                            <div class="select-box">
+                                <#assign chartId = 'review'>
+                                <#include "../../../tpl/safety-overview/college-box.html" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="change-chart-desc">
+                                    <div class="count"><span class="done-count">${unReviewCount!'0'}</span>/${reviewTotal!'0'}个</div>
+                                    <div class="text">不通过占比</div>
+                                </div>
+                            </div>
+                            <div class="col-sm-9">
+                                <div class="echarts" id="echarts-review"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>-->
+<#include "changed-tabs.html"/>
+
+<script>
+
+    (function(){
+        var that = this;
+        this.optData = {};
+        var $this = {
+            init: function() {
+                this.initRectifyChart();
+                this.initReviewChart();
+            },
+            // 整改统计图表
+            initRectifyChart: function () {
+                var chart = echarts.init(document.getElementById('echarts-rectify'));
+                var ratio = '0';
+                var legendData = ['已整改', '未整改'];
+                var seriesData = [
+                    {value:0, name:'已整改'},
+                    {value:0, name:'未整改'}
+                ];
+
+                <#if rectifyData??>
+                    var rectifyData = ${rectifyData};
+                    legendData = rectifyData.legendData;
+                    seriesData = rectifyData.seriesData;
+                    ratio = rectifyData.ratio;
+                </#if>
+
+                var chartOption =  ChartUtil.buildRectifyChartOption({
+                    legendData: legendData,
+                    seriesName: '整改率',
+                    seriesData: seriesData,
+                    colors: ['#87E7FF', '#879DFF'],
+                    centerText: ratio + '\n 整改率 '
+                });
+                chart.setOption(chartOption);
+                $(window).resize(chart.resize);
+            },
+            // 复查统计图表
+            initReviewChart: function () {
+                var chart = echarts.init(document.getElementById('echarts-review'));
+                var ratio = '0';
+                var legendData = ['通过', '不通过'];
+                var seriesData =  [
+                    {value:0, name:'通过'},
+                    {value:0, name:'不通过'}
+                ];
+                <#if reviewData??>
+                    var reviewData = ${reviewData};
+                    legendData = reviewData.legendData;
+                    seriesData = reviewData.seriesData;
+                    ratio = reviewData.ratio;
+                </#if>
+
+                var chartOption =  ChartUtil.buildRectifyChartOption({
+                    legendData: legendData,
+                    seriesName: '通过率',
+                    seriesData: seriesData,
+                    colors: ['#FFDD7C', '#AC85D4'],
+                    centerText: ratio + '\n 通过率 '
+                });
+                chart.setOption(chartOption);
+                $(window).resize(chart.resize);
+            }
+        };
+        $.extend(this,$this);
+        this.init();
+    })();
+</script>
+
+
+

@@ -1,0 +1,77 @@
+<style>
+.safety-accident-list div.lft-level {
+    display: none;
+}
+
+
+.safety-accident-list .waterfall-list > .item {
+    padding-left: 0;
+}
+.safety-accident-list .field-accName {
+    font-size: 16px;
+    font-weight: bold;
+    float: left;
+}
+.safety-accident-list .field-accName > span,
+.safety-accident-list .field-accStatus > span {
+    display: none;
+}
+.safety-accident-list .field-accStatus {
+    display: inline-block;
+    color: transparent;
+    position: relative;
+    width: 120px;
+    height: 24px;
+}
+
+.safety-accident-list .field-accStatus::before {
+    content: '进行中';
+    display: block;
+    padding: 6px 10px;
+    font-size: 12px;
+    line-height: 12px;
+    border-radius: 12px;
+    color: #fff;
+    background-color: #FF9625;
+    position: absolute;
+    top: -2px;
+    left: 15px;
+}
+.safety-accident-list div.rgt-info[data-accstatus="10"] .field-accStatus:before {
+    content: '已完结';
+    background-color: #67C23A;
+}
+</style>
+<div class="wrapper-content" id="common-management-${timestamp}">
+    <form>
+        <div class="my-filter-line">
+            <#if schoolEcmId?? >
+            <div>
+                <#include "../../tpl/basic-config/view-scope.html" />
+            </div>
+            </#if>
+            <div>
+                <div class="input-group">
+                    <input type="text" placeholder="搜索标题关键词"  class="input-sm form-control ls-input" name="keyword" />
+                    <span class="input-group-btn">
+                        <button type="button" class="btn ls-btn btn-sm btn-primary"><i class="fa fa-search"></i></button>
+                    </span>
+                </div>
+            </div>
+            <div class="rgt">
+                <button type="button" class="btn ls-btn btn-sm btn-primary" onclick="goPage('form')">创建事故记录</button>
+            </div>
+        </div>
+    </form>
+    <div class="data-list safety-accident-list"></div>
+</div>
+<script>
+
+    new TableManage({
+        wrapId: '#common-management-${timestamp}',
+        moduleName: "safety-accident",
+        ecmId: '${ecmId}'
+    }, function (res) {
+        goPage('detail', res);
+    })
+</script>

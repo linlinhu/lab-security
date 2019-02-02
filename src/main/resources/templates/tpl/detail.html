@@ -1,0 +1,140 @@
+<style>
+    
+    .mel-info > .item {
+        float: left;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+    
+    .mel-info > .item > div {
+        float: left;
+    }
+    
+    .mel-info > .item > div.name {
+        width: 100px;
+    }
+    
+    .mel-info > .item > div.detail {
+        width: auto;
+        padding-left: 15px;
+    }
+    .mel-info .map-selection {
+        margin-top: 24px;
+    }
+</style>
+<div class="mel-info" id="mel-info-${timestamp}">
+<#setting datetime_format = 'yyyy-MM-dd HH:mm'>
+<#list tpl.groups[0].items as item>
+<#if item.type != 99>
+<div class="item ${item.dataKey}">
+    <div class="name">${item.title}:</div>
+    <#switch item.type>
+        <#case 3>
+            <div class="detail">
+                <#assign dkParams = item.dataKey?split('-') />
+                <#if dkParams?size == 3>
+                    <#assign dkey = dkParams[0]/>
+                    <#assign dindex = dkParams[1]?eval/>
+                    <#assign dname = dkParams[2]/>
+                    ${(data[dkey][dindex][dname])!'暂无'}
+                </#if>
+                <#if dkParams?size == 2>
+                    <#assign dkey = dkParams[0]/>
+                    <#assign dname = dkParams[1]/>
+                    ${(data[dkey][dname])!'暂无'}
+                </#if>
+                <#if dkParams?size == 1>
+                    ${(data[dkParams])!'暂无'}
+                </#if>
+            </div>
+        <#break>
+        <#case 5>
+            <div class="detail">
+                    <#assign dkParams = item.dataKey?split('-') />
+                    <#if dkParams?size gt 1>
+                        <#assign dkey = dkParams[0]>
+                        <#assign dname = dkParams[1]>
+                        <#if data[dkey]?size gt 0>
+                        <#list data[dkey] as _c>
+                            ${(_c[dname])!'未知'}<#if _c_index != data[dkey]?size -1>,</#if>
+                        </#list>
+                        <#else>
+                        暂无
+                        </#if>
+                    <#else>
+                        ${(data[dkParams])!'暂无'}
+                    </#if>
+            </div>
+        <#break>
+        <#case 9>
+            <div class="detail">
+                <#if data[item.dataKey]??>
+                    ${data[item.dataKey]?number_to_datetime}
+                <#else>
+                    暂无
+                </#if>
+            </div>
+        <#break>
+        <#case 20>
+            <div class="detail">
+                <a class="entityOpts"  href="javascript:;" data-opt="getQrCode">
+                    <i class="iconfont icon-icon_QRcode"></i>
+                </a>
+                <a class="entityOpts" href="javascript:;" data-opt="apllicationPrint">
+                    申请打印二维码
+                </a>
+            </div>
+        <#break>
+        <#case 22>
+            <div class="detail">${(data[item.dataKey])!'中国'}</div>
+            <div class="map-selection" style="height: 200px">
+                <div class="map-container" id="map-container-${item.itemToken}"></div>
+                <div class="point-info">
+                    <span>${(data[item.dataKey])!'中国'}</span> 
+                    <i class="coordinate"></i>
+                    <i class="coordinate-animate"></i>
+                </div>
+            </div>
+        <#break>
+        <#case 30>
+            <div class="detail">
+                <#if data[item.dataKey]?? && data[item.dataKey]?size gt 0>
+                    <#list data[item.dataKey] as pic>
+                    <img src="${pic.storage[0].fileStorageUrl}" />
+                    </#list>
+                <#else>
+                    <img src="img/unknown.png">
+                </#if>
+            </div>
+        <#break>
+        <#case 50>
+            <div class="detail">${(data[item.dataKey].name)!'暂无'}</div>
+        <#break>
+        <#default>
+            <div class="detail">
+                <#assign dks = item.dataKey?split('-') />
+                <#list dks as dk>
+                ${(data[dk])!'暂无'}&nbsp;
+                </#list>
+            </div>
+        <#break>
+    </#switch>
+</div>
+</#if>
+</#list>
+<div style="clear:both"></div>
+</div>
+<script>
+    
+$('#mel-info-${timestamp} .map-selection').each(function() {
+    var self = $(this);
+    var mapId = $(self.find('.map-container')[0]).attr('id');
+    var address = $(self.find('.point-info > span')[0]).html();
+    new MapSelection({
+        root: '#mel-info-${timestamp}',
+        mapId: mapId,
+        value: address,
+        forbidEdit: true
+    });	
+});
+</script>

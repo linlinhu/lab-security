@@ -1,0 +1,54 @@
+<style>
+    .safety-changed-redo .field-unqualifiedLevelTwo {
+        float: left;
+        margin-right: 15px;
+    }
+    .safety-changed-redo .field-reviewStatusDesc > span {
+        display: none;
+    }
+
+    
+    .safety-changed-redo .field-reviewStatusDesc {
+        background-color: #67C23A;
+        border-radius: 11px;
+        padding: 5px 15px; 
+        font-size: 12px;
+        line-height: 12px;
+        display: inline-block;
+        color: #fff;
+    }
+ 
+    .safety-changed-redo div.rgt-info[data-reviewstatus="2"] .field-reviewStatusDesc {
+
+        background-color: #FF4D77;
+    }
+
+</style>
+<div class="wrapper-content safety-changed-redo" id="safety-changed-redo-${timestamp}">
+    <div class="data-list"></div>
+</div>
+
+<script>
+var changedTmElem = '#safety-changed-redo-${timestamp}';
+var changedTm = new TableManage({
+    wrapId: changedTmElem,
+    moduleName: "safety-changed-redo",
+    params: {
+        ecmId: '${ecmId}',
+        hiddenDangerGrade: '${hiddenDangerGrade}',
+        keyword: '${keyword}'
+    }
+}, function(res) {
+    if (res.opt == 'detail') {
+        res.detailTitle = '安全整改管理';
+        res.id = res.checkid;
+        goPage('detail', res);
+    }
+});
+
+
+$($(changedTmElem).parent().parent().parent().siblings('form')[0]).unbind('change').change(function() {
+    changedTm.params = $(this).serializeObject();
+    changedTm.loadList(1, 10);
+});
+</script>

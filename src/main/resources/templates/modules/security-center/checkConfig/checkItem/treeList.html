@@ -1,0 +1,40 @@
+<ul data-index="${listIndex}">
+<#list list as item>
+    <#assign listIndex=listIndex+1>
+    <li class="${item.hasChild?string('parent','child')}"
+         <#list item?keys as key>
+            <#if key=="children">
+                <#continue >
+            </#if>
+            <#assign value=item['${key}']>
+            data-${key?string?replace("([a-z])([A-Z]+)","$1-$2","r")?lower_case}="<#if value?is_boolean>${value?string('true','false')}<#else>${value}</#if>"
+         </#list>
+        data-target-ul-index="${listIndex}"
+    >
+
+
+        <span class="name">
+            <span class="title ">
+                ${item.name}
+                 <#if item.hasChild>
+                    <span class="toggleExpand fa fa-angle-down"></span>
+                 </#if>
+            </span>
+
+            <#if !item.hasChild>
+            <span>
+                <span class="badge" style="background:${colorMap["${item.grade}"]};color:#fff">${item.grade}</span>
+            </span>
+
+            <span class="nodeOperations">
+                <span class="operation checkDataItemOpts" data-opt="editGrade" data-seq="${item.seq}"><i class="iconfont icon-icon_edit"></i></span>
+            </span>
+            </#if>
+        </span>
+        <#if item.hasChild>
+            <#assign list = item.children>
+            <#include "treeList.html">
+        </#if>
+    </li>
+</#list>
+</ul>

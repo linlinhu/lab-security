@@ -1,0 +1,37 @@
+    <!-- <div class="tabs-container horizontal-tabs">
+        <ul class="nav nav-tabs">
+            <#list groups as group>
+                <li class="<#if group_index == 0>active</#if>">
+                    <a data-toggle="tab" href="#safety-changed-group-${group.id}" aria-expanded="true"> ${group.name}</a>
+                </li>
+            </#list>
+        </ul>
+        <div class="tab-content">
+            <#list groups as group>
+                <div id="safety-changed-group-${group.id}" class="tab-pane <#if group_index == 0>active</#if>">
+                    <div class="panel-body safety-changed-group">
+                        
+                    </div>
+                </div>
+            </#list>
+        </div>
+    </div> -->
+<div class="my-tab-container">
+    <ul class="my-tabs">
+        <#list groups as group>
+            <li class="<#if group_index == 0>active</#if>">
+                <a data-toggle="tab" href="#safety-changed-group-${group.id}" aria-expanded="true"> ${group.name}</a>
+            </li>
+        </#list>
+    </ul>
+    <div class="my-tab-content">
+        <#list groups as group>
+            <div id="safety-changed-group-${group.id}" class="my-tab-pane <#if group_index == 0>active</#if>">
+                <div class="safety-changed-group">
+                    
+                </div>
+            </div>
+        </#list>
+    </div>
+</div>
+<script src="js/safetyChanged/SafetyChanged.js"></script>

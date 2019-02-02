@@ -1,0 +1,16 @@
+<div class="navs_border_b changed-tabs" id="safety-changed-manage">
+    <#include "search-form.html" />
+    <#include "../../tpl/safety-changed/tabs.html" />
+</div>
+<script>
+    var tabsElem = '#safety-changed-manage';
+    new SafetyChanged({
+        wrapId: tabsElem,
+        ecmId: '${ecmId}'
+    });
+
+    $(tabsElem + ' form button').unbind().click(function() {
+        $(tabsElem + ' form').trigger('change');
+    })
+
+</script>

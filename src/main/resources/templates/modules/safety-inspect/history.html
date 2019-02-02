@@ -1,0 +1,129 @@
+<style>
+ul.security-inspect-history {
+    display: block;
+    padding: 40px 60px;
+    color: #3E4956;
+}
+
+ul.security-inspect-history > li {
+    display: block;
+    overflow: hidden;
+    position: relative;
+    padding-left: 138px;
+}
+
+ul.security-inspect-history > li > div.time-node {
+    position: absolute;
+    left: 0;
+    top: 10px;
+    text-align: right;
+    width: 88px;
+
+}
+
+ul.security-inspect-history > li > div.time-node >div.date {
+    font-size: 17px;
+    margin-bottom: 15px;
+}
+
+ul.security-inspect-history > li > div.time-node >div.time {
+    font-size: 12px;
+}
+
+ul.security-inspect-history > li > div.icon-img {
+    display: block;
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background-color: #99A3B0;
+    border-radius: 40px;
+    top: 0;
+    left: 118px;
+    text-align: center;
+    line-height: 40px;
+    color: #fff;
+}
+
+ul.security-inspect-history > li > div.icon-history-1 {
+    background-color: #FF4D77;
+}
+ul.security-inspect-history > li > div.icon-history-2 {
+    background-color: #28D582;
+}
+
+
+ul.security-inspect-history > li > div.detail-block {
+    padding: 10px 50px;
+    border-left: 1px solid #D6DBE6;
+    font-size: 14px;
+}
+
+ul.security-inspect-history > li > div.detail-block > div {
+    margin-bottom: 15px;
+}
+
+ul.security-inspect-history > li > div.detail-block > div > span {
+    display: inline-block;
+    width: 88px;
+}
+ul.security-inspect-history > li > div.detail-block > div.title {
+    font-weight: bold;
+    margin-bottom: 25px;
+    font-size: 18px;
+}
+
+ul.security-inspect-history > li > div.detail-block > div.pics img {
+    margin-bottom: 10px;
+    margin-right: 10px;
+}
+</style>
+
+<#setting datetime_format = 'yyyy/MM/dd~HH:mm'>
+<ul class="security-inspect-history"> 
+    <#list histories as history>
+    <li>
+        <#if history.type == 1>
+            <div class="icon-img icon-history-1"><span class="iconfont icon-icon_find"></span></div>
+        <#elseif history.type == 2 || (history.type == 3 && history.reviewStatus?string('true','false') == 'true')>
+            <div class="icon-img icon-history-2"><span class="iconfont icon-icon_yes"></span></div>
+        <#else>
+            <div class="icon-img"><span class="iconfont icon-icon_no"></span></div>
+        </#if>
+        <#assign timeNode = history.createTime?number_to_datetime />
+        <div class="time-node">
+            <div class="date">${timeNode?split('~')[0]}</div>
+            <div class="time">${timeNode?split('~')[1]}</div>
+        </div>
+        <div class="detail-block">
+            <div class="title">
+                <#if history.type == 1>
+                发现问题
+                <#elseif history.type == 2>
+                整改完成
+                <#else>
+                    <#if history.reviewStatus?string('true','false') == 'true'>
+                        复查通过
+                    <#else>
+                        复查未通过
+                    </#if>
+                </#if>
+
+            </div>
+            <div><span>提交人：</span>${history.opUserName} ${history.opUserPhone}</div>
+            
+            <#if history.type == 1>
+            <div><span>不符合项</span>${history.unqualifiedLevelThree}</div>
+            </#if>
+            <div><span>描述信息：</span>${history.describe}</div>
+            <#if photo?? && photo?size gt 0>
+                <div class="pics">
+                    <#list photo as pic>
+                        <img src="${pic.storage[1].fileStorageUrl}" width="100"/>
+                    </#list>
+                </div>
+            </#if>
+        </div>
+    </li>
+    </#list>
+
+</ul>

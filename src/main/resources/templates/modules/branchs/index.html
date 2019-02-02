@@ -1,0 +1,33 @@
+
+<div class="wrapper-content common-management" id="common-management-${timestamp}">
+    <form>
+    <div class="row">
+        <div class="col-sm-9">
+            <div class="input-group">
+            	<div class="personal-filter-line">
+	                <input type="text" placeholder="请输入关键词" class="input-sm form-control ls-input">
+	                <span class="iconfont icon-icon_close reset hide"></span>
+	                <span class="input-group-btn">
+	                    <button type="button" class="btn ls-btn btn-sm btn-primary"><span class="iconfont icon-icon_search"></span></button>
+	                </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3 text-right" style="padding-left:10px">
+            <#if !showOperations?? || showOperations?seq_contains("add")>
+            <button class="btn ls-btn btn-sm btn-primary entityOpts" data-opt="add"><span class="iconfont icon-icon_"></span>新建学院</button>
+            </#if>     
+        </div>
+    </div>
+    </form>
+    <div class="table-responsive data-list"></div>
+</div>
+
+<script>
+new TableManage({
+    wrapId: '#common-management-${timestamp}',
+    moduleName: 'branchs',
+    showColumns: ${showColumns!'[]'},
+    ecmId: ${ecmId}
+})
+</script>

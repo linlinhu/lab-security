@@ -1,0 +1,38 @@
+<div class="mgt20" id="statisreport-inspect-tablelist">
+    <form>
+        <div class="my-filter-line">
+            <div>
+                <#include "../../../tpl/basic-config/hidden-danger-grades.html" />
+            </div>
+            <div>
+                <#include "../../../tpl/basic-config/view-scope.html" />
+            </div>
+            <div>
+                <div class="input-group">
+                    <input type="text" placeholder="搜索实验室名" class="input-sm form-control ls-input">
+                    <span class="input-group-btn">
+                        <button type="button" class="btn ls-btn btn-sm btn-primary"><i class="fa fa-search"></i></button>
+                    </span>
+                </div>
+            </div>
+            <div class="rgt">
+                <a class="btn ls-btn btn-primary download" href="javascript:;">下载表格</a>
+            </div>
+        </div>
+    </form>
+    <div class="data-list"></div>
+</div>
+<script>
+    var statisreportTablelistElem = '#statisreport-inspect-tablelist';
+    new TableManage({
+        wrapId: statisreportTablelistElem,
+        moduleName: 'inspect-report',
+        ecmId: '${ecmId}'
+    })
+    
+    $(statisreportTablelistElem + ' a.download').unbind().click(function(){
+        layer.msg('下载程序已启动，请稍后..')
+        document.getElementById("ifile").src = '${downloadUrl}';
+        return false;
+    });
+</script>

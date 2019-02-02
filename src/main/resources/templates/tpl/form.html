@@ -1,0 +1,220 @@
+<link href="css/form.css" rel="stylesheet">
+<div class="wrapper-content">
+    <form class="form-horizontal" id="form${timestamp}" role="form" data-model-id="${tpl.id}" data-auth-token="${tpl.authToken}">
+        <#list tpl.groups as group>
+        <#if tpl.groups?size gt 1>
+        <div class="group-title">${group.name}</div>
+        </#if>
+        <#list group.items as item>
+            <#if item.type != 99 && item.type != 20>
+            <div class="group-item form-group" data-item-id="${item.id}" data-regex="${item.regEx}" data-regex-tip="${item.regExText}">
+                <span class="control-label">${item.title}</span>
+                <div>
+                    <#switch item.type>
+                        <#case 1>
+                        <input class="form-control  ls-input" type="text" name="${item.itemToken}" value="${(info[item.dataKey])!''}" placeholder="请输入${item.title}">
+                        <#break>
+                        <#case 2>
+                        <textarea class="form-control" name="${item.itemToken}"  placeholder="请输入${item.title}">${(info[item.dataKey])!''}</textarea>
+                        <#break>
+                        <#case 3>
+                            <#if item.typeExtend.sourceType == 'local'>
+                            <#list item.typeExtend.data as data>
+                                <label class="checkbox-inline i-checks">
+                                    <input type="radio" class="i-checks" value="${data.value}" <#if info?? && info[item.dataKey] == data.value>checked</#if> name="${item.itemToken}"> ${data.text}
+                                </label>
+                            </#list>
+                            <#else>
+                            <#assign dkParams = item.dataKey?split('-') />
+                            <#assign value = ''>
+                            <#if dkParams?size == 3>
+                                <#assign dkey = dkParams[0]/>
+                                <#assign dindex = dkParams[1]?eval/>
+                                <#assign dname = dkParams[2]/>
+                                <#assign value = info[dkey][dindex][dname]>
+
+                            </#if>
+                            <#if dkParams?size == 2>
+                                <#assign dkey = dkParams[0]/>
+                                <#assign dname = dkParams[1]/>
+                                <#assign value = info[dkey][dname]>
+                            </#if>
+                            <#if dkParams?size == 1>
+                                <#assign value = info[dkParams]>
+                            </#if>
+                            <div class="empty-content" data-url="${item.typeExtend.url}"  data-item-token="${item.itemToken}" data-value="${value}"></div>
+                            </#if>
+                        <#break>
+                        <#case 4>
+                        <div class="summernote" name="${item.itemToken}"></div>
+                        <#break>
+                        <#case 5>
+                            <#if item.typeExtend.sourceType == 'local'>
+                            <#list item.typeExtend.data as data>
+                                <label class="checkbox-inline i-checks">
+                                    <input type="checkbox" class="i-checks" value="${data.value}" <#if info?? && info[item.dataKey] == data.value>checked</#if> name="${item.itemToken}"> ${data.text}
+                                </label>
+                            </#list>
+                            <#else>
+                                <#assign dkParams = item.dataKey?split('-') />
+                                <#assign values = ''>
+                                <#if dkParams?size gt 1>
+                                    <#assign dkey = dkParams[0]>
+                                    <#assign dname = dkParams[1]>
+                                    <#list info[dkey] as _c>
+                                        <#assign values =  values + _c[dname] />
+                                        <#if _c_index != info[dkey]?size -1>
+                                            <#assign values =  values + ',' />
+                                        </#if>
+                                    </#list>
+                                       
+                                <#else>
+                                    <#assign values = info[dkParams] />
+                                </#if>
+                            <div class="empty-content" data-url="${item.typeExtend.url}" data-item-token="${item.itemToken}"  data-value="${values}"></div>
+                            </#if>
+                        <#break>
+                        <#case 6>
+                        <input class="form-control ls-input" type="number" name="${item.itemToken}" value="${(info[item.dataKey])!''}" placeholder="请输入${item.title}">
+                        <#break>
+                        <#case 7>
+                        <input class="form-control ls-input sf" type="text" readonly name="${item.itemToken}" data-value="${(info[item.dataKey])!''}" placeholder="请选择${item.title}">
+                        <#break>
+                        <#case 8>
+                        <input class="form-control ls-input nyr" type="text" readonly name="${item.itemToken}" data-value="${(info[item.dataKey])!''}" placeholder="请选择${item.title}">
+                        <#break>
+                        <#case 9>
+                        <div class="nyrsfm-box">
+                        	<span class="iconfont icon-icon_calendar"></span>
+                        	<input class="form-control ls-input nyrsfm" type="text" readonly name="${item.itemToken}" data-value="${(info[item.dataKey])!''}" placeholder="请选择${item.title}">
+                        	<span class="iconfont icon-icon_pull-down1"></span>
+                        </div>
+                        <#break>
+                        <#case 22>
+                        <div class="coordinate">
+                            <textarea class="form-control" name="${item.itemToken}"  placeholder="请输入你要定位的地址">${(info[item.dataKey])!''}</textarea>
+                            <div class="map-selection" style="height: 200px">
+                                <div class="map-container" id="map-container-${item.itemToken}"></div>
+                                <div class="point-info">
+                                    <span>${(info[item.dataKey])!'成都市OCG国际中心B座'}</span> <i class="coordinate"></i> <i
+                                        class="coordinate-animate"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <#break>
+                        <#case 30>
+                            <#if uploadParams?? && uploadParams[item.dataKey]??>
+                                <#assign maxLen = uploadParams[item.dataKey].fileNumberLimit>
+                                <#assign fTitle = uploadParams[item.dataKey].title>
+                            <#else>
+                                <#assign maxLen = 1>
+                                <#assign fTitle = "上传图片">
+                            </#if>
+                            <#if info??>
+                                <#assign picSize = info[item.dataKey]?size>
+                            <#else>
+                                <#assign picSize = 0>
+                            </#if>
+                            <div class="pic-selector" data-file-num-limit="${maxLen}" data-title="${fTitle},最多${maxLen}张">
+                                <value data-name="${item.itemToken}" class="hide"><#if info[item.dataKey]??><@obj2json obj=info[item.dataKey] ></@obj2json><#else>[]</#if></value>
+                                <a class="upload <#if maxLen == picSize>hide</#if>" href="javascript:;" data-upload-url="${item.typeExtend.url}" data-files-type="img"><i class="iconfont icon-icon_"></i></a>
+                                
+                                <ul class="selected-area">
+                                    <#if picSize gt 0>
+                                    <#list info[item.dataKey] as pic>
+                                    <#assign picUrl = pic.storage[0].fileStorageUrl />
+                                    <li>
+                                        <i class="pic" style="background-image:url(${picUrl})"></i>
+                                        <a class="remove" href="javascript:;" data-url="${picUrl}"><i class="iconfont icon-icon_delate"></i></a>
+                                    </li>
+                                    </#list>
+                                    </#if>
+                                </ul>
+                            </div>
+                        <#break>
+                        <#case 50>
+                            <div class="relate-selector">
+                                <value data-name="${item.itemToken}" class="hide">
+                                    <#if item.typeExtend.dataLimit?eval == 1>
+                                        ${info[item.dataKey + 'Id']}
+                                    <#else>
+                                        <#list info[item.dataKey] as _c>
+                                            ${_c.id}
+                                            <#if _c_index != info[item.dataKey]?size>
+                                            ,
+                                            </#if>
+                                        </#list>
+                                    </#if>
+                                </value>
+                                
+                                <a class="btn ls-btn btn-primary relate 
+                                <#if item.typeExtend.dataLimit?eval == 1 && (info[item.dataKey+'Id'])??>
+                                    hide
+                                </#if>
+
+                                <#if item.typeExtend.dataLimit?eval > 1 && info[item.dataKey]?size == item.typeExtend.dataLimit>
+                                    hide
+                                </#if>
+                                
+                                "><i class="iconfont icon-icon_"></i></a>
+                                <relateParams class="hide">
+                                    <@obj2json obj=item.typeExtend ></@obj2json>
+                                </relateParams>
+                                <table class="related-items">
+                                    <tbody>
+                                        <#if item.typeExtend.dataLimit?eval == 1>
+                                        <tr>
+                                            <td>
+                                                <input value="${info[item.dataKey + 'Id']}"/>
+                                            </td>
+                                            <td>${info[item.dataKey + 'Name']}</td>
+                                            <td><a class="remove"><i class="fa fa-minus"></i></a></td>
+                                        </tr>
+                                        <#else>
+                                            <#list info[item.dataKey] as _c>
+                                                <tr>
+                                                    <td>
+                                                        <input value="${_c.id}"/>
+                                                    </td>
+                                                    <td>${_c.name}</td>
+                                                    <td><a class="remove"><i class="fa fa-minus"></i></a></td>
+                                                </tr>
+                                            </#list>
+                                        </#if>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <#break>
+                        <#case 90>
+                        <#if item.typeExtend.code == 'selection-officer'>
+                         	<div class="choose-data form-control">
+                         		<span class="placeholder">请选择${item.title}</span>
+                         	</div>
+                         	<input name="${item.itemToken}" type="hidden">
+                        </#if>
+                        
+                        <#break>
+                    </#switch>
+                </div>
+            </div>
+            <#else>
+            <input class="form-control" type="hidden" name="${item.itemToken}" value="${info[item.dataKey]}">
+            </#if>
+        </#list>
+        </#list>
+        <#if pageSubmit?? && pageSubmit == 1>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">${submitName!'保存'}</button>
+            </div>
+        
+        </#if>
+    </form>
+</div>
+
+<script>
+	<#if !hasPersonalFunction??>
+    new FormTpl({
+        wrapSelector: '#form${timestamp}'
+    })
+    </#if>
+</script>

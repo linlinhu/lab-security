@@ -1,0 +1,131 @@
+<style>
+.my-message .module-title {
+	font-size: 16px;
+	font-weight: 600;
+	margin-bottom: 20px;
+}
+.my-message .filter-line {
+	border: 0;
+}	
+.my-message .table tr td:nth-child(2) {
+	padding-left: 20px;
+}
+</style>
+<div class="wrapper-content my-message" id="my-message-${timestamp}">
+	<h2 class="module-title">我的消息</h2>
+	<div class="filter-line">
+	    <form class="dr-search-form">
+	    	<input type="hidden" name="startTime" role="user-params">
+	    	<input type="hidden" name="endTime" role="user-params">
+	       	<input type="text" class="layui-input time" placeholder="请选择日期" name="time" role="user-params">
+	        <div class="personal-filter-line">
+				<input placeholder="搜索标题关键词" class="form-control ls-input" type="text" name="keyword" role="user-params">
+	            <button type="button" class="btn btn-primary" role="submit"><i class="iconfont icon-icon_search"></i></button>
+	            <span class="iconfont icon-icon_close reset hide"></span>
+	        </div>
+	    </form>
+    </div>
+    <div class="table-responsive data-list"></div>
+</div>
+<script>
+var MyMessageManage = (function(){
+	let moduleId = null,
+		searchFormSelector = null,
+		moduleCode = null,
+		tableManage = null;
+	init = function(p){
+		moduleId = p.moduleId;
+		moduleCode = p.moduleCode;
+		tableManage = new TableManage({
+		    wrapId: moduleId,
+		    moduleName: moduleCode,
+		    showColumns: []
+		},function(res){
+			console.log('res',res)
+			if(res.opt == 'detail') {
+				if(res.id) {
+					goPage('detail?id='+ res.id);
+				}
+			} else if(res.opt == 'handler') {
+				$http.get({
+		            url: "my-message/read",
+		            data: {id:res.id}
+		        }, function (res) {
+		        	goModule({
+						moduleName: 'examination',
+						directive: 'index'
+					});
+		        })
+			}
+			getCount();
+		});
+		eventInit();
+	},
+	getCount = function (){
+		$http.get({
+			url:"my-message/unread-message-count"
+		},function(res){
+			let total = res.result;
+			if(total == 0) {
+				$('.my-msg-dp .num').addClass('hide');
+			} else {
+				if(total > 99) {
+					total = '99+'
+				}
+				$('.my-msg-dp .num').removeClass('hide').text(total);
+			}
+		})
+	},
+	search = function(){
+		tableManage.loadList(1, 10)
+	},
+	eventInit = function(){
+		//时间控件初始化
+		laydate.render({ 
+		  elem: moduleId + ' .time',
+		  type: 'date',
+		  max: 0,
+		  range: '~',
+		  done: function(value, date, endDate){
+			    let startTime = '';
+	    			endTime = '';
+			    if(value!='') {
+			    	let list = value.split(' ~ ');
+			    		startTime = list[0] + ' 00:00:00';
+			    		endTime = list[1] + ' 23:59:59';
+			    	startTime = (new Date(startTime)).getTime();
+			    	endTime = (new Date(endTime)).getTime();
+			    }
+			    $(moduleId + ' input[name="startTime"]').val(startTime);
+			    $(moduleId + ' input[name="endTime"]').val(endTime)
+			    setTimeout(search);
+			  }
+		});
+		//搜索
+		$(moduleId + ' .dr-search-form button[role="submit"]').unbind().on('click',function(){
+			search();	
+		});
+		$(moduleId + ' .dr-search-form input[name="keyword"]').unbind('keyup').keyup('.form-control',function(){
+			let keyword = $(moduleId + ' .dr-search-form input[name="keyword"]').val();
+			if(keyword && $.trim(keyword).length > 0 ) {
+				$(moduleId + ' .dr-search-form .reset').removeClass('hide');
+			} else {
+				$(moduleId + ' .dr-search-form .reset').addClass('hide');
+			}
+		})
+		//重置
+		$(moduleId + ' .dr-search-form .reset').on('click',function(){
+			$(moduleId + ' .dr-search-form input[name="keyword"]').val('');
+			$(this).addClass('hide');
+			search();
+		});
+	};
+	return {
+		init: init
+	}
+}())	
+MyMessageManage.init({
+	moduleId:'#my-message-${timestamp}',
+	moduleCode: 'my-message'
+})
+</script>

@@ -1,0 +1,73 @@
+
+<table class="table table-striped m-t-sm">
+    <thead>
+    <tr>
+        <#if !showColumns?? || showColumns?seq_contains("select")>
+        <th><input type="checkbox" class="i-checks selectAll"></th>
+        </#if>
+        
+        <#if !showColumns?? || showColumns?seq_contains("name")>
+        <th>姓名</th>
+        </#if>
+        <#if !showColumns?? || showColumns?seq_contains("mobile")>
+        <th>电话</th>
+        </#if>
+        <#if !showColumns?? || showColumns?seq_contains("idCard")>
+        <th>身份证号</th>
+        </#if>
+        <#if !showColumns?? || showColumns?seq_contains("role")>
+        <th>角色</th>
+        </#if>
+        <#if !showColumns?? || showColumns?seq_contains("operation")>
+        <th>操作</th>
+        </#if>
+    </tr>
+    </thead>
+    <tbody>
+    <#list pagedResult.resultList as user>
+        <#if user.id == userId>
+            <#continue>
+        </#if>
+        <tr>
+            <#if !showColumns?? || showColumns?seq_contains("select")>
+            <td style="width:80px">
+                <input type="checkbox" class="i-checks itemSelect" value="${user.id}" >
+            </td>
+            </#if>
+            <#if !showColumns?? || showColumns?seq_contains("name")>
+            <td>${user.name}</td>
+            </#if>
+            <#if !showColumns?? || showColumns?seq_contains("mobile")>
+            <td>${user.mobile!user.username}</td>
+            </#if>
+            <#if !showColumns?? || showColumns?seq_contains("idCard")>
+            <td>${user.idCard!'信息缺失'}</td>
+            </#if>
+            <#if !showColumns?? || showColumns?seq_contains("role")>
+            <td>
+                <#assign role="">
+                <#list user.personFlocks as pf>
+                    <#if pf.type==1>
+                        <#assign role="1">
+                       ${pf.flock.name}&nbsp;
+                    </#if>
+                </#list>
+                ${(role=="")?string("暂无","")}
+            </td>
+            </#if>
+            <#if !showColumns?? || showColumns?seq_contains("operation")>
+                 <td style="display: flex;justify-content:space-around;width:120px">
+                     <a href="javascript:;" class="userOpts" data-opt="edit" data-id="${user.id}"><i class="fa fa-edit"></i></a>
+                     <a href="javascript:;" class="userOpts" data-opt="resetPassword" data-id="${user.id}"><i class="fa fa-unlock-alt"></i></a>
+                     <a href="javascript:;" class="userOpts" data-opt="${(user.userStatus==1)?string("disableUser","enableUser")}" data-id="${user.id}"><i class="fa fa-${(user.userStatus==1)?string("ban","check-circle-o")}"></i></a>
+                     <a href="javascript:;" class="userOpts" data-opt="deleteUser" data-id="${user.id}"><i class="fa fa-trash"></i></a>
+                 </td>
+            </#if>
+        </tr>
+    </#list>
+
+    </tbody>
+</table>
+<div class="pageContainer text-center" data-total="${pagedResult.totalCount}" data-page="${pagedResult.currentPage}">
+
+</div>

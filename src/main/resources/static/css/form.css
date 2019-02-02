@@ -1,0 +1,136 @@
+.group-item {
+    display: block;
+    /* overflow: hidden; */
+    position: relative;
+
+}
+.group-item > span {
+    position: absolute;
+    width: 120px;
+}
+
+.group-item > div {
+    width: 100%;
+    padding-left: 130px;
+    padding-right: 15px;
+    box-sizing: border-box;
+}
+
+.pic-selector > a.upload {
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+    border: 3px dashed #ccc;
+    border-radius: 10px;
+    color: #ccc;
+    font-size: 26px;
+    margin-right: 15px;
+    text-align: center;
+    line-height: 80px;
+}
+.pic-selector .selected-area li {
+    overflow: hidden;
+    float: left;
+    position: relative;
+    margin-right: 15px;
+} 
+.pic-selector .selected-area li > a {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+}
+.pic-selector .selected-area i.pic {
+    display: block;
+    width: 80px;
+    height: 80px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+table.related-items td:first-child {
+    display: none;
+}
+
+table.related-items td {
+    padding: 7px 15px 10px 0;
+}
+
+table.related-items a.remove {
+    width: 20px;
+    height: 20px;
+    background-color: red;
+    display: block;
+    border-radius: 20px;
+    text-align: center;
+    line-height: 20px;
+    color: #fff;
+    font-size: 14px;
+}
+div.choose-data {
+	min-height: 40px;
+	height: auto;
+	line-height: 26px;
+}
+div.choose-data .placeholder {
+	color: #999999;
+}
+div.note-editable ol {
+	list-style-type: decimal;
+	padding-left: 20px;
+}
+div.note-editable ol li { 
+ 	list-style-position:outside;
+ 	list-style: decimal;
+}
+div.note-editable ul {
+	padding-left: 20px;
+}
+div.note-editable ul li {
+	list-style-type: disc;
+}
+div.note-editor p {
+	margin: 0;
+}
+div.note-editor .note-btn-group > .btn{
+	height: 32px !important;
+    padding: 10px 15px !important;
+    font-size: 12px;
+    line-height: 10px !important;
+}
+div.note-editor .table th:last-child, 
+div.note-editor  .table td:last-child {
+	width: auto;
+}
+.form-horizontal .empty-content,
+.form-horizontal .empty-content .chosen-choices {
+	min-height: 40px;
+}
+.form-horizontal input.form-control[readonly] {
+	background: transparent;
+}
+.form-horizontal .nyrsfm-box {
+	position: relative;	
+}
+.form-horizontal .nyrsfm-box input {
+	padding: 12px 25px 12px 35px!important;
+}
+.form-horizontal .nyrsfm-box span {
+	position: absolute;
+}
+.form-horizontal .nyrsfm-box span:first-child {
+	top: 10px;
+	left: 10px;
+	color: #55A8FD;
+	font-size: 18px;
+}
+.form-horizontal .nyrsfm-box span:last-child {
+	top: 12px;
+	right: 12px;
+}
+.form-horizontal button[type="submit"] {
+	min-width: 140px;
+}
+	
+	
+

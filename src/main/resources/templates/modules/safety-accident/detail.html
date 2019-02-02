@@ -1,0 +1,264 @@
+<style>
+    .safetyAccidentDetailContainer {
+        height: 100%;
+    }
+
+    .safetyAccidentDetailContainer .wizard {
+        overflow: visible;
+        width: 80%;
+        margin: auto;
+        margin-top:30px;
+        position: relative;
+        background: #fff;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        border: none;
+        list-style: none;
+        margin-bottom: 40px;
+    }
+
+    .safetyAccidentDetailContainer .wizard:before {
+        content: " ";
+        position: absolute;
+        top: 50%;
+        bottom: 0;
+        width: 100%;
+        height: 5px;
+        margin-top: -5px;
+        background-color: #f5f5f5;
+        border-radius: 3px;
+        z-index: 0;
+    }
+
+    .safetyAccidentDetailContainer .wizard .wizard-item {
+
+        z-index: 98;
+        line-height: 1;
+        background: #fff;
+        cursor: pointer;
+        position: relative;
+
+    }
+
+    .safetyAccidentDetailContainer .wizard .wizard-item .title {
+        position: relative;
+        bottom: -20px;
+        text-align: center;
+        color: #bbb
+    }
+
+    .safetyAccidentDetailContainer .wizard .wizard-item .number {
+        overflow: visible;
+        display: block;
+        border: 2px solid #f5f5f5;
+        background: #f5f5f5;
+        width: 75px;
+        height: 75px;
+        text-align: center;
+        padding: 25px 0;
+        border-radius: 50%;
+        -webkit-box-shadow: inset 0px 0px 0px 3px #fff !important;
+        box-shadow: inset 0px 0px 0px 3px #fff !important;
+        text-decoration: none;
+        outline-style: none;
+        font-size: 18px;
+        font-weight: bold;
+        z-index: 99;
+        color: #bbb;
+        background: #f5f5f5;
+        line-height: 1;
+    }
+
+    .safetyAccidentDetailContainer .wizard .wizard-item.active .number {
+        background: #5bc0de;
+        border-color: #5bc0de;
+        color: #fff;
+    }
+    .safetyAccidentDetailContainer .wizard .wizard-item.active .title {
+        color: #5bc0de;
+    }
+    .safetyAccidentDetailContainer .wizard-content{
+        height:calc(100% - 160px)
+    }
+    .safetyAccidentDetailContainer .wizard-content .wizard-content-item{
+        display: none;
+        height:100%;
+    }
+    .safetyAccidentDetailContainer .wizard-content .wizard-content-item.active{
+        display: block;
+    }
+    .safetyAccidentDetailContainer .wizard-content .record-list{
+        margin: auto;
+        width:80%;
+        height:100%;
+    }
+    .safetyAccidentDetailContainer .wizard-content .record-list .attachment-list{
+        margin-top:15px;
+        display: grid;
+        grid-template-columns: 18% 18% 18% 18% 18%;
+        grid-column-gap: 2%;
+        grid-template-rows: 30px;
+        grid-auto-rows: 30px;
+        grid-row-gap: 10px;
+    }
+    .safetyAccidentDetailContainer .wizard-content .record-list .attachment-list .item{
+        width:100%;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+    .safetyAccidentDetailContainer .wizard-content .record-list .attachment-list .item a{
+        color:#55A8FD;
+    }
+    .safetyAccidentDetailContainer .wizard-content .wizard-content-item:nth-child(3) .record-list{
+        height:85% !important;
+    }
+    .safetyAccidentDetailContainer .wizard-content .social-feed-box{
+        border:none;
+    }
+
+    .safetyAccidentDetailContainer .wizard-content .social-feed-box .submitter{
+        color:#55A8FD;
+        font-size:14px;
+    }
+    .safetyAccidentDetailContainer .wizard-content .social-feed-box .submitDate{
+        color:#999999;
+        margin-left:29px;
+        font-size:14px;
+    }
+
+</style>
+<div class="wrapper-content safetyAccidentDetailContainer">
+
+    <ul class="wizard">
+
+        <li class="wizard-item active" data-item="1">
+            <div class="number">
+                1
+            </div>
+            <div class="title">
+                调查过程
+            </div>
+        </li>
+        <li class="wizard-item" data-item="2">
+            <div class="number">
+                2
+            </div>
+            <div class="title">
+                调查结果
+            </div>
+        </li>
+        <li class="wizard-item" data-item="3">
+            <div class="number">
+                3
+            </div>
+            <div class="title">
+                处理结果
+            </div>
+        </li>
+
+    </ul>
+
+    <div class="wizard-content">
+        <div class="wizard-content-item active" data-item="1" data-stage="investigationProcess" data-loaded="false">
+
+        </div>
+        <div class="wizard-content-item" data-item="2" data-stage="finding"  data-loaded="false">
+
+        </div>
+        <div class="wizard-content-item" data-item="3" data-stage="handleResult"  data-loaded="false">
+
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    (function () {
+        var that = this;
+        this.id = ${id};
+        this.isMember = ${isMember?string('true','false')};
+        this.isFinished = ${isFinished?string('true','false')};
+        this.optData = {}
+        var $this = {
+            init: function () {
+                this.wizardEvent();
+                this.bindEvent();
+                $(".safetyAccidentDetailContainer .wizard-content-item").each(function(){
+                    that.loadList($(this).data("stage"));
+                })
+
+            },
+            add:function(){
+                goPage("recordForm?accId="+this.id+"&stage="+this.optData.stage)
+            },
+            edit:function(){
+                goPage("recordForm?id="+this.optData.id+"&accId="+this.id+"&stage="+this.optData.stage)
+            },
+            finishAccident:function(){
+                var inValidMsg = "";
+                $(".wizard-content-item").each(function(){
+                    var l = $(this).find(".social-feed-box").length
+                    if(l==0){
+                        inValidMsg = "目前暂时没有"+$(".wizard-item[data-item='"+$(this).data("item")+"']").find(".title").html()+"记录,无法完结";
+                        return false;
+                    }
+                })
+                if(inValidMsg!=""){
+                    layer.msg(inValidMsg,{icon:5})
+                    return
+                }
+                $http.post({
+                    url:"safety-accident/finishAccident",
+                    oper_cn:"完结调查",
+                    data:{id:id}
+                },function(res){
+                    history.go(-1)
+                })
+            },
+            wizardEvent:function(){
+                $(".safetyAccidentDetailContainer .wizard-item").click(function () {
+                    var item = $(this).data("item")
+                    $(this).addClass("active")
+
+                    $(this).siblings().removeClass("active")
+                    var contentItem = $(".safetyAccidentDetailContainer .wizard-content .wizard-content-item[data-item='"+item+"']");
+                    if(!contentItem.data("loaded")){
+                        that.loadList(contentItem.data("stage"))
+                    }
+                    if(!contentItem.hasClass("active")){
+                        contentItem.addClass("active")
+                        contentItem.siblings().removeClass("active")
+                    }
+                })
+            },
+            loadList:function(stage){
+                $http.get({
+                    url:"safety-accident/recordList",
+                    data: {
+                        id:id,
+                        stage:stage
+                    }
+                },function(res){
+                    var container = $(".safetyAccidentDetailContainer .wizard-content .wizard-content-item[data-stage='"+stage+"']");
+                    container.html(res).data("loaded",true);
+                    if(!that.isMember || that.isFinished){
+                        container.find(".recordOpts").parent().hide()
+                        container.find(".record-list").css({height:"100%"})
+                    }
+                })
+            },
+            bindEvent: function () {
+                $(".safetyAccidentDetailContainer").on("click",".recordOpts",function(){
+                    var opt = $(this).data("opt")
+                    that.optData = $(this).data()
+                    eval("that."+opt+"()");
+                })
+                $(".safetyAccidentDetailContainer .wizard-content .wizard-content-item").on("refresh",function(){
+                    that.loadList($(this).data("stage"))
+                })
+            }
+        }
+        $.extend(this, $this)
+        this.init()
+    })()
+</script>

@@ -1,0 +1,12 @@
+<!-- 实验室分类 -->
+<input type="hidden" name="labType">
+<div class="dropdown" id="lab-types-${timestamp}" style="min-width: 100px"></div>
+<div class="filter-name">实验室分类</div>
+<script>
+$http.get({
+    url: 'tpl/lab-types',
+    forbidLoading: true
+}, function(res) {
+    $('#lab-types-${timestamp}').html(res);
+})
+</script>

@@ -1,0 +1,98 @@
+<style>
+    .al-manage .th-applyStatus,
+    .al-manage .td-applyStatus {
+        display: none;
+    }
+    .al-manage th:first-child,
+    .al-manage td:first-child {
+        padding-left: 15px;
+        position: relative;
+    }
+    td.unHandle::before {
+        content: '';
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 8px;
+        background-color: #FF4D77;
+        position: absolute;
+        left: 0;
+        top: 20px;
+    }
+    
+    .td-qrcode a {
+        font-size: 26px;
+    }
+    .td-operation > a {
+        display: inline-block;
+        height: 30px;
+        line-height: 30px;
+        padding: 0 15px;
+        border: 1px solid #3E4956;
+        color: #3E4956;
+        border-radius: 4px;
+    }
+    
+    .td-operation > a > i {
+        display: none;
+    }
+</style>
+<div class="common-management" id="common-management-${timestamp}">
+    <div class="tabs-container horizontal-tabs">
+        <ul class="nav nav-tabs">
+            <#list tpl.groups as group>
+                <li class="<#if group_index == 0>active</#if>">
+                    <a data-toggle="tab" href="#qrcode-group-${group.id}" aria-expanded="true"> ${group.name}</a>
+                </li>
+            </#list>
+        </ul>
+
+        <div class="tab-content">
+            
+            <#list tpl.groups as group>
+                <div id="qrcode-group-${group.id}" class="tab-pane <#if group_index == 0>active</#if>">
+                    <div class="panel-body qrcode-group">
+                        
+                    </div>
+                </div>
+            </#list>
+        </div>
+    </div>
+</div>
+
+<script>
+    var QrCodeManage = function(p) {
+        $.extend(this, p);
+        var that = this;
+        
+        that.loadManageList = function() {
+            var suffix = '#common-management-${timestamp} .qrcode-group';
+            that.dataUrl = [{
+                'url': 'qrcode/manage'
+            },{
+                'url': 'application-list/manage'
+            }]
+
+            $(suffix).each(function(i){
+                var self = $(this);
+                $http.get({
+                    url: that.dataUrl[i].url,
+                    data: {
+                        ecmId: ${ecmId}
+                    }
+                }, function(res) {
+                    self.html(res);
+                })
+            });
+        };
+
+
+        that.init = function() {
+            that.loadManageList();
+        };
+        that.init();
+    };
+
+    new QrCodeManage();
+
+</script>

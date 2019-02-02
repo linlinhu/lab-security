@@ -1,0 +1,26 @@
+
+<style>
+.inspect-lab-info .item.qrcode,
+.inspect-lab-info .map-selection {
+    display: none;
+}
+</style>
+<section class="bread-crumb">${detailTitle!'安全检查管理'} &gt;&gt; <span class="text-navy">查看详情</span></section>
+    
+<div class="basic-box sc-info lab-info inspect-lab-info">
+    <div class="seperate-title">
+        <span>实验室信息</span>
+        <div class="opts">
+            
+        </div>
+    </div>
+    <#include "../../tpl/detail.html"/>
+</div>
+
+<div class="basic-box">
+    <div class="seperate-title">
+        <span>过程追踪</span>
+        <div class="opts"></div>
+    </div>
+    <#include "history.html"/>
+</div>

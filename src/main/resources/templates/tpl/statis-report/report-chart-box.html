@@ -1,0 +1,86 @@
+<!-- <div class="ibox float-e-margins report-box">
+    <div class="ibox-content report-box-content">
+        <div class="content">
+            <div class="title">${name}</div>
+            <div class="sum">
+                <span class="number">${count}</span>个
+            </div>
+        </div>
+        <div class="media">
+            <i class="icon-img"></i>
+        </div>
+    </div>
+</div> -->
+
+<style>
+    .report-statis-box {
+        position: relative;
+        min-width: 360px;
+        height: 130px;
+        box-sizing: border-box;
+        padding: 30px 50px;
+        box-sizing: border-box;
+        background:rgba(255,255,255,1);
+        box-shadow:0px 3px 12px 1px rgba(34,83,133,0.16);
+        border-radius:8px;
+        color: #3E4956;
+    }
+
+    
+    .report-statis-box > .title {
+        font-size: 17px;
+        line-height: 17px;
+    }
+    
+    .report-statis-box > .content {
+        font-size: 15px;
+        margin-top: 15px;
+    }
+    
+    .report-statis-box > .content > .number {
+        font-size: 28px;
+        line-height: 28px;
+        font-weight: bold;
+        margin-right: 15px;
+        color: #1DCCFF;
+    }
+
+    
+    .report-statis-box > i {
+        display: block;
+        width: 74px;
+        height: 26px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-image: url(img/statis-report/line_chart_blue.png);
+        position: absolute;
+        right: 40px;
+        bottom: 32px;
+    }
+
+    .rs-purple-box .number {
+        color: #7D68FF !important;
+    }
+    
+    .rs-purple-box i {
+        background-image: url(img/statis-report/line_chart_purple.png) !important;
+    }
+
+    
+    .rs-orange-box .number {
+        color: #FF9625 !important;
+    }
+    
+    .rs-orange-box i {
+        background-image: url(img/statis-report/line_chart_orange.png) !important;
+    }
+</style>
+
+<div class="report-statis-box rs-${color}-box">
+    <div class="title">${name}</div>
+    <div class="content">
+        <span class="number">${count}</span>${unit!'个'}
+    </div>
+    <i></i>
+</div>

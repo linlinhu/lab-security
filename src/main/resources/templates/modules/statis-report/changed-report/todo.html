@@ -1,0 +1,22 @@
+
+<div id="changed-report-todo-${timestamp}">
+    <div class="data-list"></div>
+</div>
+<script>
+var changedTmElem = '#changed-report-todo-${timestamp}';
+var changedTm = new TableManage({
+    wrapId: changedTmElem,
+    moduleName: 'changed-report',
+    params: {
+        ecmId: '${ecmId}',
+        hiddenDangerGrade: '${hiddenDangerGrade}',
+        startTime: '${startTime}',
+        endTime: '${endTime}'
+    }
+});
+
+$($(changedTmElem).parent().parent().parent().siblings('form')[0]).unbind('change').change(function() {
+    changedTm.params = $(this).serializeObject();
+    changedTm.loadList(1, 10);
+});
+</script>

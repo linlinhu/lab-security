@@ -1,0 +1,26 @@
+<form class="dr-search-form">
+   	<input type="hidden" name="type" role="user-params">
+   	<#if type==2 || type==3>
+       	<div class="dropdown-box">
+			<#include "../basic-config/view-scope.html"/>
+		</div>
+    </#if>
+	<input type="hidden" name="startTime" role="user-params">
+    <input type="hidden" name="endTime" role="user-params">
+    <div class="time-select">
+    	<i class="iconfont icon-icon_calendar"></i>
+    	<input type="text" class="layui-input ls-input" placeholder="请选择日期" name="time" role="user-params">
+    	<i class="iconfont icon-icon_pull-down1"></i>
+    </div>
+    
+    <#if type==1 || type==4>
+       	<div class="personal-filter-line">
+			<input placeholder="搜索标题关键词" class="form-control ls-input" type="text" name="keyword" role="user-params">
+           <button type="button" class="btn btn-primary" role="submit"><i class="iconfont icon-icon_search"></i></button>
+           <span class="iconfont icon-icon_close reset hide"></span>
+       	</div>
+     </#if>
+</form>
+<#if type==1 || type==4>
+	<a class="btn btn-primary publish-notify"><#if type==1>发布通知<#else>发布公告</#if></a>
+</#if>

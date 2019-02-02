@@ -1,0 +1,17 @@
+<div class="my-tab-container">
+    <ul class="my-tabs">
+        <#list changedItems as citem>
+            <li class="<#if citem_index == 0>active</#if>">
+                <a data-toggle="tab" href="#changed-items_${citem.code}" data-code="${citem.code}" data-load-url="${citem.loadUrl}" aria-expanded="true"> ${citem.codeName}</a>
+            </li>
+        </#list>
+    </ul>
+    <div class="my-tab-content">
+        <#list changedItems as citem>
+            <div id="changed-items_${citem.code}" class="my-tab-pane <#if citem_index == 0>active</#if>">
+                <div class="safety-changed-group"></div>
+            </div>
+        </#list>
+    </div>
+</div>
+<script src="js/safetyChanged/SafetyChanged.js"></script>

@@ -1,0 +1,49 @@
+<style>
+.examination .green {
+	color: #28D582;
+}
+.examination .red {
+	color: #FF4D77;
+}
+.examination .table thead,
+.examination .table thead tr,
+.examination .table thead th {
+	height: 30px;
+}
+.examination .table td:nth-child(2) {
+	padding-left: 20px;
+}
+</style>
+<div class="wrapper-content examination" id="examination-${timestamp}">
+    <div class="table-responsive data-list"></div>
+</div>
+<script>
+new TableManage({
+    wrapId: '#examination-${timestamp}',
+    moduleName: 'examination',
+    showColumns: []
+},function(res){
+	console.log('res',res)
+	let confirmMsg = '确认拒绝这条申请吗?',
+		isAgree = 2,
+		params = {
+			id: res.id
+		};
+	if(res.opt == 'agree') {
+		confirmMsg = '确认通过这条申请吗?';
+		isAgree = 1;
+	}
+	params.isAgree = isAgree;
+	verify({params:params,confirmMsg:confirmMsg});
+})
+function verify(data){
+	$http.post({
+         url: 'examination/verify',
+         data: data.params,
+         forbidLoading: false,
+         confirmMsg: data.confirmMsg
+     }, function(res) {
+    	 goPage('index');
+     })
+}
+</script>

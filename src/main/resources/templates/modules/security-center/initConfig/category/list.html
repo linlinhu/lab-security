@@ -1,0 +1,18 @@
+<#list categories as category>
+    <div class="categoryItem">
+        <#if  category.id??>
+             <span class="badge deleteBtn configOpts" data-opt="delete" data-id="${category.id}" data-group-code="${groupCode}" data-group-name="${groupName}"><span class="fa fa-times"></span></span>
+        </#if>
+
+        <div class="categoryItemContent">
+            <img class="categoryIcon img-responsive" src="/img/security-center/${groupCode}.png">
+            <span class="name">${category.name}</span>
+        </div>
+        <div style="position: absolute;right:12px;bottom: 12px;">
+            <a href="javascript:;" class="configOpts" data-opt="detail" data-item-code="${category.code}" data-group-code="${groupCode}" data-group-name="${groupName}" style="color: #55A8FD;" >配置</a>
+        </div>
+
+    </div>
+</#list>
+
+

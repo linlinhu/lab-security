@@ -1,0 +1,188 @@
+/**扩展控件相关的CSS**/
+
+/*
+    邮箱联想输入控件的CSS Start
+ */
+ul.emailSelector {
+    position: absolute;
+    list-style: none;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    z-index: 999999999;
+    display: none;
+    margin: 0;
+    padding: 0;
+    min-width: 240px;
+    border-radius: 5px;
+}
+
+ul.emailSelector > li {
+    background-color: #fff;
+    color: #333;
+    font-family: Arial, "微软雅黑";
+    padding: 5px 15px;
+    cursor: pointer;
+}
+
+ul.emailSelector > li.active {
+    /* 激活样式 可以根据自己需要修改 */
+    background-color: #09c;
+    color: #fff;
+}
+/*
+    邮箱联想输入控件的CSS end
+ */
+
+
+/*  重写 Btn样式 覆盖颜色*/
+
+.btn {
+    border: 0;
+}
+.btn[disabled]{
+    background: #CCCCCC !important;
+}
+.btn:focus,
+.btn:active:focus,
+.btn.active:focus,
+.btn.focus,
+.btn:active.focus,
+.btn.active.focus {
+    outline: none;
+}
+/**
+ Primary Btn
+ */
+.btn-primary{
+    background: #55A8FD !important;
+    color:#fff;
+}
+.btn-primary:hover{
+    background: #77B9FD !important;
+}
+.btn-primary:active{
+    background: #4C97E3 !important;
+}
+
+/**
+  Success Btn
+ */
+
+.btn-success{
+    background: #67C23A !important;
+}
+.btn-success:hover{
+    background: #85CE61 !important;
+}
+.btn-success:active{
+    background: #5CAE34 !important;
+}
+
+/*
+ Warning Btn
+*/
+.btn-warning{
+    background: #E6A23C !important;
+}
+.btn-warning:hover{
+    background: #EBB563 !important;
+}
+.btn-warning:active{
+    background: #CF9136 !important;
+}
+
+/*
+ Danger Btn
+*/
+.btn-danger{
+    background: #F56C6C !important;
+}
+.btn-danger:hover{
+    background: #F78989 !important;
+}
+.btn-danger:active{
+    background: #DC6161 !important;
+}
+
+/*
+ Danger Btn
+*/
+.btn-info{
+    background: #48C5EA !important;
+}
+.btn-info:hover{
+    background: #6DD1EE !important;
+}
+.btn-info:active{
+    background: #41B1D2 !important;
+}
+
+
+.btn-default{
+    border:1px solid #D6DBE6;
+    color:#3E4956;
+    background: #FFFFFF;
+}
+.btn-default:hover{
+    color:#3E4956;
+    background: #F5F7FA !important;
+}
+.btn-default:active{
+    color:#3E4956;
+    background: #E3E6E8 !important;
+}
+.btn-default:focus{
+    color:#3E4956;
+    background: #FFFFFF !important;
+}
+
+.ls-input,
+.ls-btn{
+    height: 40px !important;
+    padding: 12px 16px !important;
+    font-size: 14px;
+    line-height: 16px !important;
+}
+th,
+td {
+    height: 60px;
+    text-align: left
+}
+
+.table th:last-child,
+.table td:last-child {
+    text-align: right;
+    width: 100px;
+}
+
+
+.table td:last-child > a {
+    color: #55A8FD
+}
+
+.pageContainer input,
+.pageContainer button {
+    height: 30px !important;
+    padding: 0 10px !important;
+}
+
+.pageContainer button {
+    background-color: #55A8FD;
+    color: #fff;
+    border: 0;
+}
+.wrapper-content {
+    padding: 30px 60px;
+}
+
+.searchInputGroup .input-group-addon:nth-child(1){
+    color:rgba(200,200,200,.8);
+}
+.searchInputGroup input:focus,.searchInputGroup input::-moz-focus-inner{
+    border-color: #e5e6e7 !important;
+}
+.searchInputGroup input{
+    border-left:none !important;
+
+}
+

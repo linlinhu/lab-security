@@ -1,0 +1,56 @@
+<div class="wrapper-content">
+    <form class="form-horizontal phForm">
+        <input type="hidden" value="${(ph.id)!''}" name="id">
+        <input type="hidden" value="${(ph.code)!''}" name="code">
+        <div class="form-group">
+            <label class="col-sm-3">等级名称</label>
+            <div class="col-sm-8">
+                <input class="form-control ls-input" name="name" value="${(ph.name)!''}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3">问题等级</label>
+            <div class="col-sm-8">
+                <select class="form-control" name="value" multiple='multiple' data-placeholder="选择问题等级">
+                    <#list levels?sort as l>
+                        <option value="${l}">${l}级</option>
+                    </#list>
+                </select>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    $('.phForm:visible select[name="value"]').select2({
+        language:"zh-CN"
+    })
+     <#if ph??>
+        var arr = []
+         <#list ph.value?split(",") as l>
+         arr.push("${l}")
+         </#list>
+        $('.phForm:visible select[name="value"]').val(arr).trigger("change")
+     </#if>
+    $(".phForm:visible").validate({
+        rules: {
+            name: {
+                required: true,
+                rangelength: [1,4]
+            },
+            value: {
+                required: true
+            }
+
+        },
+        messages: {
+            name: {
+                required: icon + "请输入等级名称",
+                rangelength: icon + "用户姓名输入长度限制为1-4个字符"
+            },
+            value: {
+                required: icon + "请选择问题等级",
+            }
+
+        }
+    })
+</script>

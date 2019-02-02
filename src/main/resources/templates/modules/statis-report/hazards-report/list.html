@@ -1,0 +1,31 @@
+<div class="mgt20" id="statisreport-hazards-tablelist">
+    <form>
+        <div class="my-filter-line">
+            <div>
+                <#include "../../../tpl/basic-config/view-scope.html" />
+            </div>
+
+            <div>
+                <#include "../../../tpl/basic-config/danger-sources.html" />
+            </div>
+            <div class="rgt">
+                <a class="btn ls-btn btn-primary download" href="javascript:;">下载表格</a>
+            </div>
+        </div>
+    </form>
+    <div class="data-list"></div>
+</div>
+<script>
+    var statisreportTablelistElem = '#statisreport-hazards-tablelist';
+    new TableManage({
+        wrapId: statisreportTablelistElem,
+        moduleName: 'hazards-report',
+        ecmId: '${ecmId}'
+    })
+    
+    $(statisreportTablelistElem + ' a.download').unbind().click(function(){
+        layer.msg('下载程序已启动，请稍后..')
+        document.getElementById("ifile").src = '${downloadUrl}';
+        return false;
+    });
+</script>

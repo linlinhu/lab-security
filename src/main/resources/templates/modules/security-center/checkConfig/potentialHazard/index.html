@@ -1,0 +1,155 @@
+<style class="wrapper-content">
+
+    .phLevelManagement .phList {
+        display: grid;
+        grid-template-columns: 22% 22% 22% 22%;
+        grid-column-gap: 4%;
+        grid-row-gap: 40px;
+    }
+    .phLevelManagement .phList .categoryItem{
+        box-shadow:0px 3px 12px 1px  rgba(34,83,133,0.16);
+        border-radius: 8px;
+        height:160px;
+        position: relative;
+    }
+    .phLevelManagement .phList .categoryItem .deleteBtn{
+        float:right;
+
+    }
+    .phLevelManagement .phList .categoryItem .categoryItemContent{
+        display: table;
+    }
+    .phLevelManagement .phList .categoryItem .content{
+        height:100px;
+        display: grid;
+        grid-template-columns: 30% 30% 30%;
+        grid-column-gap: 3%;
+        grid-template-rows: 45% 45%;
+    }
+    .phLevelManagement .phList .categoryItem .content span{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .phLevelManagement .phList .categoryItem .title{
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        height:44px;
+        text-align:center;
+        line-height:44px;
+        border:none;
+        padding-left: 16px;
+        padding-right:16px;
+        color:#fff;
+    }
+
+    .phLevelManagement .phList .categoryItem .categoryIcon{
+        display: inline;
+        margin-right:10px;
+    }
+
+</style>
+<div class="wrapper-content phLevelManagement">
+
+
+    <div class="col-sm-6 " style="background:#F1F3F4;border:1px solid #D6DBE6 ;padding:13px 25px;margin-bottom:30px " >
+        提醒：您可<span style="color:#55A8FD">添加问题等级</span>，配置其<span style="color:#55A8FD">对应的检查项等级</span>
+    </div>
+    <div class="col-sm-6 text-right">
+        <button class="btn ls-btn btn-sm btn-primary phLevelOpts" data-opt="add"><i class="iconfont icon-icon_"></i> 添加</button>
+    </div>
+
+    <div class="phList col-sm-12" style="padding:0">
+
+    </div>
+</div>
+<script type="text/javascript">
+    (function(){
+
+        var that = this
+        this.availableLevels = [1,2,3,4,5,6]
+        this.optData = {}
+        var $this = {
+            init:function(){
+                $(".phLevelManagement .phList").unbind("loaded").on("loaded",function(e,avalibleLevels){
+
+                    that.avalibleLevels = avalibleLevels
+                })
+                this.loadList()
+
+            },
+            bindEvent:function(){
+
+                $(".phLevelManagement .phLevelOpts").unbind("click").click(function(){
+                    var opt = $(this).data("opt");
+                    that.optData = $(this).data();
+                    eval("that."+opt+"()");
+                })
+
+            },
+            _form:function(code){
+                $http.get({
+                    url:"checkItem/phForm",
+                    traditional:true,
+                    data:{
+                        code:code,
+                        avalibleLevels:avalibleLevels
+                    }
+                },function(res){
+                    layer.open({
+                        title:(code?"修改":"添加")+"等级",
+                        type:1,
+                        zIndex:20,
+                        area:"440px",
+                        btn:["保存"],
+                        content:res,
+                        yes:function(index,layero){
+                            var form = $(layero).find(".phForm")
+                            if(form.valid()){
+                                var data = form.serializeObject();
+                                console.log(data)
+                                $http.post({
+                                    url:"checkItem/savePh",
+                                    data:data,
+                                    traditional:true
+                                },function(res){
+                                    layer.close(index)
+                                    that.loadList()
+                                })
+                            }
+                        }
+                    })
+                })
+            },
+            add:function(){
+                this._form()
+
+            },
+            delete:function(){
+                $http.post({
+                    url:"security-center-initConfig/deleteCategory",
+                    oper_cn:"删除",
+                    data:{
+                        id:that.optData.id
+                    }
+                },function(res){
+                    that.loadList()
+                })
+            },
+            edit:function(){
+                this._form(that.optData.code)
+            },
+            loadList:function(){
+                $http.get({
+                    url:"checkItem/phList",
+                },function(res){
+                    $(".phLevelManagement .phList").html(res)
+                    that.bindEvent()
+                })
+            }
+
+        }
+        $.extend(this,$this)
+        this.init()
+    })()
+</script>

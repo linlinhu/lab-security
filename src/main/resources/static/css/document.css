@@ -1,0 +1,155 @@
+
+.document-manage {
+	height:100%;
+	padding:0;
+}
+.document-manage .cate-area,
+.document-manage .right-area  {
+	height:100%;
+	display: inline-block;
+	float: left;
+}
+.document-manage .cate-area {
+	width: 199px;
+	background: #ffffff;
+	border-right: 1px solid #DCE3E9;
+    overflow: auto;
+	
+}
+.document-manage .right-area {
+	width: calc(100% - 200px);
+	padding: 30px 70px 0 70px;
+	background: #ffffff;
+	overflow: auto;
+}
+
+.document-manage .cate-area .add-cate {
+	margin-top: 30px;
+	text-align: center;
+	width: 140px;
+}
+.document-manage .cate-area .add-cate .iconfont {
+	font-size: 18px;
+}
+
+.document-manage .table-box .treetable-component {
+	height: calc(100% - 200px);
+	overflow: auto;
+}
+
+.document-manage .filter-line .ibox-tools {
+	float: right;
+	margin-right: 0;
+}
+.document-manage .filter-line .ibox-tools .btn {
+	height: 40px;
+	width: 120px;
+	text-align: center;
+	padding: 10px 12px;
+}
+.document-manage .filter-line .btn-yellow {
+	background: #FFD658;
+	border-color: #FFD658;
+}
+.document-manage .filter-line {
+	border: 0;
+}
+.personal-filter-line {
+	position: relative;
+}
+.personal-filter-line input.form-control {
+	width: 260px !important;
+	height: 40px;
+	margin-right: 0;
+	border: 1px solid #D6DBE6;
+	border-right: 0;
+	border-top-left-radius: 4px;
+	border-bottom-left-radius: 4px;
+	
+}
+.personal-filter-line .btn {
+	height: 40px;
+	width: 40px;
+	border-top-left-radius: 0px;
+	border-bottom-left-radius: 0px;
+}
+.personal-filter-line .btn .iconfont {
+	font-size: 16px;
+}
+.personal-filter-line .iconfont.reset {
+	position: absolute;
+	right: 54px;
+	top: 14px;
+}
+.document-manage ul.path {
+	min-height: 20px;
+	margin-bottom: 20px;
+}
+.document-manage ul.path .left {
+	float: left;
+}
+.document-manage ul.path li{
+	height: 24px;
+	line-height: 24px;
+	display: inline-block;
+	font-size: 16px;
+}
+.document-manage ul.path li:last-child {
+	color: #55A8FD;
+}
+.document-manage ul.path .iconfont {
+	font-size: 12px;
+	padding: 5px 5px;
+}
+.document-manage .path li:hover {
+	text-decoration: underline;
+	color: #3A8FE2;
+	cursor: pointer;
+}
+.document-manage .iconfont {
+	font-size: 13px;
+}
+.document-manage .table tr{
+	height: 60px;
+	border-bottom: 1px solid #DCE3E9;
+}
+.document-manage .batch-oper {
+	margin-top: -40px;
+}
+.document-manage .batch-oper a {
+	margin-right: 24px;
+}
+.document-manage .right-menu {
+	position: absolute;
+    border: 1px solid #70B2E1;
+    color: #3A8FE2;
+    background: #ffffff;
+}
+.document-manage .right-menu li{
+	border-bottom: 1px solid #D7E5F2;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+.document-manage .right-menu li:last-child{
+	border-bottom: none;
+}
+.document-manage .right-menu li:hover {
+	background: #D2E0EC;
+}
+
+
+.document-manage .cate-area .nav-tabs {
+	border: 0;
+	height: calc(100% - 80px);
+		
+}
+.document-manage .cate-area .nav-tabs li{
+	display:block;
+	width: 100%;
+}
+.document-manage .cate-area .nav-tabs li a:hover {
+	background: transparent;
+}
+.document-manage .cate-area .nav-tabs .active a {
+	border: 0px!important;
+}

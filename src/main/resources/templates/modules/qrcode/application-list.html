@@ -1,0 +1,134 @@
+<div class="wrapper-content common-management al-manage" id="common-management-${timestamp}">
+    <form>
+        <div class="row">
+            <div class="col-sm-6" style="padding-left:10px">
+                <button type="button" class="entityOpts btn ls-btn btn-primary" data-opt="print">批量打印</button>
+                <button type="button" class="entityOpts btn ls-btn btn-primary" data-opt="printMsg">批量通知打印完成</button>
+            </div>
+            <div class="col-sm-3">
+            </div>
+            <div class="col-sm-3">
+                <div class="input-group">
+                    <input type="text" placeholder="请输入关键词" class="input-sm form-control ls-input" name="keyword">
+                    <span class="input-group-btn">
+                        <button type="button" onclick="reloadList('keyword')" class="btn ls-btn btn-sm btn-primary"><i class="fa fa-search"></i></button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="table-responsive data-list"></div>
+</div>
+
+<script>
+var wrapId = '#common-management-${timestamp}';
+var moduleName = 'application-list';
+var showColumns = ${showColumns!'[]'};
+
+
+var alTm = new TableManage({
+    wrapId: wrapId,
+    moduleName: moduleName,
+    showColumns: showColumns,
+    ecmId: '${ecmId}',
+    loaded: function() {
+        $(wrapId + ' .td-applyStatus').each(function() {
+            var tdEl = $($(this).siblings()[0])
+            var applyStatus = $(this).html().replace(/\s*/g,"");
+            if (parseInt(applyStatus) == 20) {
+                tdEl.addClass('unHandle');
+            } else {
+                tdEl.removeClass('unHandle');
+            }
+        });
+
+        $(wrapId + ' td.unHandle').each(function() {
+            $(this).siblings('.td-operation').find('a[data-opt="printMsg"]').addClass('hide');
+        });
+    }
+}, function(res) {
+    var codesManage = new CodesManage();
+    var opt = res.opt;
+    var params = function() {
+        var sns = [];
+        var ids = [];
+        if (res.sn && res.id) {
+            sns.push(res.sn);
+            ids.push(res.id);
+        }
+        if (!res.sn && !res.id) {
+            if ($(wrapId + ' div.checked').length > 0) {
+                $(wrapId + ' div.checked').each(function() {
+                    var sn = $(this).siblings('input[name="sn"]').val();
+                    if (sn) {
+                        sns.push(sn);
+                    }
+                    var id = $(this).siblings('input[name="id"]').val();
+                    if (id) {
+                        ids.push(id);
+                    }
+                });
+            }
+        }
+        return {
+            sns: sns,
+            ids: ids
+        }
+    };
+    var print = function() {
+        var ids = params().ids;
+        if (ids.length == 0) {
+            layer.msg('未选择批量打印数据对象');
+            return false;
+        }
+        codesManage.recordPrint(ids.join(','), function() {
+            var sns = params().sns;
+            if (sns.length > 0) {
+                codesManage.codesPrint(sns.join(','));
+            }
+        })
+    };
+
+    var printMsg = function() {
+        var ids = params().ids;
+        if (ids.length == 0) {
+            layer.msg('未选择通知打印数据对象');
+            return false;
+        } else {
+            var unHandleLen = 0;
+            for (var i in ids) {
+                var id = ids[i];
+                if (id) {
+                    var isUnHandle = $(wrapId + ' td input[name="id"][value="' + id + '"]').parent().hasClass('unHandle');
+                    if (isUnHandle) {
+                        unHandleLen ++;
+                    }
+                }
+            }
+            
+            if (unHandleLen > 0) {
+                layer.msg('您勾选了未打印的数据对象进行已打印通知，请重新选择！');
+                return fasle;
+            }
+            codesManage.noticePrinted(ids.join(','));
+        }
+    }
+    var qrcode = function() {
+        codesManage.codesShow(res.sn);
+    }
+    
+    eval(opt + '()');
+})
+
+
+function reloadList(key) {
+    if (key == 'keyword') {
+        var val = $(wrapId + ' form input[name="keyword"]').val();
+        if (val.replace(/\s*/g,"").length == 0) {
+            layer.msg('关键词不能为空！');
+            return false;
+        }
+    }
+    alTm.loadList(1, 10);
+}
+</script>

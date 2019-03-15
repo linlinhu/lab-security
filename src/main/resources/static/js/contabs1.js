@@ -9,7 +9,7 @@ function loadContentData(p, callback) {
 		menuItem,//当前选中的菜单
 		iframeIndex,
 		jumpUrl = '';//菜单跳转的路径
-
+    layer.closeAll()
 
 	menuItem = $('.J_menuItem[data-index=' + _index + ']');
 	if (menuItem.length == 1) {
@@ -215,7 +215,6 @@ function goPage(directive, params, callback) {
 		directive: directive
 	})
 	goModule(params, callback);
-
 
 }
 /***

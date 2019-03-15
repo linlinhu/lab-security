@@ -11,6 +11,7 @@ import cn.cdyxtech.lab.constain.ApplicationConstain;
 import cn.cdyxtech.lab.controller.HeaderCommonController;
 import cn.cdyxtech.lab.feign.BasicInfoAPI;
 import cn.cdyxtech.lab.feign.MelAPIFeign;
+import cn.cdyxtech.lab.filter.MenuOperationFilter;
 
 import java.util.Map;
 
@@ -18,15 +19,20 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.emin.base.dao.PageRequest;
 import com.emin.base.exception.EminException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 @RequestMapping("/application-list")
 public class ApplicationListController extends HeaderCommonController {
+    private Logger logger = LoggerFactory.getLogger(QrcodeController.class);
     @Autowired
     private MelAPIFeign melApiFeign;
 
     @Autowired
     private BasicInfoAPI basicInfoApi;
+    @Autowired
+	MenuOperationFilter menuOperationFilter;
 
     public JSONObject tpl() {
         JSONObject res = new JSONObject();
@@ -56,6 +62,12 @@ public class ApplicationListController extends HeaderCommonController {
         if(ArrayUtils.isNotEmpty(showOperations)){
             data.put("showOperations",showOperations);
         }
+        try {
+			String operationCodes = menuOperationFilter.menuOperations("qrcode");
+			data.put("operationCodes", operationCodes);
+		} catch (Exception e) {
+            logger.error("二维码管理界面跳转，加载权限出现异常->" + e.getMessage());
+		}
         data.put("ecmId", ecmId);
 
         return "modules/qrcode/application-list";
@@ -71,6 +83,8 @@ public class ApplicationListController extends HeaderCommonController {
         data.put("tpl", tpl().getJSONArray("groups").getJSONObject(1));
         PageRequest pr = getPageRequestData();
         JSONObject res = basicInfoApi.printApplyPage(ecmId, userId, pr.getCurrentPage(), pr.getLimit(), keyword);
+        this.dealException(res);
+
         data.put("data", res.getJSONObject("result"));
         if(showColumns!=null){
             data.put("showColumns",showColumns);

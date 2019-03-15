@@ -70,6 +70,8 @@
 
     <link href="${base}plugins/select2/css/select2.css" rel="stylesheet" />
 
+	<link href="${base}plugins/rcrumbs/jquery.rcrumbs.css" rel="stylesheet"/>
+
 </head>
 <body class="fixed-sidebar full-height-layout gray-bg">
 	<div class="fixed-loading"
@@ -91,9 +93,9 @@
 							<div>实验室安全检查</div>
 						</div>
 					</li>
-					<li class="<#if !userClaim.schoolEcmId?? >hide</#if>">
+					<!-- <li class="<#if !userClaim.schoolEcmId?? >hide</#if>">
                         <a href="#">
-                            <i class="fa fa-university"></i>
+                            <i class="iconfont icon-icon_school"></i>
                             <span class="nav-label">学校管理</span>
                             <span class="fa arrow"></span>
                         </a>
@@ -108,46 +110,13 @@
                                 <a class="J_menuItem" href="security-system">安全体系</a>
                             </li>
                             <li>
-                                <a class="J_menuItem" href="school-users">人员信息</a>
+                                <a class="J_menuItem" href="school-users">校级人员</a>
                             </li>
                         </ul>
 					</li>
-
-					<li class="<#if !userClaim.schoolEcmId?? >hide</#if>">
-						<a href="#">
-							<i class="fa fa-university"></i>
-							<span class="nav-label">安全总览</span>
-							<span class="fa arrow"></span>
-						</a>
-						<ul class="nav nav-second-level">
-							<li>
-								<a class="J_menuItem" href="labs-statis">实验室统计</a>
-								<a class="J_menuItem" href="hazards-statis">危险源统计</a>
-								<a class="J_menuItem" href="hidden-danger-statis">问题统计</a>
-								<a class="J_menuItem" href="changed-statis">整改统计</a>
-								<a class="J_menuItem" href="inspect-statis">检查统计</a>
-								<a class="J_menuItem" href="accident-statis">安全事故统计</a>
-								<a class="J_menuItem" href="security-users">安全责任人</a>
-							</li>
-						</ul>
-					</li>
-					<li class="<#if !userClaim.branchEcmId?? >hide</#if>">
-						<a href="#">
-							<i class="fa fa-university"></i>
-							<span class="nav-label">学院管理</span>
-							<span class="fa arrow"></span>
-						</a>
-						<ul class="nav nav-second-level">
-							<li>
-								<a class="J_menuItem" href="branch">学院信息</a>
-								<a class="J_menuItem" href="branch-labs">实验室信息</a>
-								<a class="J_menuItem" href="branch-user">人员信息</a>
-							</li>
-						</ul>
-					</li>
-                    <li class="<#if !userClaim.schoolEcmId?? >hide</#if>">
+					<li class="<#if !(userClaim.schoolEcmId?? && userClaim.highestEcmIdType==4)>hide</#if>">
                         <a href="#">
-                            <i class="fa fa-shield"></i>
+                            <i class="iconfont icon-icon_center"></i>
                             <span class="nav-label">安全中心管理</span>
                             <span class="fa arrow"></span>
                         </a>
@@ -160,9 +129,24 @@
                             </li>
                         </ul>
                     </li>
-					<li class="<#if !userClaim.labEcmId?? >hide</#if>">
+                    <li class="<#if !userClaim.branchEcmId?? >hide</#if>">
 						<a href="#">
 							<i class="fa fa-university"></i>
+							<span class="nav-label">学院管理</span>
+							<span class="fa arrow"></span>
+						</a>
+						<ul class="nav nav-second-level">
+							<li>
+								<a class="J_menuItem" href="branch">学院信息</a>
+								<a class="J_menuItem" href="branch-labs">实验室信息</a>
+								<a class="J_menuItem" href="branch-user">院级人员</a>
+							</li>
+						</ul>
+					</li>
+                    
+					<li class="<#if !userClaim.labEcmId?? >hide</#if>">
+						<a href="#">
+							<i class="iconfont icon-icon_labor"></i>
 							<span class="nav-label">实验室管理</span>
 							<span class="fa arrow"></span>
 						</a>
@@ -172,33 +156,57 @@
 							</li>
 						</ul>
 					</li>
-					<li>
-						<a class="J_menuItem" href="examination">
-							<i class="fa fa-deviantart"></i>
-							<span class="nav-label">审核管理</span>
+					<li class="<#if !userClaim.schoolEcmId?? >hide</#if>">
+						<a href="#">
+							<i class="iconfont icon-icon_explosion"></i>
+							<span class="nav-label">安全总览</span>
+							<span class="fa arrow"></span>
 						</a>
+						<ul class="nav nav-second-level">
+							<li>
+								<a class="J_menuItem" href="labs-statis">实验室统计</a>
+								<a class="J_menuItem" href="hazards-statis">危险源统计</a>
+								<a class="J_menuItem" href="inspect-statis">检查统计</a>
+								<a class="J_menuItem" href="changed-statis">整改统计</a>
+								<a class="J_menuItem" href="hidden-danger-statis">问题统计</a>
+								<a class="J_menuItem" href="accident-statis">安全事故统计</a>
+								<a class="J_menuItem" href="security-users">安全责任人</a>
+							</li>
+						</ul>
 					</li>
 					<li>
 						<a class="J_menuItem" href="safety-inspect">
-							<i class="fa fa-university"></i>
+							<i class="iconfont icon-icon_inspection"></i>
 							<span class="nav-label">安全检查管理</span>
 						</a>
 					</li>
 					<li>
 						<a class="J_menuItem" href="safety-changed">
-							<i class="fa fa-university"></i>
+							<i class="iconfont icon-icon_change"></i>
 							<span class="nav-label">安全整改管理</span>
 						</a>
 					</li>
 					<li>
 						<a class="J_menuItem" href="safety-accident">
-							<i class="fa fa-university"></i>
+							<i class="iconfont icon-icon_accident"></i>
 							<span class="nav-label">安全事故管理</span>
+						</a>
+					</li>
+					<li class="<#if !userClaim.schoolEcmId?? >hide</#if>">
+						<a class="J_menuItem" href="statis-report">
+							<i class="iconfont icon-icon_date"></i>
+							<span class="nav-label">统计报表管理</span>
+						</a>
+					</li>
+					 <li >
+						<a class="J_menuItem" href="document">
+							<i class="iconfont icon-icon_doc"></i>
+							<span class="nav-label">档案库管理</span>
 						</a>
 					</li>
                     <li>
                         <a href="#">
-                            <i class="fa fa-volume-up"></i>
+                            <i class="iconfont icon-icon_notice"></i>
                             <span class="nav-label">通知管理</span>
                             <span class="fa arrow"></span>
                         </a>
@@ -211,32 +219,25 @@
                             </li>
                         </ul>
                     </li>
-                    <li >
-						<a class="J_menuItem" href="document">
-							<i class="fa fa-book"></i>
-							<span class="nav-label">档案库管理</span>
-						</a>
-					</li>
-					
-                    <li class="<#if !userClaim.schoolEcmId?? >hide</#if>">
-						<a class="J_menuItem" href="statis-report">
-							<i class="fa fa-book"></i>
-							<span class="nav-label">统计报表</span>
-						</a>
-					</li>
                     <li>
-						<a class="J_menuItem" href="user">
-							<i class="fa fa-user"></i>
+						<a class="J_menuItem hide" href="user">
+							<i class="iconfont icon-icon_user"></i>
 							<span class="nav-label">用户管理</span>
+						</a>
+					</li>
+					<li>
+						<a class="J_menuItem" href="examination">
+							<i class="iconfont icon-icon_process"></i>
+							<span class="nav-label">审核管理</span>
 						</a>
 					</li>
                     <li>
 						<a class="J_menuItem hide" href="my-message">
 							<i class="fa fa-book"></i>
-							<span class="nav-label">个人中心</span>
+							<span class="nav-label">个人信息</span>
 						</a>
-					</li>
-					 <#--<#if menus??>
+					</li> -->
+					<#if menus??>
 						 <#list menus as menu>
                     		<li >
                                 <a <#if menu.leaf>class="J_menuItem"</#if> href="${menu.leaf?string(menu.code,'#')}">
@@ -261,7 +262,13 @@
 								</#if>
                             </li>
 						 </#list>
-					 </#if>-->
+					 </#if>
+					 <li>
+						<a class="J_menuItem hide" href="my-message">
+							<i class="fa fa-book"></i>
+							<span class="nav-label">个人信息</span>
+						</a>
+					</li>
 				</ul>
 			</div>
 		</nav>
@@ -291,9 +298,9 @@
 						<button class="btn ls-btn btn-default dropdown-toggle" type="button" id="login-user-dpdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 							${reanName!mobile} <span class="caret"></span>
 						</button>
-						<ul class="dropdown-menu" aria-labelledby="login-user-dpdown">
-							<!-- <li><a href="#">修改密码</a></li>
-							<li role="separator" class="divider"></li> -->
+						<ul class="dropdown-menu personal-enter" aria-labelledby="login-user-dpdown">
+							<li><a href="javascript:goModule({moduleName: 'my-message',directive: 'personal-info'});">个人信息</a></li>
+							<li role="separator" class="divider" style="border-color: #eeeeee;"></li>
 							<li><a href="javascript:void(0)" class="logout">注销</a></li>
 						</ul>
 					</div>
@@ -311,7 +318,7 @@
 		<#include "tpl/myMessageTpl.html"/>
 	</div>
 
-	<script src="http://api.map.baidu.com/api?v=2.0&ak=YXCZieRrBD8dAfXj7eUp5oF4EA6UAIrl"></script>
+	<script src="https://api.map.baidu.com/api?v=2.0&ak=YXCZieRrBD8dAfXj7eUp5oF4EA6UAIrl"></script>
 	<#--<script type="text/javascript" src="http://api.map.baidu.com/library/AreaRestriction/1.2/src/AreaRestriction_min.js"></script>
 	<script type="text/javascript" src="http://api.map.baidu.com/library/TextIconOverlay/1.2/src/TextIconOverlay_min.js"></script>
 	<script type="text/javascript" src="http://api.map.baidu.com/library/MarkerClusterer/1.2/src/MarkerClusterer_min.js"></script> -->
@@ -330,7 +337,6 @@
 	</style>
 	<script type="text/javascript">
 		var base = "${base}";
-		
 	</script>
 	<!-- 自定义js -->
 	<script src="${base}js/hplus.js?v=3.2.0"></script>
@@ -346,7 +352,7 @@
 	<script src="${base}js/plugins/footable/footable.js"></script>
 	<script src="${base}js/plugins/validate/jquery.validate.min.js"></script>
 	<script src="${base}plugins/x-editable/js/bootstrap-editable.min.js"></script>
-
+	<script src="${base}plugins/rcrumbs/jquery.rcrumbs.js"></script>
     <#--<script src="${base}js/js/validate/additional-methods.min.js"></script>-->
 	<script src="${base}js/plugins/validate/messages_zh.min.js"></script>
 	<script src="${base}js/plugins/validate/compatible_bootstrap.js"></script>
@@ -413,7 +419,7 @@
 	<script type="text/javascript" src="${base}js/document/manage.js"></script>
 	<script type="text/javascript" src="${base}js/tpl/TableManage.js"></script>
 	<script type="text/javascript" src="${base}js/tpl/FormTpl.js"></script>
-	<script type="text/javascript" src="${base}js/qrcode/CodesManage.js"></script>
+	<script type="text/javascript" src="${base}js/qrCode/CodesManage.js"></script>
 	<script type="text/javascript" src="${base}js/document/document-table.js"></script>
 
     <!-- ECharts -->

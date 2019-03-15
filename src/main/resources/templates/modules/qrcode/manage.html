@@ -3,11 +3,14 @@
     <form>
         <div class="row">
             <div class="col-sm-6" style="padding-left:10px">
+                <@codeValidation codes=operationCodes operationCode="qrcode-print">
                 <button class="entityOpts btn ls-btn btn-primary" data-opt="batchPrint" type="button">批量打印</button>
+                </@codeValidation>
             </div>
             <div class="col-sm-3">
                 <#include "../../tpl/basic-config/view-scope.html" />
             </div>
+            <@codeValidation codes=operationCodes operationCode="search">
             <div class="col-sm-3">
                 <div class="input-group">
                     <input type="text" placeholder="请输入关键词" class="input-sm form-control ls-input" name="keyword">
@@ -16,17 +19,31 @@
                     </span>
                 </div>
             </div>
+            </@codeValidation>
+
         </div>
     </form>
     <div class="table-responsive data-list"></div>
 </div>
 
 <script>
-
+var  qrcode_showColumns = '${showColumns!"[]"}';
+if(typeof qrcode_showColumns == "string") {
+    qrcode_showColumns = JSON.parse(qrcode_showColumns);
+}
 var qrCodeTm = new TableManage({
     wrapId: '#common-management-${timestamp}',
     moduleName: 'qrcode',
-    showColumns: ${showColumns!'[]'}
+    showColumns: qrcode_showColumns,
+    operationCodes: '${operationCodes}',
+    loaded: function(){
+        let operationCodes = qrCodeTm.operationCodes;
+        if(operationCodes.indexOf('qrcode-print') == -1) { //打印权限
+            $(qrCodeTm.wrapId + ' td a[data-opt="print"]').remove();
+            $(qrCodeTm.wrapId + ' .th-operation').remove();
+            $(qrCodeTm.wrapId + ' .td-operation').remove();
+        } 
+    }
 }, function(res) {
     if (res.opt == 'qrcode') {
         new CodesManage().codesShow(res.sn);
@@ -38,7 +55,16 @@ var qrCodeTm = new TableManage({
         new CodesManage().codesPrint(res.sn);
     }
     if (res.opt == 'batchPrint') {
-        new CodesManage().codesPrint("1547518815475,1547518777719");
+        let selectedEl = $(qrCodeTm.wrapId + ' tbody input:checked'),
+            sn_list = [];
+        if(selectedEl.length == 0) {
+            layer.msg('未选择批量打印数据对象',{icon:5});
+            return false;
+        }
+        selectedEl.map((index,item) => {
+            sn_list.push($(item).val());
+        }) 
+        new CodesManage().codesPrint(sn_list.join(','));
     }
 })
 

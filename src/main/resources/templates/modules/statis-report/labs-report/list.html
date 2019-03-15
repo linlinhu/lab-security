@@ -1,4 +1,9 @@
-
+<style>
+    #statisreport-labs-tablelist .th-peopleNumber,
+    #statisreport-labs-tablelist .td-peopleNumber {
+        text-align: right;
+    }
+</style>
 <div class="mgt20" id="statisreport-labs-tablelist">
     <form>
         <div class="my-filter-line">
@@ -12,9 +17,11 @@
             <div>
                 <#include "../../../tpl/basic-config/lab-grades.html" />
             </div>
+            <@codeValidation codes=operationCodes operationCode="labs-report-download">
             <div class="rgt">
                 <a class="btn ls-btn btn-primary download" href="javascript:;">下载表格</a>
             </div>
+            </@codeValidation>
         </div>
     </form>
     <div class="data-list"></div>

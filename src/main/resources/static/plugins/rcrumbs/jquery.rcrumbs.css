@@ -17,7 +17,7 @@ html {
   display: none;
 }
 .rcrumbs > ul > li.show {
-  display: inline-block;
+  display: inline-block !important;
 }
 .rcrumbs > ul > li.ellipsis {
   text-overflow: ellipsis;

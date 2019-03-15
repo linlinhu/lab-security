@@ -29,7 +29,6 @@ public class LabsStatisController extends HeaderCommonController {
 
     public JSONObject safetyOverviewTpl() {
         JSONObject res = new JSONObject();
-
         res = melApiFeign.dataModel(ApplicationConstain.SERVICE_ID, "safety-overview", "BROWSER");
         this.dealException(res);
 
@@ -39,10 +38,10 @@ public class LabsStatisController extends HeaderCommonController {
     @GetMapping("index")
     public String detail(Map<String,Object> data, Long id){
         data.put("timestamp", System.currentTimeMillis());
-        if (this.validateAuthorizationToken().getSchoolEcmId() == null) {
+        if (this.validateAuthorizationToken().getPersonalHeigherEcmId() == null) {
             throw new EminException("404");
         }
-        Integer ecmId = Integer.parseInt(this.validateAuthorizationToken().getSchoolEcmId().toString());
+        Integer ecmId = Integer.parseInt(this.validateAuthorizationToken().getPersonalHeigherEcmId().toString());
         data.put("ecmId", ecmId);
         this.getStatisData(data, ecmId);
         return "modules/safety-overview/labs-statis/index";
@@ -64,19 +63,18 @@ public class LabsStatisController extends HeaderCommonController {
         // 按分类统计数据
         JSONObject categoryRes = basicInfoApi.getLabStatisticsByCategory(ecmId);
         this.dealException(categoryRes);
-        JSONObject categoryData = this.parseForChartData(collegeRes.getJSONArray("result"));
+        JSONObject categoryData = this.parseForChartData(categoryRes.getJSONArray("result"));
         if(categoryData != null) {
             data.put(CATEGORY_STATIS_KEY, categoryData.toJSONString());
         }
 
         // 按实验室等级统计数据
-        JSONObject labLevelRes = basicInfoApi.getLabStatisticsByCategory(ecmId);
+        JSONObject labLevelRes = basicInfoApi.getLabStatisticsByLevel(ecmId);
         this.dealException(labLevelRes);
         JSONObject labLevelData = this.parseForChartData(labLevelRes.getJSONArray("result"));
         if(labLevelData != null) {
             data.put(LAB_LEVEL_STATIS_KEY, labLevelData.toJSONString());
         }
-
     }
 
     private JSONObject parseCollegeData(JSONArray datasource) {
@@ -134,15 +132,16 @@ public class LabsStatisController extends HeaderCommonController {
         String keyword){
 
         if (ecmId == null) {
-            if (this.validateAuthorizationToken().getSchoolEcmId() == null) {
+            if (this.validateAuthorizationToken().getPersonalHeigherEcmId() == null) {
                 throw new EminException("404");
             }
-            ecmId = Integer.parseInt(this.validateAuthorizationToken().getSchoolEcmId().toString());
+            ecmId = Integer.parseInt(this.validateAuthorizationToken().getPersonalHeigherEcmId().toString());
         
         }
         data.put("tpl", safetyOverviewTpl().getJSONArray("groups").getJSONObject(0));
         PageRequest pr = getPageRequestData();
         JSONObject res = basicInfoApi.labsPageBySchoolId(ecmId, pr.getCurrentPage(), pr.getLimit(), keyword, labType, labGrade);
+        
         data.put("data", res.getJSONObject("result"));
         return "tpl/list";
     }

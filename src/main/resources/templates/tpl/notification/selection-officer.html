@@ -147,15 +147,15 @@
 <script type="text/javascript">
 var SelectionOfficerFn = function(p,callback){
 	let El = null,
-		selectedData = [],
-		oldSelectedData = p.selectedData||[]
+		selectedData = p.selectedData||[],
+		oldSelectedData = p.selectedData||[],
 		openIndex = null,
 		title = p.title ? p.title:'发送范围',
-		path = [{name:'北京大学',id:'1'},{name:'法学院',id:'2'}],
+		path = [],
 		hasTowType = p.hasTowType,
 		treeview = null,
 		_this = this;
-		_this.cateType = p.cateType;
+		_this.cateType = p.cateType || 'org';
 	function init(){
 		
 		let tpl = selection_officer_tpl.innerHTML,
@@ -224,8 +224,8 @@ var SelectionOfficerFn = function(p,callback){
             selectedIcon: '',
             showTags: true,
             checkedIcon: 'fa fa-check-square ',
-            partiallyCheckedIcon: 'fa fa-check-square',
-            uncheckedIcon: 'fa fa-square-o ',
+            partiallyCheckedIcon: 'fa fa-square-o',
+            uncheckedIcon: 'fa fa-square-o',
             data: data,
             onNodeChecked: function (event, node) {
             	/* console.log(event, node); */
@@ -238,22 +238,52 @@ var SelectionOfficerFn = function(p,callback){
         })
         
         if(oldSelectedData.length > 0){
-        	oldSelectedData.map((item)=>{
-        		$(El + ' .list-group-item[data-nodeid="'+item.id+'"] span.check-icon').trigger('click');
-        	});
+			let allNodes = $(El + ' .personTree').treeview('getNodes');
+			if(_this.cateType == 'org') {//学校架构
+				allNodes.map(node => {
+					oldSelectedData.map((item)=>{
+						if(item.mobile == node.mobile && item.userId == node.userId) {
+							$(El + ' .list-group-item[data-nodeid="'+node.nodeId+'"] span.check-icon').trigger('click');
+						}
+						
+					});
+				});
+			} else { //岗位角色
+				allNodes.map(node => {
+					oldSelectedData.map((item)=>{
+						if(item.text == node.text) {
+							$(El + ' .list-group-item[data-nodeid="'+node.nodeId+'"] span.check-icon').trigger('click');
+						}
+					});
+				});
+			}
+        	
+        	selectedData = oldSelectedData;
         	oldSelectedData = [];
-        } else {
-        	renderSelectedData(selectedData);
         }
+        renderSelectedData(selectedData);
         $(El + ' .personTree .list-group-item .badge .iconfont').unbind('click').on('click',function(e){
         	e.preventDefault();
         	let ecmId = $(this).attr('data-ecmId');
         	_this.params = {};
         	searchFormInit();
+      		oldSelectedData = selectedData;
         	getLowerLevelLabs({collegeId:ecmId})
         })
-      	//$(El + ' .personTree').treeview('checkAll', { silent: true });
-        /* $(El + ' .personTree').treeview('checkNode', selectedData.map((item)=>{return item.id})); */
+        checkboxInit();
+        function checkboxInit(){
+        	let colleges = $(El + ' .icon-icon_tree').parents('.list-group-item');
+        	
+        	if(colleges.length > 0){
+        		colleges.each(function(index, value){
+        			let item = $(value);
+        			if(item.find('.expand-icon').length == 0) {
+        				item.find('.check-icon').remove();
+        			}
+        		})
+        	}
+        	
+        }
     }
 	function changeSelectedData(node,opt){
 		//node 节点信息
@@ -265,17 +295,36 @@ var SelectionOfficerFn = function(p,callback){
 			userId: node.userId,
 			mobile: node.mobile,
 			type: node.type
-		};
+		},
+		hasThisNode = false;
+
 		if(opt == 'remove') {
 			let tIndex = null;
 			selectedData.forEach(function(value,index){
-				if(value.id == temp.id) {
+				if(temp.mobile == value.mobile && temp.userId == value.userId) {
 					tIndex = index;
 				}
 			})
 			selectedData.splice(tIndex,1);
 		} else {
-			selectedData.push(temp)
+			if(_this.cateType == 'org') {
+				selectedData.map((item,index) => {
+					if(temp.mobile == item.mobile && temp.userId == item.userId) {
+						hasThisNode = true;
+					}
+				});
+			} else {
+				selectedData.map((item,index) => {
+					if(temp.text == item.text) {
+						hasThisNode = true;
+					}
+				});
+			}
+			
+			if(!hasThisNode) {
+				selectedData.push(temp)
+			}
+			
 		}
 		renderSelectedData(selectedData);
 	}
@@ -294,7 +343,6 @@ var SelectionOfficerFn = function(p,callback){
 			});
 			view.html(html);
 			view.find('.remove').unbind().on('click',function(){
-				let id = $(this).parents('.item').attr('data-id');
 				$(El + ' .list-group-item[data-nodeid="'+id+'"] span.check-icon').trigger('click');
 			});
 		}
@@ -381,14 +429,19 @@ var SelectionOfficerFn = function(p,callback){
     		temp = {};
     		securityUserList = item.securityUserList||[];
     		children = [];
-    		if(!(securityUserList == [] && hasChild == false)){
+    		if(item.level == 0){
+    			item.hasChild = false;
+    		};
+    		
+    		if(!(item.hasChild == false && item.hasPerson == false)){
     			temp = {
     				selectable: false,
     				text: item.name,
     				ecmId: item.ecmId,
     				id: item.id
     			}
-    			if(item.collegeFlag){
+    			
+    			if(item.hasChild){
     				temp.tags = ['<i class="iconfont icon-icon_tree" data-ecmId="'+item.ecmId+'"> 下级实验室</i>']
     			}
     			if(securityUserList != []) {
@@ -412,7 +465,6 @@ var SelectionOfficerFn = function(p,callback){
     }
 	function search(){
 		let keyword = $(El + ' .dr-search-form input[name="keyword"]').val();
-		console.log(_this.cateType)
 		_this.params = {keyword: keyword}
 		if(_this.cateType == 'org') {
 			if(path.length == 1) {
@@ -469,7 +521,7 @@ var SelectionOfficerFn = function(p,callback){
 				let id = $(this).attr('data-id');
 				if(id != path[len-1].id) {
 					oldSelectedData = selectedData;
-					selectedData = [];
+					/* selectedData = []; */
 					initData();
 				}
 			}

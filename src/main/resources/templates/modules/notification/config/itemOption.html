@@ -1,7 +1,7 @@
 <div class="tabs-container" style="height:calc(100% - 40px);margin:auto;">
     <ul class="nav nav-tabs">
         <li class="active">
-            <a data-toggle="tab" data-type="d" href="#notificationType-1" aria-expanded="true"> 按部门</a>
+            <a data-toggle="tab" data-type="d" href="#notificationType-1" aria-expanded="true"> 按层级</a>
         </li>
         <li class="">
             <a data-toggle="tab" data-type="p" href="#notificationType-2" aria-expanded="false"> 指定人员</a>
@@ -9,7 +9,7 @@
     </ul>
     <div class="tab-content" style="height:calc(100% - 45px)">
         <div id="notificationType-1" class="tab-pane active" style="height:100%">
-            <div class="panel-body" style="height:100%^">
+            <div class="panel-body" style="height:100%;">
                 <div class="dept">
                     <div class=" i-checks">
                         <label>
@@ -136,7 +136,7 @@
         $(".nfConfigContainer .addItemOption .searchPerson").keyup(function () {
             var val = $(this).val()
             clearTimeout(t)
-            if (val == "") {
+            /*if (val == "") {
                 $(".nfConfigContainer .addItemOption .personTree").treeview("clearSearch")
             } else {
                 t = setTimeout(function () {
@@ -147,7 +147,10 @@
                     }]);
                 }, 500)
 
-            }
+            }*/
+            t = setTimeout(function () {
+               initData(val)
+            }, 500)
 
         })
         $(".nfConfigContainer .addItemOption").on("init",function(){
@@ -174,16 +177,19 @@
                 }
             })
         }
-        function initData() {
+        function initData(keyword) {
             $http.get({
-                url: "notification-config/getPersonTree"
+                url: "notification-config/getPersonTree",
+                data:{
+                    keyword:keyword
+                }
             }, function (res) {
                 initTree(res.result)
             })
         }
 
         function initTree(data) {
-            console.log(data)
+            
             $(".nfConfigContainer .addItemOption .personTree").treeview({
                 showCheckbox: true,
                 hierarchicalCheck: true,//级联勾选

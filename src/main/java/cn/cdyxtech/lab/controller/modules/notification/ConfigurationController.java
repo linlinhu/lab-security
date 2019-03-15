@@ -4,6 +4,7 @@ import cn.cdyxtech.lab.constain.ConfigOption;
 import cn.cdyxtech.lab.controller.ResponseBack;
 import cn.cdyxtech.lab.facade.ConfigFacade;
 import cn.cdyxtech.lab.facade.NotificationConfigFacade;
+import cn.cdyxtech.lab.filter.MenuOperationFilter;
 import cn.cdyxtech.lab.util.TestRandomUtil;
 import cn.cdyxtech.lab.vo.NotificationConfigVO;
 import cn.cdyxtech.lab.vo.SecurityTreeVO;
@@ -29,13 +30,17 @@ public class ConfigurationController extends BaseController {
     @Autowired
     private NotificationConfigFacade notificationConfigFacade;
 
+    @Autowired
+    private MenuOperationFilter menuOperationFilter;
+
     @GetMapping("/index")
     public String index(Map<String,Object> data){
         List<ConfigOption.ConfigItem> phLevels = configFacade.getConfigItems(ConfigOption.POTENTIAL_HAZARD_LEVEL_GROUP);
         List<NotificationConfigVO> configList = notificationConfigFacade.configs();
+        String operationCodes = menuOperationFilter.menuOperations("notification-config");
         data.put("configs",configList);
         data.put("phLevels",phLevels);
-
+        data.put("operationCodes",operationCodes);
         return "modules/notification/config/index";
     }
 
@@ -48,8 +53,8 @@ public class ConfigurationController extends BaseController {
 
     @GetMapping("/getPersonTree")
     @ResponseBody
-    public ResponseBack<List<SecurityTreeVO>> getPersonTree(){
-        return ResponseBack.success(notificationConfigFacade.getSecurityTree());
+    public ResponseBack<List<SecurityTreeVO>> getPersonTree(String keyword){
+        return ResponseBack.success(notificationConfigFacade.getSecurityTree(keyword));
     }
 
     @GetMapping("/testPersonTreeData")

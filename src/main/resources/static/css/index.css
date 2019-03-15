@@ -43,3 +43,9 @@
 	font-size: 12px;
 	cursor: pointer;
 }
+.login-info .my-msg-dp .dropdown-menu{
+	margin-top: -2px;
+}
+.login-info .dropdown-toggle.btn-default{
+	color: #55A8FD;
+}

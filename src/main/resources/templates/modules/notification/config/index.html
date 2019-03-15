@@ -257,6 +257,7 @@
 
     </div>
     <h2>隐患默认通知配置</h2>
+    <#if phLevels?? && phLevels?size gt 0 >
     <div style="padding-left:60px;padding-top:30px;height:calc(100% - 60px);overflow: auto">
         <#list phLevels as level>
             <div class="levelContainer">
@@ -278,10 +279,21 @@
     </div>
 
     <div class="text-center">
+        <@codeValidation codes=operationCodes operationCode="modify">
         <button class="btn ls-btn btn-primary nfConfigOpts" data-opt="modify" style="width:120px;"><i
                 class="iconfont icon-icon_edit"></i> 修改
         </button>
+        </@codeValidation>
     </div>
+    <#else>
+        <#assign message="您需要先配置问题等级，才可进行通知配置">
+        <#include "/tpl/no-data.html">
+        <div style="margin:auto;text-align: center">
+            <button class="btn btn-primary nfConfigOpts" data-opt="toConfig">去配置</button>
+        </div>
+
+    </#if>
+
 
     <div class="addItemOption animated">
         <#include "itemOption.html">
@@ -310,6 +322,9 @@
                     $(this).parent().remove()
                 })
 
+            },
+            toConfig:function(){
+                goModule({moduleName:"checkItem",toPh:true})
             },
             addItem: function () {
                 this.showMask();

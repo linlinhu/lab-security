@@ -40,8 +40,10 @@
             <input type="text" placeholder="时间选择" id="changed-report-datepicker" class="form-control ls-input">
             <span class="iconfont icon-icon_pull-down1"></span>
         </div>
+        <@codeValidation codes=operationCodes operationCode="changed-report-download">
         <div class="col-sm-2">
             <a class="btn ls-btn btn-primary download" href="javascript:;">下载表格</a>
         </div>
+        </@codeValidation>
     </div>
 </form>

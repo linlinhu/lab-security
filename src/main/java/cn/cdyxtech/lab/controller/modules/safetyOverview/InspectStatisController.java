@@ -37,10 +37,10 @@ public class InspectStatisController extends HeaderCommonController {
     @GetMapping("index")
     public String detail(Map<String,Object> data, Long id){
         data.put("timestamp", System.currentTimeMillis());
-        if (this.validateAuthorizationToken().getSchoolEcmId() == null) {
+        if (this.validateAuthorizationToken().getPersonalHeigherEcmId() == null) {
             throw new EminException("404");
         }
-        Integer ecmId = Integer.parseInt(this.validateAuthorizationToken().getSchoolEcmId().toString());
+        Integer ecmId = Integer.parseInt(this.validateAuthorizationToken().getPersonalHeigherEcmId().toString());
         data.put("ecmId", ecmId);
         
         return "modules/safety-overview/inspect-statis/index";
@@ -52,10 +52,10 @@ public class InspectStatisController extends HeaderCommonController {
         String hiddenDangerGrade, 
         Integer ecmId, String keyword){
         if (ecmId == null) {
-            if (this.validateAuthorizationToken().getSchoolEcmId() == null) {
+            if (this.validateAuthorizationToken().getPersonalHeigherEcmId() == null) {
                 throw new EminException("404");
             }
-            ecmId = Integer.parseInt(this.validateAuthorizationToken().getSchoolEcmId().toString());
+            ecmId = Integer.parseInt(this.validateAuthorizationToken().getPersonalHeigherEcmId().toString());
         }
         
         data.put("tpl", safetyOverviewTpl().getJSONArray("groups").getJSONObject(5));
@@ -74,7 +74,9 @@ public class InspectStatisController extends HeaderCommonController {
         Integer id, 
         Integer labId, 
         String detailTitle){
-
+    	if(detailTitle == null) {
+    		detailTitle = "安全检查统计";
+    	}
         data.put("id", id);
         data.put("labId", labId);
         data.put("detailTitle", detailTitle);

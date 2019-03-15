@@ -8,6 +8,10 @@ public interface ConfigOption {
 
     String DEFAULT_CHECKDATA_ITEM_CODE = "defaultCheckData";
 
+    String GRADE_CONFIG_GROUP_CODE = "gradeConfig";
+
+    String GRADE_CONFIG_ITEM_CODE = "gradeColor";
+
     // 隐患等级
     String POTENTIAL_HAZARD_LEVEL_GROUP = "potentialHazardLevel";
 

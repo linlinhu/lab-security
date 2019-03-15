@@ -1,3 +1,9 @@
+<style>
+#statisreport-hazards-tablelist .table tr th:first-child,
+#statisreport-hazards-tablelist .table tr td:first-child {
+    display: table-cell;
+}
+</style>
 <div class="mgt20" id="statisreport-hazards-tablelist">
     <form>
         <div class="my-filter-line">
@@ -8,9 +14,11 @@
             <div>
                 <#include "../../../tpl/basic-config/danger-sources.html" />
             </div>
+            <@codeValidation codes=operationCodes operationCode="hazards-report-download">
             <div class="rgt">
                 <a class="btn ls-btn btn-primary download" href="javascript:;">下载表格</a>
             </div>
+            </@codeValidation>
         </div>
     </form>
     <div class="data-list"></div>

@@ -49,13 +49,13 @@ public class HiddenDangerStatisController extends HeaderCommonController {
     @GetMapping("index")
     public String detail(Map<String,Object> data, Long id){
         // 检查项
-        Long topEcmId = ecoFacade.getTopEcmId(JWTThreadLocalUtil.getEcmId());
+        Long topEcmId = JWTThreadLocalUtil.getRootEcmId();
         List<CheckDataVO> voList =configFacade.getCheckData(topEcmId);
         data.put("checkItemList", JSONArray.toJSON(voList));
 
         // 不符合项统计查询
         // Integer ecmId = 4;
-        Integer ecmId = Integer.parseInt(this.validateAuthorizationToken().getSchoolEcmId().toString());
+        Integer ecmId = Integer.parseInt(this.validateAuthorizationToken().getPersonalHeigherEcmId().toString());
         JSONObject unqualifiedRes = securityCheckApi.getPageStatisticsByUnqualified(ecmId, 1, 100);
         this.dealException(unqualifiedRes);
         data.put("unqualifiedList", unqualifiedRes.getJSONObject("result").getJSONArray("resultList"));

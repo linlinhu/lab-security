@@ -14,8 +14,8 @@ var changedTm = new TableManage({
     }
 }, function(res) {
     if (res.opt == 'detail') {
-        res.detailTitle = '安全整改管理';
-        goPage('detail', res);
+        var url = 'detail?id=' + res.id + "&labid=" + res.labid;
+        goPage(url,res);
     }
 })
 

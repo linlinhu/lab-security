@@ -9,6 +9,8 @@ import cn.cdyxtech.lab.constain.ApplicationConstain;
 import cn.cdyxtech.lab.controller.HeaderCommonController;
 import cn.cdyxtech.lab.feign.BasicInfoAPI;
 import cn.cdyxtech.lab.feign.MelAPIFeign;
+import cn.cdyxtech.lab.filter.MenuOperationFilter;
+import cn.cdyxtech.lab.util.UserClaim;
 
 import java.util.Map;
 
@@ -20,12 +22,14 @@ import com.emin.base.exception.EminException;
 @Controller
 @RequestMapping("/school")
 public class SchoolController extends HeaderCommonController {
-    
     private Logger logger = LoggerFactory.getLogger(SchoolController.class);
+    
     @Autowired
     private MelAPIFeign melApiFeign;
     @Autowired
     private BasicInfoAPI basicInfoApi;
+    @Autowired
+	MenuOperationFilter menuOperationFilter;
 
     public JSONObject infoTpl() {
         JSONObject res = new JSONObject();
@@ -52,17 +56,22 @@ public class SchoolController extends HeaderCommonController {
     
     @GetMapping("/index")
     public String index(Map<String,Object> data){
-        logger.error("加载学校详情界面++++++++++++++++++++++++++++=");
-        if (this.validateAuthorizationToken().getSchoolEcmId() == null) {
-            logger.error("学校ecmId = " + this.validateAuthorizationToken().getSchoolEcmId() + "++++++++++++++++++++++++++++=");
+        UserClaim userClaim = this.validateAuthorizationToken();
+        if (userClaim.getSchoolEcmId() == null) {
+            logger.error("学校ecmId = " + userClaim.getSchoolEcmId() + "++++++++++++++++++++++++++++=");
 
             throw new EminException("404");
         }
-        Integer ecmId = Integer.parseInt(this.validateAuthorizationToken().getSchoolEcmId().toString());
+        Integer ecmId = Integer.parseInt(userClaim.getSchoolEcmId().toString());
+        try {
+			String operationCodes = menuOperationFilter.menuOperations("school");
+			data.put("operationCodes", operationCodes);
+		} catch (Exception e) {
+            logger.error("学校信息界面跳转，加载权限出现异常->" + e.getMessage());
+		}
         data.put("timestamp", System.currentTimeMillis());
         data.put("tpl", infoTpl());
         data.put("data", schoolInfo(ecmId));
-        logger.error(JSONObject.toJSONString(data) + "====================================================");
         
         return "modules/school/index";
     }

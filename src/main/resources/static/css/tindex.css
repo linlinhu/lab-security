@@ -455,3 +455,18 @@ ul.my-tabs {
 .emin-diagrams .echarts {
     min-height: 340px;
 }
+
+
+.empty-data {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding:50px 0;
+}
+.empty-data p{
+    margin-top:15px;
+}
+.empty-data img {
+    width: 150px;
+    height: 150px;
+}

@@ -11,8 +11,11 @@ import cn.cdyxtech.lab.constain.ApplicationConstain;
 import cn.cdyxtech.lab.controller.HeaderCommonController;
 import cn.cdyxtech.lab.feign.MelAPIFeign;
 import cn.cdyxtech.lab.feign.SecurityCheckAPI;
+import cn.cdyxtech.lab.filter.MenuOperationFilter;
 
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONObject;
 import com.emin.base.dao.PageRequest;
@@ -21,11 +24,15 @@ import com.emin.base.exception.EminException;
 @Controller
 @RequestMapping("/changed-report")
 public class ChangedReportController extends HeaderCommonController {
+    private Logger logger = LoggerFactory.getLogger(ChangedReportController.class);
+    
     @Autowired
     private MelAPIFeign melApiFeign;
 
     @Autowired
     private SecurityCheckAPI securityCheckApi;
+    @Autowired
+	MenuOperationFilter menuOperationFilter;
 
     @Value("${labApiGateway}")
     private String labAPIGateway;
@@ -62,6 +69,12 @@ public class ChangedReportController extends HeaderCommonController {
         if (this.validateAuthorizationToken().getSchoolEcmId() == null) {
             throw new EminException("404");
         }
+        try {
+			String operationCodes = menuOperationFilter.menuOperations("statis-report");
+			data.put("operationCodes", operationCodes);
+		} catch (Exception e) {
+            logger.error("统计报表管理界面跳转，加载权限出现异常->" + e.getMessage());
+		}
         Integer ecmId = Integer.parseInt(this.validateAuthorizationToken().getSchoolEcmId().toString());
         data.put("ecmId", ecmId);
         // data.put("groups", groupTpl().getJSONArray("groups"));

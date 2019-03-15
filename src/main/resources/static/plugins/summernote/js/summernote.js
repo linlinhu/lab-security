@@ -6340,7 +6340,7 @@
               '<div class="form-group note-form-group note-group-select-from-files">',
               '<label class="note-form-label">' + this.lang.image.selectFromFiles + '</label>',
               '<input class="note-image-input note-form-control note-input" ',
-              ' type="file" name="files" accept="image/*" multiple="multiple" />',
+              ' type="file" name="files" multiple="multiple" />',
               imageLimitation,
               '</div>',
               '<div class="form-group note-group-image-url" style="overflow:auto;">',
@@ -6480,14 +6480,12 @@
           if (dom.isImg(target)) {
               var pos = dom.posFromPlaceholder(target);
               var posEditor = dom.posFromPlaceholder(this.editable);
-              var that = this
-              this.$popover.css({
+              /*this.$popover.css({ //如果要对图片进行操作，请放开此处注释并删除下面的click事件
                   display: 'block',
                   left: this.options.popatmouse ? event.pageX - 20 : pos.left,
                   top: this.options.popatmouse ? event.pageY : Math.min(pos.top, posEditor.top)
-              });
+              });*/
               $(document).on("click",function(){
-                  console.log(123)
                   that.$popover.hide()
               })
           }

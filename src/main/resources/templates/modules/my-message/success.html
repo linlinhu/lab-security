@@ -1,0 +1,58 @@
+<style>
+    .modify-success {
+        padding: 36px 0 0 40px;
+        background-color: #EBFAF3;
+        min-height: 160px;
+    }
+    .modify-success .left {
+        float: left;
+    }
+    .modify-success .left i {
+        font-size: 50px;
+        color: #28D582;
+    }
+    .modify-success .right-panel {
+        padding-left: 20px;
+    }
+    .modify-success .right-panel h3 {
+        font-size: 18px;
+    }
+    .modify-success .right-panel p {
+        padding: 12px 0 20px 0;
+    }
+    .modify-success .right-panel span {
+        color: #55A8FD;
+    }
+</style>
+<div class="modify-success">
+    <div class="left">
+        <i class="iconfont icon-icon_circled"></i>
+    </div>
+    <div class="left right-panel">
+        <h3>修改成功，您的手机号码为&nbsp;&nbsp;<strong>${mobile!'-'}</strong></h3>
+        <p>您需要以新账号重新登录</p>
+        <span>5秒后 自动跳转到登录页</span>
+    </div>
+</div>
+<script>
+    (function(){
+        let number = 5,
+            countDownTimer = null;
+        countDownTimer = setInterval(function(){
+            countDown(countDownTimer,$('.modify-success .right-panel span'))
+        },1000);
+        
+        $(document).on('click',function(){
+            window.location.replace("/login");
+        })  
+        function countDown(timer,el){
+            if(number > 0){
+                number -= 1;
+                el.html(number + '秒后 自动跳转到登录页');
+            } else {
+                clearInterval(timer);
+                window.location.replace("/login");
+            }
+        }
+    }())
+</script>

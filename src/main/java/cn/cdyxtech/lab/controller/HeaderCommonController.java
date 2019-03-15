@@ -61,12 +61,14 @@ public abstract class HeaderCommonController extends BaseController {
         			//包装当前用户对应的ecm相关信息
             		JsonObjectHelper helper = new JsonObjectHelper(ecmInfoJson);
             		Long userId = helper.getValue("userId", Long.class);
-            		if (userClaim.getId()==userId) {
+            		if (userClaim.getId().compareTo(userId)==0) {
 						//确定是同一个用户的时候
             			userClaim.setSchoolEcmId(helper.getValue("schoolEcmId", Long.class));
             			userClaim.setBranchEcmId(helper.getValue("branchEcmId", Long.class));
             			userClaim.setLabEcmId(helper.getValue("labEcmId", Long.class));
             			userClaim.setHighestEcmId(helper.getValue("highestEcmId", Long.class));
+                        userClaim.setHighestEcmIdType(helper.getValue("highestEcmIdType", Integer.class));
+                        userClaim.setPersonalHeigherEcmId(helper.getValue("personalHeigherEcmId", Long.class));
 					}
 				}
         	}
@@ -115,6 +117,7 @@ public abstract class HeaderCommonController extends BaseController {
      private ConfigFacade configFacade;
 
     protected JSONObject gradeReloadResult(JSONObject result) {
+       
         JSONArray resultList = result.getJSONArray("resultList");
         List<ConfigOption.ConfigItem> hiddenDangerGrades = configFacade.getConfigItems(ConfigOption.POTENTIAL_HAZARD_LEVEL_GROUP);
         for (int i = 0; i < resultList.size(); i++) {

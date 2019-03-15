@@ -73,13 +73,23 @@ public interface UserAPIFeign {
 	 * @param page
 	 * @param limit
 	 * @param keyword
+	 * @param controlTypes 需要查询的组控制范围集合;0:权限，1：第三方平台，2：共有控制
 	 * @return
 	 */
 	@GetMapping("/api/member/user/list")
-	JSONObject userList(@RequestParam("ecmIds") Long[] ecmId,@RequestParam("flockIds")Long[] flockIds,@RequestParam("page") Integer page, @RequestParam("limit") Integer limit, @RequestParam("keyword") String keyword, @RequestParam("type") String type);
+	JSONObject userList(@RequestParam("ecmIds") Long[] ecmId,
+		@RequestParam("flockIds")Long[] flockIds,
+		@RequestParam("page") Integer page, 
+		@RequestParam("limit") Integer limit, 
+		@RequestParam("keyword") String keyword, 
+		@RequestParam("type") String type,
+		@RequestParam("controlTypes") Long[] controlTypes);
 
 	@PostMapping(value = "/register/saveOrUpdateUser")
-	JSONObject saveOrUpdateUser(@RequestParam("realName") String name, @RequestParam("mobile") String mobile, @RequestParam("id") Long id);
+	JSONObject saveOrUpdateUser(@RequestParam("realName") String name,
+		@RequestParam("mobile") String mobile, 
+		@RequestParam("id") Long id,
+		@RequestParam("username") String username);
 
 	@PostMapping(value = "/register/saveUserWithEcm")
 	JSONObject saveOrUpdateUser(@RequestBody JSONObject user);
@@ -99,7 +109,5 @@ public interface UserAPIFeign {
 
 	@GetMapping("/api/flock/getEcmFlock")
 	JSONObject getFlocks(@RequestParam("ecmId") Long ecmId,@RequestParam("flockType") Integer flockType);
-
-
 
 }

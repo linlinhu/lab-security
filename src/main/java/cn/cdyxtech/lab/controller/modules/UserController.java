@@ -1,11 +1,15 @@
 package cn.cdyxtech.lab.controller.modules;
 
 import cn.cdyxtech.lab.controller.ResponseBack;
+import cn.cdyxtech.lab.facade.ECOFacade;
 import cn.cdyxtech.lab.facade.UserFacade;
+import cn.cdyxtech.lab.feign.BasicInfoAPI;
+import cn.cdyxtech.lab.feign.ResultCheckUtil;
 import cn.cdyxtech.lab.util.JWTThreadLocalUtil;
 import cn.cdyxtech.lab.vo.FlockVO;
 import cn.cdyxtech.lab.vo.UserVO;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.emin.base.controller.BaseController;
 import com.emin.base.dao.PagedResult;
 import org.apache.commons.lang3.ArrayUtils;
@@ -27,7 +31,10 @@ public class UserController extends BaseController {
 
     @Autowired
     private UserFacade userFacade;
-  
+    @Autowired
+    private BasicInfoAPI basicInfoApi;
+    @Autowired
+    private ECOFacade ecoFacade;
 
 
     @GetMapping("/index")
@@ -36,7 +43,10 @@ public class UserController extends BaseController {
                         Long[] queryFlockIds,
                         Long additionFlockId,
                         Boolean ecmDeep,
-                        String[] showColumns,String[] showOperations){
+                        String[] showColumns,
+                        String[] showOperations,
+                        String operationCodes,
+                        String controlTypes){
 
         if(ArrayUtils.isNotEmpty(showColumns)){
             data.put("showColumns",JSONArray.toJSONString(showColumns));
@@ -47,10 +57,15 @@ public class UserController extends BaseController {
         if(ArrayUtils.isNotEmpty(queryFlockIds)){
             data.put("queryFlockIds",JSONArray.toJSONString(queryFlockIds));
         }
+        if(operationCodes != null){
+            data.put("operationCodes", operationCodes);
+        }
+        if(controlTypes != null){
+            data.put("controlTypes", controlTypes);
+        }
         data.put("additionFlockId",additionFlockId);
         data.put("ecmId",ecmId==null?JWTThreadLocalUtil.getEcmId():ecmId);
-
-        data.put("ecmDeep",ecmDeep==null?true:ecmDeep);
+        data.put("ecmDeep",ecmDeep==null?false:ecmDeep);
 
         return "modules/user/index";
     }
@@ -67,13 +82,23 @@ public class UserController extends BaseController {
     }
 
     @GetMapping("/list")
-    public String list(Map<String,Object> data, String keyword,String[] showColumns, Long ecmId, Long[] flockIds, Boolean ecmDeep){
-        PagedResult<UserVO> pagedResult = userFacade.getPagedUser(getPageRequestData(),keyword,ecmId,ecmDeep,flockIds);
+    public String list(Map<String,Object> data, String keyword,String[] showColumns, Long ecmId, Long[] flockIds, Boolean ecmDeep,Long[] controlTypes){
+        if(controlTypes == null || controlTypes.length==0) {
+            controlTypes = new Long[]{1L};
+        }
+        PagedResult<UserVO> pagedResult = userFacade.getPagedUser(getPageRequestData(),keyword,ecmId,ecmDeep,flockIds,controlTypes);
         if(showColumns!=null && showColumns.length>0){
             data.put("showColumns",showColumns);
         }
+        if(flockIds==null || flockIds.length==0){
+            Long topEcmId = ecoFacade.getTopEcmId(ecmId);
+            JSONObject res = basicInfoApi.scInfo(topEcmId);
+            ResultCheckUtil.check(res);
+            data.put("flockId",res.getJSONObject("result").getLong("flockId"));
+
+        }
         data.put("pagedResult",pagedResult);
-        data.put("userId",JWTThreadLocalUtil.getEcmId());
+        data.put("userId",JWTThreadLocalUtil.getUserId());
         return "modules/user/list";
     }
 

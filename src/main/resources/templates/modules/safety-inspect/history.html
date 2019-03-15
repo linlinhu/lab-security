@@ -115,15 +115,35 @@ ul.security-inspect-history > li > div.detail-block > div.pics img {
             <div><span>不符合项</span>${history.unqualifiedLevelThree}</div>
             </#if>
             <div><span>描述信息：</span>${history.describe}</div>
-            <#if photo?? && photo?size gt 0>
+            <#if history.photo?? && history.photo?size gt 0>
                 <div class="pics">
-                    <#list photo as pic>
-                        <img src="${pic.storage[1].fileStorageUrl}" width="100"/>
+                    <#list history.photo as pic>
+                        <img src="${pic.storage[1].fileStorageUrl}" data-original-href="${pic.storage[0].fileStorageUrl}" width="100" onclick="showImgBox(this)"/>
                     </#list>
                 </div>
             </#if>
         </div>
     </li>
     </#list>
-
 </ul>
+
+<script>
+    function showImgBox(self) {
+        layer.photos({
+            photos: {
+                "title": "查看大图", //相册标题
+                "id": 1, //相册id
+                "start": 0, //初始显示的图片序号，默认0
+                "data": [   //相册包含的图片，数组格式
+                    {
+                        "alt": "查看大图",
+                        "pid": 1, //图片id
+                        "src": $(self).attr('data-original-href'), //原图地址
+                        "thumb": $(self).attr('src')
+                    }
+                ]
+            }
+            ,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机
+        });
+    }
+</script>

@@ -89,8 +89,28 @@ var	SecurityTree = function(options){
 			url: tableUrl||"document/getPage"
 		},function(res){
 			if(res.success) {
+				let obj = {},
+				result = res.result,
+				newList = [],
+				temp;
+				result.sort(compare('nodeId'));
+				
+				result.map(item=>{
+					if(item.level == null || item.level ==1 || item.level ==2) {
+						item.parentNodeId = null;
+						obj[item.nodeId] = [item]
+					} else {
+						obj[item.parentNodeId].push(item)
+					}
+				});
+				for(key in obj) {
+					newList = newList.concat(obj[key]);
+				}
+				temp = newList[0];
+				newList[0] = newList[1];
+				newList[1] = temp;
 				if(typeof callback == 'function') {
-					callback(res.result);
+					callback(newList);
 				}
 			} else {
 				layer.msg('获取数据失败',{icon: 5});
@@ -104,6 +124,21 @@ var	SecurityTree = function(options){
     		renderTable({data:res})
     	})
 	},
+	compare = function(prop) {
+        return function (obj1, obj2) {
+            var val1 = obj1[prop];
+            var val2 = obj2[prop];
+            val1 = (val1=='-1' ? 'null' : val1);
+            val2 = (val2=='-1' ? 'null' : val2);
+            if (val1 < val2) {
+                return -1;
+            } else if (val1 > val2) {
+                return 1;
+            } else {
+                return 0;
+            }            
+        } 
+    };
     init = function(p){
 		p = p || {};
 		tableHeaderTpl = p.tableHeaderTpl;

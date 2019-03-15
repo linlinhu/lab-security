@@ -1,6 +1,17 @@
 <style type="text/css">
     .checkItemConfig{
         height:100%;
+        position:relative;
+    }
+    .checkItemConfig .gradeConfig{
+        position: absolute;
+        top:0px;
+        left: 0px;
+        width:100%;
+        height:100%;
+        display: none;
+        z-index:999;
+        background: #fff;
     }
     .checkItemConfig .tips{
         padding:13px 25px;
@@ -12,8 +23,6 @@
         height:calc(100% - 150px);
         padding:0;
         overflow: auto;
-    }
-    .checkItemTree{
         border-top:1px solid #D6DBE6;
         border-bottom:1px solid #D6DBE6;
     }
@@ -101,14 +110,22 @@
         font-size:18px;
     }
 </style>
-<#assign colorMap= {"1":"#28D582","2":"#92A2CA","3":"#7D68FF","4":"#FFBE32","5":"#FF80B9","6":"#FF4D77"}>
-<div class="wrapper-content checkItemConfig">
-    <div class="col-sm-6 tips p-sm">
-        提醒：上传安全检查模板，配置<span style="color:#199ED8">检查项的等级</span>。等级为<span style="color:#199ED8">1~6级</span>，数字越大涉及问题越严重
-    </div>
 
-    <div class="col-sm-6 text-right">
+<div class="wrapper-content checkItemConfig">
+    <div class="gradeConfig">
+
+    </div>
+   <#-- <div class="col-sm-6 tips p-sm">
+        提醒：上传安全检查模板，配置<span style="color:#199ED8">检查项的等级</span>。等级为<span style="color:#199ED8">1~6级</span>，数字越大涉及问题越严重
+    </div>-->
+
+    <div class="col-sm-12 text-right p-sm">
+        <@codeValidation codes=operationCodes operationCode="config">
+        <button class="btn ls-btn btn-info checkDataItemOpts m-r-sm" data-opt="gradeConfig"><i class="iconfont icon-icon_edit"></i> 等级配置</button>
+        </@codeValidation>
+        <@codeValidation codes=operationCodes operationCode="upload">
         <button class="btn ls-btn btn-info checkDataItemOpts" data-opt="upload"><i class="iconfont icon-icon_upload"></i> 上传Excel</button>
+        </@codeValidation>
     </div>
     <div class="checkItemTree col-sm-12 panel-group">
         <#assign list = checkItemList>
@@ -167,6 +184,7 @@
                   filesType: ['excel']
               },function(res){
                     if(res.success){
+                        layer.closeAll()
                         goPage("index")
                     }else{
                         layer.msg(res.message,{icon:5})
@@ -196,6 +214,13 @@
                     layer.close(index);
                 });
 
+            },
+            gradeConfig:function(){
+                $http.get({
+                    url:"checkItem/gradeConfig"
+                },function(res){
+                    $(".checkItemConfig .gradeConfig").html(res).fadeIn()
+                })
             },
             save:function(){
                 var items = this._handleData($(".checkItemTree .checkDataItemsPanel"));

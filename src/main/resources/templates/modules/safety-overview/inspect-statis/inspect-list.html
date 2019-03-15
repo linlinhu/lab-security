@@ -4,18 +4,16 @@
         <div class="row">
             <div class="col-sm-3"></div>
             <div class="col-sm-3">
-                <#include "../../../tpl/basic-config/hidden-danger-grades.html" />
-            </div>
-            
-            <div class="col-sm-3">
                 <#include "../../../tpl/basic-config/view-scope.html" />
             </div>
-            
+            <div class="col-sm-3">
+                    <#include "../../../tpl/basic-config/hidden-danger-grades.html" />
+                </div>
             <div class="col-sm-3">
                 <div class="input-group">
-                    <input type="text" placeholder="搜索实验室名" class="input-sm form-control ls-input">
+                    <input type="text" placeholder="搜索实验室名" class="input-sm form-control ls-input" name="keyword">
                     <span class="input-group-btn">
-                        <button type="button" class="btn ls-btn btn-sm btn-primary"><i class="fa fa-search"></i></button>
+                        <button type="button" class="btn ls-btn btn-sm btn-primary" data-opt="reloadList"><i class="fa fa-search"></i></button>
                     </span>
                 </div>
             </div>
@@ -31,7 +29,7 @@
     }, function(res) {
         if (res.opt == 'eye') {
             res.detailTitle = '安全检查统计';
-            goPage('detail', res);
+            goPage('detail?id='+res.id + '&labId=' + res.labId, res);
         }
     })
 </script>

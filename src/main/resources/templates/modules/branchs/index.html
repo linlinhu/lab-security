@@ -14,9 +14,9 @@
             </div>
         </div>
         <div class="col-sm-3 text-right" style="padding-left:10px">
-            <#if !showOperations?? || showOperations?seq_contains("add")>
+            <@codeValidation codes=operationCodes operationCode="add-s-branch">
             <button class="btn ls-btn btn-sm btn-primary entityOpts" data-opt="add"><span class="iconfont icon-icon_"></span>新建学院</button>
-            </#if>     
+            </@codeValidation>
         </div>
     </div>
     </form>
@@ -28,6 +28,14 @@ new TableManage({
     wrapId: '#common-management-${timestamp}',
     moduleName: 'branchs',
     showColumns: ${showColumns!'[]'},
-    ecmId: ${ecmId}
+    operationCode: '${operationCodes}',
+    ecmId: ${ecmId},
+    limit: 20,
+    loaded: function(res){
+        let operationCode = res.operationCode;
+        if(operationCode.indexOf('eidt-s-branch') == -1) {
+            $(res.wrapId + ' .td-operation a[data-opt="edit"]').remove();
+        }
+    }
 })
 </script>

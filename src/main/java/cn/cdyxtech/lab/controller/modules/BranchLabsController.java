@@ -11,8 +11,11 @@ import cn.cdyxtech.lab.controller.HeaderCommonController;
 import cn.cdyxtech.lab.facade.ConfigFacade;
 import cn.cdyxtech.lab.feign.BasicInfoAPI;
 import cn.cdyxtech.lab.feign.MelAPIFeign;
+import cn.cdyxtech.lab.filter.MenuOperationFilter;
 
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONObject;
 import com.emin.base.dao.PageRequest;
@@ -21,12 +24,15 @@ import com.emin.base.exception.EminException;
 @Controller
 @RequestMapping("/branch-labs")
 public class BranchLabsController extends HeaderCommonController {
+    private Logger logger = LoggerFactory.getLogger(BranchLabsController.class);
     @Autowired
     private MelAPIFeign melApiFeign;
     @Autowired
     private BasicInfoAPI basicInfoApi;
     @Autowired
     private ConfigFacade configFacade;
+    @Autowired
+	MenuOperationFilter menuOperationFilter;
     
     public JSONObject listTpl() {
         JSONObject res = new JSONObject();
@@ -49,6 +55,12 @@ public class BranchLabsController extends HeaderCommonController {
 
     @GetMapping("/index")
     public String index(Map<String,Object> data){
+        try {
+			String operationCodes = menuOperationFilter.menuOperations("branch-labs");
+			data.put("operationCodes", operationCodes);
+		} catch (Exception e) {
+            logger.error("实验室管理界面跳转，加载权限出现异常->" + e.getMessage());
+		}
         data.put("timestamp", System.currentTimeMillis());
         return "modules/branch/labs/index";
     }
@@ -105,6 +117,17 @@ public class BranchLabsController extends HeaderCommonController {
         data.put("itemToken", itemToken);
         data.put("value", value);
         data.put("max_selected_options", 10);
+        return "tpl/combo";
+    }
+
+    
+    @GetMapping("/labGrades")
+    public String labGrades(Map<String,Object> data, String itemToken, String value){
+        String res = "[{\"name\":\"Ⅰ级\",\"value\":\"Ⅰ级\"},{\"name\":\"Ⅱ级\",\"value\":\"Ⅱ级\"},{\"name\":\"Ⅲ级\",\"value\":\"Ⅲ级\"},{\"name\":\"Ⅳ级\",\"value\":\"Ⅳ级\"}]";
+        data.put("data", JSONObject.parseArray(res));
+        data.put("itemToken", itemToken);
+        data.put("value", value);
+        data.put("max_selected_options", 1);
         return "tpl/combo";
     }
 }

@@ -34,6 +34,9 @@ public class StartupRunner implements CommandLineRunner {
     @Value("classpath:/initDataFile/lab_checkData.json")
     private Resource labCheckData;
 
+    @Value("classpath:/initDataFile/lab_initPH.json")
+    private Resource labPHData;
+
     @Override
     public void run(String... args) throws IOException {
 
@@ -59,6 +62,27 @@ public class StartupRunner implements CommandLineRunner {
             JSONObject createItemsResult = commonServiceAPIFeign.createConfigItem((JSONObject) JSON.toJSON(item));
             ResultCheckUtil.check(createItemsResult);
         }
+        /*JSONObject phResult = commonServiceAPIFeign.configIsExists(ConfigOption.POTENTIAL_HAZARD_LEVEL_GROUP);
+        ResultCheckUtil.check(phResult);
+        if (!phResult.getBooleanValue("result")) {
+            InputStream phData = labPHData.getInputStream();
+            String phJSON = this.jsonRead(phData);
+            JSONObject group = new JSONObject();
+            group.put("groupCode", ConfigOption.POTENTIAL_HAZARD_LEVEL_GROUP);
+            group.put("isTree", false);
+            group.put("name",  ConfigOption.POTENTIAL_HAZARD_LEVEL_GROUP);
+            JSONObject createResult = commonServiceAPIFeign.createConfig(group);
+            ResultCheckUtil.check(createResult);
+            Long groupId = createResult.getJSONObject("result").getLong("id");
+            JSONArray items = JSONArray.parseArray(phJSON);
+            for (int i=0;i<items.size();i++){
+                items.getJSONObject(i).put("groupId", groupId);
+            }
+            JSONObject createItemsResult = commonServiceAPIFeign.createConfigItems(items);
+            ResultCheckUtil.check(createItemsResult);
+        }*/
+
+
         InputStream file = labInitData.getInputStream();
         String jsonData = this.jsonRead(file);
         JSONObject initData = JSONObject.parseObject(jsonData);

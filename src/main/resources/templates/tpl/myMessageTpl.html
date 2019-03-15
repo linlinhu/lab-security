@@ -11,7 +11,7 @@
 					【系统公告】
 				{{# } else if(item.type == 5) { }}
 					【申请通知】
-				{{# } }}{{item.title}} {{new Date(item.createTime).Format("yyyy-MM-dd hh:mm")}}
+				{{# } }}{{item.title}}<br> {{new Date(item.createTime).Format("yyyy-MM-dd hh:mm")}}
 			</a>
 		</li>
 	{{# }) }}

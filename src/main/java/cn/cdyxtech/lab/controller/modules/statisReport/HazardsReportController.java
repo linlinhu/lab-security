@@ -10,9 +10,14 @@ import cn.cdyxtech.lab.constain.ApplicationConstain;
 import cn.cdyxtech.lab.controller.HeaderCommonController;
 import cn.cdyxtech.lab.feign.BasicInfoAPI;
 import cn.cdyxtech.lab.feign.MelAPIFeign;
+import cn.cdyxtech.lab.filter.MenuOperationFilter;
 
+import java.util.ArrayList;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.emin.base.dao.PageRequest;
 import com.emin.base.exception.EminException;
@@ -20,10 +25,13 @@ import com.emin.base.exception.EminException;
 @Controller
 @RequestMapping("/hazards-report")
 public class HazardsReportController extends HeaderCommonController {
+    private Logger logger = LoggerFactory.getLogger(HazardsReportController.class);
     @Autowired
     private MelAPIFeign melApiFeign;
     @Autowired
     private BasicInfoAPI basicInfoApi;
+    @Autowired
+	MenuOperationFilter menuOperationFilter;
     
     @Value("${labApiGateway}")
     private String labAPIGateway;
@@ -50,6 +58,12 @@ public class HazardsReportController extends HeaderCommonController {
         if (this.validateAuthorizationToken().getSchoolEcmId() == null) {
             throw new EminException("404");
         }
+        try {
+			String operationCodes = menuOperationFilter.menuOperations("statis-report");
+			data.put("operationCodes", operationCodes);
+		} catch (Exception e) {
+            logger.error("统计报表管理界面跳转，加载权限出现异常->" + e.getMessage());
+		}
         Integer ecmId = Integer.parseInt(this.validateAuthorizationToken().getSchoolEcmId().toString());
         data.put("ecmId", ecmId);
         data.put("downloadUrl", labAPIGateway + "/api-lab-basicinformation-extension/wholeLaboratory/exportHSStatistics/" + ecmId);
@@ -73,8 +87,30 @@ public class HazardsReportController extends HeaderCommonController {
         Integer page = pr.getCurrentPage();
         Integer limit = pr.getLimit();
         JSONObject res = basicInfoApi.labPage(ecmId, page, limit, keyword, dangerSource);
-        // String resStr = "{\"resultList\":[{\"dangerSourceName\":\"易燃品\",\"labName\":\"微生物实验室502-1\",\"laboratoryCategoryNames\":[{\"categoryName\":\"化学类\"}],\"labLevel\":\"Ⅰ级\",\"securityUserName\":\"张三\"},{\"dangerSourceName\":\"剧毒物\",\"labName\":\"药剂实验室302-2\",\"laboratoryCategoryNames\":[{\"categoryName\":\"生物类\"}],\"labLevel\":\"Ⅳ级\",\"securityUserName\":\"李四\"}],\"currentPage\":1,\"totalCount\":2}";
-        data.put("data", res.getJSONObject("result"));
+        JSONObject result = res.getJSONObject("result");
+        JSONArray list = result.getJSONArray("resultList");
+        JSONObject item;
+        JSONArray dangerSourceList;
+        ArrayList<String> dangerSourceNameList;
+        String dangerSourceNameStr = new String();
+        if(!list.isEmpty()) {
+            for(int i = 0; i < list.size(); i++){
+                item = list.getJSONObject(i);
+                dangerSourceNameList = new ArrayList();
+                dangerSourceList = item.getJSONArray("hazardSourceCategoryNames");
+                if(dangerSourceList!=null && !dangerSourceList.isEmpty()) {
+                    for(int j = 0; j < dangerSourceList.size(); j++) {
+                        dangerSourceNameList.add(dangerSourceList.getJSONObject(j).getString("categoryName"));
+                    }
+                }
+                dangerSourceNameStr = String.join("，", dangerSourceNameList);
+                item.put("dangerSourceName", dangerSourceNameStr);
+            
+            }
+            result.put("resultList", list);
+        }
+        
+        data.put("data", result);
         return "tpl/list";
     }
 

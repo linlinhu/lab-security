@@ -10,20 +10,26 @@ import cn.cdyxtech.lab.constain.ApplicationConstain;
 import cn.cdyxtech.lab.controller.HeaderCommonController;
 import cn.cdyxtech.lab.feign.MelAPIFeign;
 import cn.cdyxtech.lab.feign.SecurityCheckAPI;
+import cn.cdyxtech.lab.filter.MenuOperationFilter;
 
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 import com.emin.base.dao.PageRequest;
 import com.emin.base.exception.EminException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 @RequestMapping("/accident-report")
 public class AccidentReportController extends HeaderCommonController {
+    private Logger logger = LoggerFactory.getLogger(AccidentReportController.class);
     @Autowired
     private MelAPIFeign melApiFeign;
     @Autowired
     private SecurityCheckAPI securityCheckApi;
+    @Autowired
+	MenuOperationFilter menuOperationFilter;
     @Value("${labApiGateway}")
     private String labAPIGateway;
 
@@ -39,7 +45,7 @@ public class AccidentReportController extends HeaderCommonController {
     @GetMapping("charts")
     public String charts(Map<String,Object> data, Long id, Integer ecmId){
         JSONObject res = securityCheckApi.accidentStatis(ecmId);
-        System.out.println(JSONObject.toJSONString(res));
+
         data.put("statisData", res.getJSONObject("result").getJSONArray("countList"));
         return "modules/statis-report/accident-report/charts";
     }
@@ -51,6 +57,12 @@ public class AccidentReportController extends HeaderCommonController {
         if (this.validateAuthorizationToken().getSchoolEcmId() == null) {
             throw new EminException("404");
         }
+        try {
+			String operationCodes = menuOperationFilter.menuOperations("statis-report");
+			data.put("operationCodes", operationCodes);
+		} catch (Exception e) {
+            logger.error("统计报表管理界面跳转，加载权限出现异常->" + e.getMessage());
+		}
         Integer ecmId = Integer.parseInt(this.validateAuthorizationToken().getSchoolEcmId().toString());
         data.put("ecmId", ecmId);
         data.put("downloadUrl", labAPIGateway + "/api-lab-security-check/accident/exportSafetyAccidentStatistics/" + ecmId);

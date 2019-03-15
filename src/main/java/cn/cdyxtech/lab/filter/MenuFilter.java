@@ -4,14 +4,14 @@
 package cn.cdyxtech.lab.filter;
 
 import cn.cdyxtech.lab.feign.PermissionAPIFeign;
+import cn.cdyxtech.lab.util.JsonObjectHelper;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author jim.lee
@@ -51,26 +51,60 @@ public class MenuFilter {
 	}
 	
 	private JSONArray buildMenuList(JSONArray menuArr) {
+		Map<Long, List<JSONObject>> menuParentMap = new HashMap<>();
 		JSONArray menuList = new JSONArray();
-		Set<Long> handledIds = new HashSet<>();
-		for(int i=0;i<menuArr.size();i++) {
-			JSONObject menu = menuArr.getJSONObject(i);
-			if(handledIds.contains(menu.getLong("id"))) {
+		int size = menuArr == null || menuArr.isEmpty() ? 0 : menuArr.size();
+		JSONArray topMenus = new JSONArray();
+		JSONObject m = null;
+		Long pid = null;
+		List<JSONObject> ms = null;
+		JsonObjectHelper helper = null;
+		for (int i = 0; i < size; i++) {
+			m = menuArr.getJSONObject(i);
+			helper = new JsonObjectHelper(m);
+			pid = helper.getValue("pid", Long.class);
+			if (pid != null) {
+				ms = menuParentMap.getOrDefault(pid, new ArrayList<>());
+				ms.add(m);
+				menuParentMap.put(pid, ms);
+			} else {
+				topMenus.add(m);
+			}
+		}
+		Long menuId = null;
+		JSONArray children = null;
+		for (int i = 0; i < topMenus.size(); i++) {
+			m = topMenus.getJSONObject(i);
+			helper = new JsonObjectHelper(m);
+			menuId = helper.getValue("id", Long.class);
+			if (menuId == null) {
 				continue;
 			}
-			JSONArray children = new JSONArray();
-			if(!menu.getBooleanValue("leaf")) {
-				for(int j=0;j<menuArr.size();j++) {
-					JSONObject subMenu = menuArr.getJSONObject(j);
-					if(subMenu.getLong("pid")!=null && menu.getLongValue("id")==subMenu.getLongValue("pid")) {
-						children.add(subMenu);
-						handledIds.add(subMenu.getLong("id"));
-					}
-				}
+			children = this.getSubChildren(menuParentMap, menuId);
+			if (children!=null && !children.isEmpty()) {
+				m.put("children", children);
 			}
-			menu.put("children", children);
-			menuList.add(menu);
+			menuList.add(m);
 		}
 		return menuList;
+	}
+
+	private JSONArray getSubChildren(Map<Long, List<JSONObject>> menuParentMap, Long curId) {
+		JSONArray children = new JSONArray();
+		if (menuParentMap == null || menuParentMap.isEmpty() || curId == null || !menuParentMap.containsKey(curId)) {
+			return children;
+		}
+		List<JSONObject> cList = menuParentMap.get(curId);
+		if (cList != null && !cList.isEmpty()) {
+			cList.forEach(e -> {
+				JsonObjectHelper helper = new JsonObjectHelper(e);
+				Long mId = helper.getValue("id", Long.class);
+				if (helper.getValue("leaf", false, Boolean.class)) {
+					e.put("children", this.getSubChildren(menuParentMap, mId));
+				}
+				children.add(e);
+			});
+		}
+		return children;
 	}
 }

@@ -36,6 +36,29 @@
 	font-size: 14px;
 	color: #99A3B0;
 	padding: 15px 0 28px 0;
+    text-align: left;
+}
+.my-message-detail .summernote ol {
+	list-style-type: decimal;
+	padding-left: 20px;
+}
+.my-message-detail .summernote ol li { 
+ 	list-style-position:outside;
+ 	list-style: decimal;
+}
+.my-message-detail .summernote ul {
+	padding-left: 20px;
+}
+.my-message-detail .summernote ul li {
+	list-style-type: disc;
+}
+.my-message-detail .box {
+	border: 1px solid #D6DBE6;
+	margin: 50px 0;
+	padding: 10px 40px;
+}
+.my-message-detail .notification-receiver.box {
+	margin-top: -30px;
 }
 </style>
 <#setting datetime_format = 'yyyy-MM-dd HH:mm'>
@@ -45,11 +68,75 @@
 		<span class="left iconfont icon-icon_to"></span>
 		<li class="left" data-type="0">查看详情</li>
 	</ul>
-	<box class="text-center">
+	<div class="text-center box">
 		<div class="title">${data.title}</div>
-		<div class="time">${data.createTime?number_to_datetime}</div>
-		<div class="content-container text-left summernote">
-			${data.content?replace("&lt;","<")?replace("&gt;",">")?replace("”","'")?replace("&amp;","&")}
+
+		<div class="time" style="padding-left: 50%;">
+			<#if data.checkType??>
+				分类：${data.checkType}
+			<#else>
+				分类：
+				<#switch data.type>
+					<#case 1>
+						检查通知
+					<#break>
+					<#case 2>
+						整改通知
+					<#break>
+					<#case 3>
+						复查通知
+					<#break>
+					<#case 4>
+						系统公告
+					<#break>
+					<#case 5>
+						申请通知
+					<#break>
+				</#switch>
+			</#if>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			发布人：${data.opUserName}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			发布时间：${data.createTime?number_to_datetime}
 		</div>
-	</box>
+		<div class="content-container text-left summernote">
+			${data.content?replace("&lt;","<")?replace("&gt;",">")?replace("”",'"')?replace("’","'")?replace("&amp;","&")}
+		</div>
+	</div>
+	<#if data.receiver?? && data.receiver.receiver??>
+		<div class="notification-receiver box">
+			<#assign receivers = data.receiver.receiver?split(';')>
+			<#assign type =  data.receiver.type>
+			发送范围：
+			<#if type == 1>
+				<#list receivers as receiver>
+					${receiver?split(',')[1]}&nbsp;&nbsp;
+				</#list>
+			<#else>
+				<#list receivers as receiver>
+					${receiver}&nbsp;&nbsp;
+				</#list>
+			</#if>
+		</div>
+	</#if>
 </div>
+<script>
+
+var getCount = function (){
+	$http.get({
+		url:"my-message/unread-message-count",
+		forbidLoading: true
+	},function(res){
+		let total = res.result;
+		if(total == 0) {
+			$('.my-msg-dp .num').addClass('hide');
+		} else {
+			if(total > 99) {
+				total = '99+';
+			}
+			$('.my-msg-dp .num').removeClass('hide').text(total);
+		}
+	})
+};
+getCount()
+
+</script>

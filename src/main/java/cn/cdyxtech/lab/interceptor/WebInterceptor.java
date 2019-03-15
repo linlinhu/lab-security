@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import cn.cdyxtech.lab.facade.ECOFacade;
 import com.alibaba.fastjson.JSONArray;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -40,6 +41,8 @@ public class WebInterceptor extends HandlerInterceptorAdapter {
 
 	@Autowired
 	private UserAPIFeign personAPIFeign;
+	@Autowired
+	private ECOFacade ecoFacade;
 
 	public static boolean isRequestFromAJAX(HttpServletRequest request){
 		String requestType = request.getHeader("X-Requested-With");
@@ -74,10 +77,11 @@ public class WebInterceptor extends HandlerInterceptorAdapter {
 				JSONObject json = JWTUtil.validateToken(jwt);
 				System.out.println(json);
 				JSONArray ecmIds = json.getJSONArray("ecmIds");
-				JWTThreadLocalUtil.setEcmId(ecmIds.size()>0?ecmIds.getLong(0):null);
+				JWTThreadLocalUtil.setRootEcmId(ecoFacade.getTopEcmId(ecmIds.getLong(0)));
+				JWTThreadLocalUtil.setEcmId(ecmIds.getLong(0));
 				JWTThreadLocalUtil.setUserId(json.getLong("id"));
 				JWTThreadLocalUtil.setJwt(jwt);
-			} catch (RuntimeException e) {
+			} catch (Exception e) {
 				validation = false;
 			}
 

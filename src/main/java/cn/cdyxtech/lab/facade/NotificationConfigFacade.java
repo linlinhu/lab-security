@@ -10,5 +10,5 @@ public interface NotificationConfigFacade extends AbstractFacade<NotificationCon
 
     List<NotificationConfigVO> configs();
 
-    List<SecurityTreeVO> getSecurityTree();
+    List<SecurityTreeVO> getSecurityTree(String keyword);
 }

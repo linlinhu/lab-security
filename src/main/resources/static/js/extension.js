@@ -2,9 +2,6 @@
  * 扩展定义的JS
  */
 
-
-
-
 (function ($) {
 
     //增加自定义正则表达式验证方法
@@ -122,7 +119,6 @@
 
         //设置激活样式
         function setActive() {
-            console.log(1)
             $ul.find('li').removeClass('active');
             $ul.find('li').eq(getIndex()).addClass('active');
         }

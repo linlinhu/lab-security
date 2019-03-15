@@ -14,6 +14,12 @@
             </div>
         </div>
         <div class="form-group">
+            <label class="control-label col-sm-3">身份证号</label>
+            <div class="col-sm-8">
+                <input class="form-control ls-input" type="text" name="idCard"  value="${(user.idCard)!''}">
+            </div>
+        </div>
+        <div class="form-group">
             <label class="control-label col-sm-3">角色</label>
             <div class="col-sm-8">
                 <select class="form-control ls-input" name="flockIds" multiple='multiple'>
@@ -54,6 +60,10 @@
                 mobile: {
                     required: true,
                     regex: "^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\\d{8}$"
+                },
+                idCard:{
+                    required:true,
+                    regex:"^[1-9]\\d{7}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}$|^[1-9]\\d{5}[1-9]\\d{3}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}([0-9]|X)$"
                 }
 
 
@@ -66,6 +76,10 @@
                 mobile: {
                     required: icon + "请输入用户手机号",
                     regex: icon + "用户手机号格式不正确"
+                },
+                idCard:{
+                    required: icon + "请输入用户身份证号",
+                    regex: icon + "用户身份证号格式不正确"
                 }
 
             }

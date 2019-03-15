@@ -1,5 +1,5 @@
 var DocumentTableManage = function(options){
-	
+	$.extend(this,options)
 	if(!(options.treeTableSelecter && $(options.treeTableSelecter).length == 1)){
 		layer.msg('treeTable容器有且只能有一个')
 		return false;
@@ -127,9 +127,11 @@ var DocumentTableManage = function(options){
 						itemSelector: moduleId + ' input[name="file-item"]'
 					});
 					
-					
 				} else {
 					$(tableId + '-page').hide();
+				};
+				if(typeof _this.loaded == 'function'){
+					_this.loaded();
 				}
 			});
 		};	
@@ -289,9 +291,19 @@ var DocumentTableManage = function(options){
 				type = 'folder';
 			}
 			if(rightMenu) {
-				rightMenu({id:id,type:type,e:e,el:self,name: name});
-			}
-			
+				if(type == 'file') {
+					if(operationCodes.indexOf('doc-remove-folder-file') != -1 || operationCodes.indexOf('doc-move-folder-file') != -1) {
+						rightMenu({id:id,type:type,e:e,el:self,name: name});
+					}
+				} else {
+					if(operationCodes.indexOf('doc-remove-folder-file') != -1 
+						|| operationCodes.indexOf('doc-move-folder-file') != -1
+						|| operationCodes.indexOf('doc-edit-folder') != -1
+						|| operationCodes.indexOf('doc-upload-file') != -1) {
+						rightMenu({id:id,type:type,e:e,el:self,name: name});
+					}
+				}
+			}	
 		});
 		//排序
 		$(tableId).unbind('click');

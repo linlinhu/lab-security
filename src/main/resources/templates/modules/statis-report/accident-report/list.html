@@ -7,16 +7,17 @@
             </div>
             <div>
                 <div class="input-group">
-                    <input type="text" placeholder="搜索实验室名，安全责任人名，电话" class="input-sm form-control ls-input">
+                    <input type="text" placeholder="搜索实验室名，安全责任人名，电话" class="input-sm form-control ls-input" name="keyword">
                     <span class="input-group-btn">
-                        <button type="button" class="btn ls-btn btn-sm btn-primary"><i class="fa fa-search"></i></button>
+                        <button type="button" class="btn ls-btn btn-sm btn-primary" data-opt="reloadList"><i class="fa fa-search"></i></button>
                     </span>
                 </div>
             </div>
-            
+            <@codeValidation codes=operationCodes operationCode="accident-report-download">
             <div class="rgt">
                 <a class="btn ls-btn btn-primary download" href="javascript:;">下载表格</a>
             </div>
+            </@codeValidation>
         </div>
     </form>
     <div class="data-list"></div>

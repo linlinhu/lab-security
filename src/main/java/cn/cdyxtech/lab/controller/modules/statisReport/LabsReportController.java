@@ -10,8 +10,11 @@ import cn.cdyxtech.lab.constain.ApplicationConstain;
 import cn.cdyxtech.lab.controller.HeaderCommonController;
 import cn.cdyxtech.lab.feign.BasicInfoAPI;
 import cn.cdyxtech.lab.feign.MelAPIFeign;
+import cn.cdyxtech.lab.filter.MenuOperationFilter;
 
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONObject;
 import com.emin.base.dao.PageRequest;
@@ -20,10 +23,13 @@ import com.emin.base.exception.EminException;
 @Controller
 @RequestMapping("/labs-report")
 public class LabsReportController extends HeaderCommonController {
+    private Logger logger = LoggerFactory.getLogger(LabsReportController.class);
     @Autowired
     private MelAPIFeign melApiFeign;
     @Autowired
     private BasicInfoAPI basicInfoApi;
+    @Autowired
+	MenuOperationFilter menuOperationFilter;
     @Value("${labApiGateway}")
     private String labAPIGateway;
     public JSONObject safetyOverviewTpl() {
@@ -54,6 +60,12 @@ public class LabsReportController extends HeaderCommonController {
         if (this.validateAuthorizationToken().getSchoolEcmId() == null) {
             throw new EminException("404");
         }
+        try {
+			String operationCodes = menuOperationFilter.menuOperations("statis-report");
+			data.put("operationCodes", operationCodes);
+		} catch (Exception e) {
+            logger.error("统计报表管理界面跳转，加载权限出现异常->" + e.getMessage());
+		}
         Integer ecmId = Integer.parseInt(this.validateAuthorizationToken().getSchoolEcmId().toString());
         data.put("ecmId", ecmId);
         data.put("downloadUrl", labAPIGateway + "/api-lab-basicinformation-extension/wholeLaboratory/exportLabStatistics/" + ecmId);

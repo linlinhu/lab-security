@@ -1,0 +1,19 @@
+[{
+  "groupId":0,
+  "code":"serious",
+  "name":"严重隐患",
+  "value":"5,6",
+  "valueType":"String"
+},{
+  "groupId":0,
+  "code":"commonly",
+  "name":"一般隐患",
+  "value":"3,4",
+  "valueType":"String"
+},{
+  "groupId":0,
+  "code":"low",
+  "name":"管理问题",
+  "value":"1,2",
+  "valueType":"String"
+}]

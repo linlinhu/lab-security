@@ -5,7 +5,7 @@
             <div class="col-sm-9"></div>
             <div class="col-sm-3">
                 <div class="input-group">
-                    <input type="text" placeholder="搜索实验室名，安全责任人名，电话" class="input-sm form-control ls-input">
+                    <input type="text" placeholder="搜索实验室名，安全责任人名，电话" class="input-sm form-control ls-input" name='keyword'>
                     <span class="input-group-btn">
                         <button type="button" class="btn ls-btn btn-sm btn-primary"><i class="fa fa-search"></i></button>
                     </span>
@@ -18,9 +18,22 @@
 
 
 <script>
-    new TableManage({
+(function(){
+    var SA_tableManage = new TableManage({
         wrapId: '#safetyoverview-accident-tablelist',
         moduleName: 'accident-statis',
         ecmId: '${ecmId}'
+    },function(res){
+    	if(res.opt == 'eye') {
+    		goModule({
+    			moduleName: 'safety-accident',
+    			directive: 'detail?id='+res.id,
+    		});
+    	}	
+    });
+    $(SA_tableManage.wrapId + ' form button').unbind().on('click',function(){
+        SA_tableManage.loadList(1,10)
     })
+}())
+    
 </script>

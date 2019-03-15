@@ -1,13 +1,47 @@
 
 <section class="emin-diagrams safety-charts">
     <div class="emin-diagram emin-diagram-4">
-        <#include "byBranch.html" />
+        <div class="basic-box">
+            <div class="seperate-title">
+                <span>按学院统计</span>
+                <div class="opts">
+                    <div class="collapse-link-area">
+                        <a class="collapse-link"><i class="fa fa-chevron-left"></i></a>
+                        <a class="collapse-link"><i class="fa fa-chevron-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="echarts echarts-lab-bar" id="echarts-college"></div>
+        </div>
     </div>
     <div class="emin-diagram emin-diagram-4">
-        <#include "byCategory.html" />
+        <div class="basic-box">
+            <div class="seperate-title">
+                <span class="title">按分类统计</span>
+                <div class="opts">
+                    <div class="select-box">
+                        <#assign chartId = 'lab-category'>
+                        <#include "../../../tpl/safety-overview/college-box.html" />
+                    </div>
+                </div>
+            </div>
+            <div class="echarts" id="echarts-category" style="height: 343px"></div>
+        </div>
     </div>
     <div class="emin-diagram emin-diagram-4">
-        <#include "byGrade.html" />
+        <div class="basic-box">
+            <div class="seperate-title">
+                <span class="title">按实验室等级统计</span>
+                <div class="opts">
+                    <div class="select-box">
+                        <#assign chartId = 'lab-level'>
+                        <#include "../../../tpl/safety-overview/college-box.html" />
+                    </div>
+        
+                </div>
+            </div>
+            <div class="echarts" id="echarts-lab-level"></div>
+        </div>
     </div>
     <div style="clear:both"></div>
 </section>
@@ -101,4 +135,3 @@
     })();
 
 </script>
-

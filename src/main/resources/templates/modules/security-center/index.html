@@ -8,24 +8,22 @@
     <div class="basic-box sc-info">
         <div class="seperate-title">
             <span>基本信息</span>
+            <@codeValidation codes=operationCodes operationCode="security-center-edit">
             <div class="opts">
                 <a  class="text-navy" href="javascript:goPage('form?id=${data.id}');" style="width: 150px;"><span class="iconfont icon-icon_edit"></span></a>
             </div>
+            </@codeValidation>
         </div>
         <#include "../../tpl/detail.html"/>
     </div>
     <div class="basic-box ">
         <div class="seperate-title">
-            <span>人员信息</span>
-            <div class="opts">
-                <a class="text-navy" href="javascript:;"><span class="iconfont icon-icon_"></span></a>
-            </div>
+            <span>安全中心人员</span>
         </div>
         <div class="relate-users"></div>
     </div>
 </section>
 <script>
-
     $http.get({
         url: 'user/index',
         data: {
@@ -34,10 +32,13 @@
             ecmId: '${data.ecmId}',
             ecmDeep: false,
             queryFlockIds: '${data.flockId}',
-            additionFlockId: '${data.flockId}'
+            additionFlockId: '${data.flockId}',
+            operationCodes: '${operationCodes!""}',
+            controlTypes: 0
         },
         forbidLoading: true
     }, function(res) {
+        let moduleId = '#security-center-${timestamp}';
         $('#security-center-${timestamp} .relate-users').html(res);
     })
 </script>

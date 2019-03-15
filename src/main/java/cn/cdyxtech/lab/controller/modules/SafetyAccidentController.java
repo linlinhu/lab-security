@@ -9,17 +9,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import cn.cdyxtech.lab.constain.ApplicationConstain;
-import cn.cdyxtech.lab.constain.ConfigOption;
 import cn.cdyxtech.lab.controller.HeaderCommonController;
 import cn.cdyxtech.lab.feign.BasicInfoAPI;
 import cn.cdyxtech.lab.feign.InterfaceProxyCloudAPI;
 import cn.cdyxtech.lab.feign.MelAPIFeign;
 import cn.cdyxtech.lab.feign.SecurityCheckAPI;
+import cn.cdyxtech.lab.filter.MenuOperationFilter;
 
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.emin.base.dao.PageRequest;
@@ -28,6 +29,8 @@ import com.emin.base.exception.EminException;
 @Controller
 @RequestMapping("/safety-accident")
 public class SafetyAccidentController extends HeaderCommonController {
+    private Logger logger = LoggerFactory.getLogger(SchoolController.class);
+
     @Autowired
     private MelAPIFeign melApiFeign;
     @Autowired
@@ -39,6 +42,8 @@ public class SafetyAccidentController extends HeaderCommonController {
 
     @Autowired
     private SafetyAccidentFacade safetyAccidentFacade;
+    @Autowired
+	MenuOperationFilter menuOperationFilter;
 
     public JSONObject groupTpl() {
         JSONObject res = new JSONObject();
@@ -49,14 +54,21 @@ public class SafetyAccidentController extends HeaderCommonController {
 
     @GetMapping("/index")
     public String index(Map<String,Object> data){
-        if (this.validateAuthorizationToken().getHighestEcmId() == null) {
+        UserClaim userClaim = this.validateAuthorizationToken();
+        if (userClaim.getHighestEcmId() == null) {
             throw new EminException("404");
         }
-        Integer ecmId = Integer.parseInt(this.validateAuthorizationToken().getHighestEcmId().toString());
+        Long ecmId = userClaim.getPersonalHeigherEcmId();
         data.put("ecmId", ecmId);
-        if (this.validateAuthorizationToken().getSchoolEcmId() != null) {
-            data.put("schoolEcmId", this.validateAuthorizationToken().getSchoolEcmId());
+        if (userClaim.getSchoolEcmId() != null) {
+            data.put("schoolEcmId", userClaim.getSchoolEcmId());
         }
+        try {
+			String operationCodes = menuOperationFilter.menuOperations("safety-accident");
+			data.put("operationCodes", operationCodes);
+		} catch (Exception e) {
+            logger.error("安全事故管理界面跳转，加载权限出现异常->" + e.getMessage());
+		}
         return "modules/safety-accident/index";
     }
 
@@ -66,12 +78,13 @@ public class SafetyAccidentController extends HeaderCommonController {
         String hiddenDangerGrade, 
         Integer ecmId, 
         String keyword){
-        
+            UserClaim userClaim = this.validateAuthorizationToken();
         if (ecmId == null) {
-            if (this.validateAuthorizationToken().getHighestEcmId() == null) {
+            if (userClaim.getHighestEcmId() == null) {
                 throw new EminException("404");
             }
-            ecmId = Integer.parseInt(this.validateAuthorizationToken().getHighestEcmId().toString());
+            /* ecmId = userClaim.getPersonalHeigherEcmId().intValue(); */
+            ecmId = userClaim.getHighestEcmId().intValue();
         }
         
         data.put("timestamp", System.currentTimeMillis());
@@ -143,6 +156,7 @@ public class SafetyAccidentController extends HeaderCommonController {
         data.put("tpl", formTpl());
         data.put("submitName", "完成");
         data.put("pageSubmit", 1);
+        data.put("ecmId", this.validateAuthorizationToken().getHighestEcmId());
         return "modules/safety-accident/form";
     }
     
@@ -172,6 +186,33 @@ public class SafetyAccidentController extends HeaderCommonController {
         data.put("itemToken", itemToken);
         data.put("value", value);
         data.put("max_selected_options", 1);
+        data.put("tips", "学院");
+        return "tpl/combo";
+    }
+    @GetMapping("/get-lab-list")
+    public String getlabList(Map<String,Object> data, String itemToken, String value,Long ecmId){
+        JSONArray arr = new JSONArray();
+        if(ecmId != null) {
+            JSONObject res = basicInfoApi.labPage(ecmId.intValue(), 1, 100000, null, null);
+            this.dealException(res);
+            JSONArray result = res.getJSONObject("result").getJSONArray("resultList");
+            JSONObject temp;
+            JSONObject item;
+            if(!result.isEmpty()) {
+                for(int i = 0; i < result.size(); i++){
+                    item = result.getJSONObject(i);
+                    temp = new JSONObject();
+                    temp.put("name", item.getString("name"));
+                    temp.put("value", item.getString("id"));
+                    arr.add(temp);
+                }
+            };
+        }
+        data.put("data", arr);
+        data.put("itemToken", itemToken);
+        data.put("value", value);
+        data.put("max_selected_options", 1);
+        data.put("tips", "实验室");
         return "tpl/combo";
     }
     

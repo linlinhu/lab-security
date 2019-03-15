@@ -1,7 +1,9 @@
 <#list categories as category>
-    <div class="categoryItem">
+    <div class="categoryItem" data-name="${category.name?trim}" data-id="${category.id!'0'}">
         <#if  category.id??>
+        <@codeValidation codes=operationCodes operationCode="delete">
              <span class="badge deleteBtn configOpts" data-opt="delete" data-id="${category.id}" data-group-code="${groupCode}" data-group-name="${groupName}"><span class="fa fa-times"></span></span>
+        </@codeValidation>
         </#if>
 
         <div class="categoryItemContent">
@@ -9,7 +11,9 @@
             <span class="name">${category.name}</span>
         </div>
         <div style="position: absolute;right:12px;bottom: 12px;">
-            <a href="javascript:;" class="configOpts" data-opt="detail" data-item-code="${category.code}" data-group-code="${groupCode}" data-group-name="${groupName}" style="color: #55A8FD;" >配置</a>
+            <@codeValidation codes=operationCodes operationCode="detail">
+                 <a href="javascript:;" class="configOpts" data-opt="detail" data-item-code="${category.code}" data-group-code="${groupCode}" data-group-name="${groupName}" style="color: #55A8FD;" >配置</a>
+            </@codeValidation >
         </div>
 
     </div>

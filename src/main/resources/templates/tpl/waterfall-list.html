@@ -70,6 +70,17 @@
     .field-unqualifiedLevelTwo > span {
         display: none;
     }
+    .waterfall-list .selected-area {
+        display: inline-block;
+    }
+    .waterfall-list .selected-area li{
+        display: inline-block;
+        padding: 10px 20px 10px 0;
+    }
+    .waterfall-list .selected-area li span {
+        cursor: pointer;
+        text-decoration: underline;
+    }
 </style>
 <#if data.resultList?size gt 0>
 
@@ -87,7 +98,11 @@
         <div class="item mgt20">
             <#assign itemLevel = entity.unqualifiedGrade?split(",")>
             <#assign maxLevel = (itemLevel?reverse)[0]>
-            <div class="lft-level" style="background-color:${colorMap[maxLevel]}">
+           <!--  <div class="lft-level" style="background-color:${colorMap[maxLevel]}" data-level="${entity.unqualifiedGrade}">
+                ${entity.unqualifiedProGrade?substring(0, 2)}<br>
+                ${entity.unqualifiedProGrade?substring(2, 4)}
+            </div> -->
+            <div class="lft-level" style="background-color:${colorMap[maxLevel]}" data-level="${entity.unqualifiedGrade}">
                 ${entity.unqualifiedProGrade?substring(0, 2)}<br>
                 ${entity.unqualifiedProGrade?substring(2, 4)}
             </div>
@@ -157,6 +172,21 @@
                         <#if item.type == 1>
                             ${entity[item.dataKey]}
                         </#if>
+                        <#if item.type == 31>
+                            <ul class="selected-area">
+                                <#if entity[item.dataKey]?size gt 0>
+                                    <#list entity[item.dataKey] as file>
+                                    <#assign fileUrl = file.storage[0].fileStorageUrl />
+                                    <li data-filetype="${file.originalMimeType}" data-url="${file.storage[0].fileStorageUrl}">
+                                        <i class="fa ${file.viewFileType}"></i>&nbsp;<span class="file-name">${file.originalName}</span>
+                                    </li>
+                                    </#list>
+                                <#else>
+                                    无
+                                </#if>
+                            </ul>
+                            
+                        </#if>
                     </div>
                 </#if>
                 </#list>
@@ -166,5 +196,91 @@
 </div>
 <div class="pageContainer text-right" data-total="${data.totalCount}" data-page="${data.currentPage}"></div>
 <#else>
-    <div class="empty">查无数据</div>
+    <#assign message="暂无数据" />
+    <#include "no-data.html" /> 
 </#if>
+<script>
+(function(){
+    $('.waterfall-list .selected-area .file-name').unbind().on('click',function(){
+        let self = $(this),
+            parent = self.parents('li'),
+            fileName = self.text(),
+            pathUrl = parent.attr('data-url'),
+            filetype = parent.attr('data-filetype'),
+            tempList = ['gif','jpg','jpeg','png','pdf'],
+            isTempType = false;
+        
+        for(let i = 0; i < tempList.length; i++) {
+            if(tempList[i] == filetype) {
+                isTempType = true;
+            }
+        }
+            
+        if(isTempType) {
+            openPanel();
+        } else {
+            $http.get({
+                data: {
+                    viewChannel: 'yozosoft',
+                    filePath:pathUrl,
+                    previewFileName: fileName
+                },
+                url: "document/supportPreview"
+            },function(res){	
+                
+                if(res.result == true) {
+                    $http.post({
+                        data: {
+                            viewChannel: 'yozosoft',
+                            filePath:pathUrl,
+                            previewFileName: fileName
+                        },
+                        url: "document/preview"
+                    },function(res){	
+                        pathUrl = res;
+                        openPanel();
+                    })
+                } else {
+                    layer.msg('不支持预览',{icon:5});
+                }
+            })
+        }
+        function openPanel() {
+            layer.open({
+                type : 1,
+                title :'【' + fileName + '】 在线预览',
+                shadeClose: false,
+                closeBtn: 1, 
+                anim: 2,
+                skin : 'layui-layer-rim', //加上边框
+                area : [ '800px', '600px' ], //宽高
+                btn: ['全屏'],
+                content : '<div class="filer-filepreview-open" style="background:#F3F5F5">' + "<iframe src='" + pathUrl + "' width='100%' height='485px' frameborder='0'>This is an embedded <a target='_blank' href='http://office.com'>Microsoft Office</a> document, powered by <a target='_blank' href='http://office.com/webapps'>Office Online</a>.</iframe>" + '</div>',
+                yes: function(oneOpenIndex){
+                    let oneOpen = $('#layui-layer' + oneOpenIndex);
+                        H = window.innerHeight - 120;
+                    oneOpen.addClass('hide');
+                    let twoOpen = layer.open({
+                        type : 1,
+                        title :'【' + fileName + '】 在线预览',
+                        shadeClose: false,
+                        closeBtn: 1, 
+                        anim: 2,
+                        skin : 'layui-layer-rim', //加上边框
+                        btn: ['还原'],
+                        area : [ '100%', '100%' ], //宽高
+                        content : '<div class="filer-filepreview-open" style="background:#F3F5F5">' + "<iframe src='" + pathUrl + "' width='100%' height='" + H + "px' frameborder='0'>This is an embedded <a target='_blank' href='http://office.com'>Microsoft Office</a> document, powered by <a target='_blank' href='http://office.com/webapps'>Office Online</a>.</iframe>" + '</div>',
+                        yes: function(fullSIndex){
+                            oneOpen.removeClass('hide');
+                            layer.close(fullSIndex)
+                        }
+                    });
+                    $('#layui-layer' + twoOpen + ' .layui-layer-close').on('click',function(){
+                        layer.close(oneOpenIndex)
+                    });
+                }
+            });
+        }
+    }); 
+}())
+</script>

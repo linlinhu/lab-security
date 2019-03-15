@@ -3,7 +3,8 @@
         <button class="btn btn-primary recordOpts" data-opt="add" data-stage="${stage}"><i class="iconfont icon-icon_"></i> 添加记录</button>
     </div>
     <div style="height:calc(100% - 60px);overflow: auto">
-        <#list recordList?sort_by("createTime") as item>
+        <#if recordList?? && recordList?size gt 0>
+            <#list recordList?sort_by("createTime") as item>
             <div class="social-feed-box">
                 <div class="social-avatar">
                     <span class="submitter">提交人： ${item.userName}</span>
@@ -21,14 +22,19 @@
                      <#if item.files?? && item.files?size gt 0>
                         <div class="attachment-list">
                          <#list item.files as file>
-                           <div class="item" title="${file.fileName}"><i class="fa ${file.viewIcon}"></i> <a href="${file.fileUrl}" target="_blank" title="${file.fileName}">${file.fileName}</a></div>
+                             <div class="item" title="${file.fileName}"><i class="fa ${file.viewIcon}"></i> <a href="${file.fileUrl}" target="_blank" title="${file.fileName}">${file.fileName}</a></div>
                          </#list>
                         </div>
                      </#if>
                 </div>
 
             </div>
-        </#list>
+            </#list>
+        <#else>
+            <#assign message="暂无记录">
+            <#include "../../tpl/no-data.html">
+        </#if>
+
     </div>
 </div>
 <#if stage="handleResult">

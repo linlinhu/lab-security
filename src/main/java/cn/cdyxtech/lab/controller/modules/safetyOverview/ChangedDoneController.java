@@ -40,10 +40,10 @@ public class ChangedDoneController extends HeaderCommonController {
         String hiddenDangerGrade,
         String keyword, Integer ecmId) {
         if (ecmId == null) {
-            if (this.validateAuthorizationToken().getSchoolEcmId() == null) {
+            if (this.validateAuthorizationToken().getPersonalHeigherEcmId() == null) {
                 throw new EminException("404");
             }
-            ecmId = Integer.parseInt(this.validateAuthorizationToken().getSchoolEcmId().toString());
+            ecmId = Integer.parseInt(this.validateAuthorizationToken().getPersonalHeigherEcmId().toString());
         }
         
         data.put("tpl", safetyOverviewTpl().getJSONArray("groups").getJSONObject(3));

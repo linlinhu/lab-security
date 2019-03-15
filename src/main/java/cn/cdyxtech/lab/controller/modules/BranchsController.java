@@ -1,6 +1,8 @@
 package cn.cdyxtech.lab.controller.modules;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +14,7 @@ import cn.cdyxtech.lab.constain.ApplicationConstain;
 import cn.cdyxtech.lab.controller.HeaderCommonController;
 import cn.cdyxtech.lab.feign.BasicInfoAPI;
 import cn.cdyxtech.lab.feign.MelAPIFeign;
+import cn.cdyxtech.lab.filter.MenuOperationFilter;
 import cn.cdyxtech.lab.util.UserClaim;
 
 import java.util.Map;
@@ -24,10 +27,13 @@ import com.emin.base.exception.EminException;
 @Controller
 @RequestMapping("/branchs")
 public class BranchsController extends HeaderCommonController {
+    private Logger logger = LoggerFactory.getLogger(BranchsController.class);
     @Autowired
     private MelAPIFeign melApiFeign;
     @Autowired
     private BasicInfoAPI basicInfoApi;
+    @Autowired
+	MenuOperationFilter menuOperationFilter;
 
     public JSONObject listTpl() {
         JSONObject res = new JSONObject();
@@ -57,7 +63,7 @@ public class BranchsController extends HeaderCommonController {
     }
 
     @GetMapping("/index")
-    public String index(Map<String,Object> data,String[] showColumns,String[] showOperations){
+    public String index(Map<String,Object> data){
         if (this.validateAuthorizationToken().getSchoolEcmId() == null) {
             throw new EminException("404");
         }
@@ -65,12 +71,12 @@ public class BranchsController extends HeaderCommonController {
         data.put("ecmId",ecmId);
 
         data.put("timestamp", System.currentTimeMillis());
-        if(ArrayUtils.isNotEmpty(showColumns)){
-            data.put("showColumns",JSONArray.toJSONString(showColumns));
-        }
-        if(ArrayUtils.isNotEmpty(showOperations)){
-            data.put("showOperations",showOperations);
-        }
+        try {
+			String operationCodes = menuOperationFilter.menuOperations("branchs");
+			data.put("operationCodes", operationCodes);
+		} catch (Exception e) {
+            logger.error("学院管理界面跳转，加载权限出现异常->" + e.getMessage());
+		}
 
         return "modules/branchs/index";
     }

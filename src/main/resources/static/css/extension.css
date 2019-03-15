@@ -152,7 +152,7 @@ td {
 .table th:last-child,
 .table td:last-child {
     text-align: right;
-    width: 100px;
+    min-width: 100px;
 }
 
 
@@ -172,7 +172,7 @@ td {
     border: 0;
 }
 .wrapper-content {
-    padding: 30px 60px;
+    padding: 28px 60px;
 }
 
 .searchInputGroup .input-group-addon:nth-child(1){

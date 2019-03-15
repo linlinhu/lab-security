@@ -11,6 +11,7 @@ import cn.cdyxtech.lab.controller.HeaderCommonController;
 import cn.cdyxtech.lab.feign.BasicInfoAPI;
 import cn.cdyxtech.lab.feign.MelAPIFeign;
 import cn.cdyxtech.lab.feign.SecurityCheckAPI;
+import cn.cdyxtech.lab.util.UserClaim;
 
 import java.util.Map;
 
@@ -37,10 +38,11 @@ public class ScTodoController extends HeaderCommonController {
 
     @GetMapping("/index")
     public String index(Map<String,Object> data){
-        if (this.validateAuthorizationToken().getHighestEcmId() == null) {
+        UserClaim userClaim = this.validateAuthorizationToken();
+        if (userClaim.getHighestEcmId() == null) {
             throw new EminException("404");
         }
-        Integer ecmId = Integer.parseInt(this.validateAuthorizationToken().getHighestEcmId().toString());
+        Long ecmId = userClaim.getPersonalHeigherEcmId();
         data.put("ecmId", ecmId);
         if (this.validateAuthorizationToken().getSchoolEcmId() != null) {
             data.put("schoolEcmId", this.validateAuthorizationToken().getSchoolEcmId());
@@ -99,12 +101,10 @@ public class ScTodoController extends HeaderCommonController {
     @GetMapping("detail")
     public String detail(Map<String,Object> data, 
         Integer id, 
-        Integer labid, 
-        String detailTitle){
-
+        Integer labid){
         data.put("id", id);
         data.put("labId", labid);
-        data.put("detailTitle", detailTitle);
+        data.put("detailTitle", "安全整改管理");
 
         return "tpl/inspect-detail/detail";
     }

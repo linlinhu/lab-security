@@ -14,10 +14,11 @@ public class UserClaim implements Serializable {
 	private String mobile;
 	private Integer userType;
 	private Long[] ecmIds;
-	private Long highestEcmId;
+	private Long highestEcmId;//根节点ecmId,rootEcmId
 	private Long schoolEcmId;
 	private Long branchEcmId;
 	private Long labEcmId;
+	private Long personalHeigherEcmId;//用户当前的最高ecmid
 	private Integer highestEcmIdType;
 
 	private Long[] permissionGroupIds;
@@ -62,7 +63,7 @@ public class UserClaim implements Serializable {
 	}
 
 	public UserClaim(Long id, String realName, String mobile, Integer userType, Long[] ecmIds, Long highestEcmId,
-			Integer highestEcmIdType,Long schoolEcmId,Long branchEcmId,Long labEcmId) {
+			Integer highestEcmIdType,Long schoolEcmId,Long branchEcmId,Long labEcmId, Long personalHeigherEcmId) {
 		super();
 		this.id = id;
 		this.realName = realName;
@@ -74,6 +75,7 @@ public class UserClaim implements Serializable {
 		this.schoolEcmId = schoolEcmId;
 		this.branchEcmId = branchEcmId;
 		this.labEcmId = labEcmId;
+		this.personalHeigherEcmId = personalHeigherEcmId;
 
 	}
 
@@ -182,6 +184,13 @@ public class UserClaim implements Serializable {
 
 	public void setLabEcmId(Long labEcmId) {
 		this.labEcmId = labEcmId;
+	}
+	public Long getPersonalHeigherEcmId() {
+		return personalHeigherEcmId;
+	}
+
+	public void setPersonalHeigherEcmId(Long personalHeigherEcmId) {
+		this.personalHeigherEcmId = personalHeigherEcmId;
 	}
 
 }

@@ -16,14 +16,18 @@ import cn.cdyxtech.lab.facade.ConfigFacade;
 import cn.cdyxtech.lab.feign.ECMAPIFeign;
 import cn.cdyxtech.lab.feign.MelAPIFeign;
 import cn.cdyxtech.lab.feign.NotificationAPIFeign;
+import cn.cdyxtech.lab.filter.MenuOperationFilter;
 import cn.cdyxtech.lab.util.UserClaim;
 
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 @RequestMapping("/notification-list")
 public class NotificationListController extends HeaderCommonController{
+	private Logger logger = LoggerFactory.getLogger(NotificationListController.class);
 	@Autowired
     private MelAPIFeign melApiFeign;
 	@Autowired
@@ -31,21 +35,33 @@ public class NotificationListController extends HeaderCommonController{
 	@Autowired
 	private ECMAPIFeign ecmAPIFeign;
 	@Autowired
-    private ConfigFacade configFacade;
+	private ConfigFacade configFacade;
+	@Autowired
+	MenuOperationFilter menuOperationFilter;
 	
     
     @GetMapping("/index")
-    public String index(Map<String,Object> data,Long type){
-        Long ecmId = this.validateAuthorizationToken().getHighestEcmId();
+    public String index(Map<String,Object> data,Long type, String isDraft){
+		Long ecmId = this.validateAuthorizationToken().getHighestEcmId();
+		try {
+			String operationCodes = menuOperationFilter.menuOperations("notification-list");
+			data.put("operationCodes", operationCodes);
+		} catch (Exception e) {
+            logger.error("通知列表界面跳转，加载权限出现异常->" + e.getMessage());
+		}
         data.put("ecmId",ecmId);
         data.put("timestamp", System.currentTimeMillis());
-        data.put("type", type);
+		data.put("type", type);
+		if(isDraft == null) {
+			isDraft = "false";
+		}
+		data.put("isDraft", isDraft);
         return "modules/notification/list/manage";
     }
     
     UserClaim userClaim = this.validateAuthorizationToken();
     @GetMapping("/list")
-    public String list(Map<String,Object> data, String[] showColumns, String keyword,Long startTime, Long endTime,Integer type,Long ecmId){
+    public String list(Map<String,Object> data, String[] showColumns, String keyword,Long startTime, Long endTime,Integer type,Long ecmId,String isDraft){
     	JSONObject res = new JSONObject();
     	if(ecmId == null) {
     		ecmId = this.validateAuthorizationToken().getHighestEcmId();
@@ -54,33 +70,57 @@ public class NotificationListController extends HeaderCommonController{
         String sort = "createTime";
     	String order = "desc";
         Integer limit= getPageRequestData().getLimit();
-        Integer page= getPageRequestData().getCurrentPage();
+		Integer page= getPageRequestData().getCurrentPage();
+		data.put("tpl", listTpl().getJSONArray("groups").getJSONObject(type-1));
         if(type.equals(2)) { // 整改通知
         	res = notificationAPIFeign.pageModification(keyword, startTime, endTime, type, sort, order, page, limit, ecmId);
         } else if(type.equals(3)){ //复查通知
         	res = notificationAPIFeign.pageReview(keyword, startTime, endTime, type, sort, order, page, limit, ecmId);
         } else { //检查通知或系统公告
-        	 res = notificationAPIFeign.pageMessage(keyword, startTime, endTime, type, sort, order, page, limit, ecmId);
+			 Boolean status = false;
+			 if(isDraft.equals("true")) {
+				if(type.equals(1)) {
+					data.put("tpl", listTpl().getJSONArray("groups").getJSONObject(4));
+				} else {
+					data.put("tpl", listTpl().getJSONArray("groups").getJSONObject(5));
+				}
+				status = true;
+			 }
+			 res = notificationAPIFeign.pageMessage(keyword, startTime, endTime, type, sort, order, page, limit, ecmId,status);
         }
-        this.dealException(res);
+		this.dealException(res);
         data.put("data",res.getJSONObject("result"));
         data.put("timestamp", System.currentTimeMillis());
-        data.put("tpl", listTpl().getJSONArray("groups").getJSONObject(type-1));
+        /* data.put("tpl", listTpl().getJSONArray("groups").getJSONObject(type-1)); */
         return "tpl/examination/list";
     }
     @GetMapping("/search-form")
-    public String searchForm(Map<String,Object> data, Integer type){
-        data.put("type",type);
+    public String searchForm(Map<String,Object> data, Integer type,String isDraft){
+		data.put("type",type);
+		data.put("isDraft",isDraft);
         data.put("timestamp", System.currentTimeMillis());
         return "tpl/notification/search-form";
     }
     @GetMapping("/form")
-    public String form(Map<String,Object> data,int type){
-    	JSONObject info = new JSONObject();
+    public String form(Map<String,Object> data,int type,Long id){
+		JSONObject info = new JSONObject();
+		if(id != null) {
+			JSONObject res = notificationAPIFeign.detail(id, this.validateAuthorizationToken().getId(),true);
+    		this.dealException(res);
+			info = res.getJSONObject("result");
+		}
+	
     	UserClaim userClaim = this.validateAuthorizationToken();
     	JSONObject obj = type2obj(type);
     	String formCode = obj.getString("formCode");
-    	String formName = obj.getString("formName");
+		String formName = obj.getString("formName");
+		
+		try {
+			String operationCodes = menuOperationFilter.menuOperations("notification-list");
+			data.put("operationCodes", operationCodes);
+		} catch (Exception e) {
+            logger.error(formName + "表单界面跳转，加载权限出现异常->" + e.getMessage());
+		}
     	info.put("type", type);
     	info.put("opUserId", userClaim.getId());
     	info.put("opUserPhone", userClaim.getMobile());
@@ -93,7 +133,7 @@ public class NotificationListController extends HeaderCommonController{
         data.put("pageSubmit", 1);
         data.put("formName", formName);
         
-        data.put("info", info);
+		data.put("info", info);
         data.put("hasPersonalFunction", "true");
         return "modules/notification/list/form";
     }
@@ -104,13 +144,13 @@ public class NotificationListController extends HeaderCommonController{
     }
     @GetMapping("/detail")
     public String detail(Map<String,Object> data,Long id,Integer type){
-    	JSONObject res = notificationAPIFeign.detail(id, this.validateAuthorizationToken().getId());
-    	this.dealException(res);
+    	JSONObject res = notificationAPIFeign.detail(id, this.validateAuthorizationToken().getId(),true);
+		this.dealException(res);
     	JSONObject obj = type2obj(type);
     	String formName = obj.getString("formName");
         data.put("moduleName", formName);
         data.put("type", type);
-        data.put("data", res.getJSONObject("result"));
+		data.put("data", res.getJSONObject("result"));
         return "modules/my-message/detail";
     }
     /**

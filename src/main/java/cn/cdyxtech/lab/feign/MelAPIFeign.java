@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -35,13 +36,18 @@ public interface MelAPIFeign {
      * @param sync
      * @return
      */
-    @PostMapping(value="/logdata/{modelId}/submit",consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    /*@PostMapping(value="/logdata/{modelId}/submit",consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     JSONObject save(@PathVariable("modelId") Integer modelId, 
         @RequestHeader("authToken") String authToken, 
         @RequestParam("data") String data, 
         @RequestParam("submitter") String submitter, 
+        @RequestParam("sync") Boolean sync);*/
+    @PostMapping(value="/logdata/{modelId}/submit",consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    JSONObject save(@PathVariable("modelId") Integer modelId, 
+        @RequestHeader("authToken") String authToken, 
+        @RequestBody String data, 
+        @RequestParam("submitter") String submitter, 
         @RequestParam("sync") Boolean sync);
-
     
     /**
      * 分页查询

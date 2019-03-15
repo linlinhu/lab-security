@@ -9,8 +9,11 @@ import cn.cdyxtech.lab.constain.ApplicationConstain;
 import cn.cdyxtech.lab.controller.HeaderCommonController;
 import cn.cdyxtech.lab.feign.BasicInfoAPI;
 import cn.cdyxtech.lab.feign.MelAPIFeign;
+import cn.cdyxtech.lab.filter.MenuOperationFilter;
 
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONObject;
 import com.emin.base.exception.EminException;
@@ -18,10 +21,13 @@ import com.emin.base.exception.EminException;
 @Controller
 @RequestMapping("/branch")
 public class BranchController extends HeaderCommonController {
+    private Logger logger = LoggerFactory.getLogger(SchoolController.class);
     @Autowired
     private MelAPIFeign melApiFeign;
     @Autowired
     private BasicInfoAPI basicInfoApi;
+    @Autowired
+	MenuOperationFilter menuOperationFilter;
 
     public JSONObject infoTpl() {
         JSONObject res = new JSONObject();
@@ -51,6 +57,12 @@ public class BranchController extends HeaderCommonController {
         data.put("tpl", infoTpl());
         JSONObject res = basicInfoApi.branchInfo(ecmId);
         this.dealException(res);
+        try {
+			String operationCodes = menuOperationFilter.menuOperations("branch");
+			data.put("operationCodes", operationCodes);
+		} catch (Exception e) {
+            logger.error("学院信息界面跳转，加载权限出现异常->" + e.getMessage());
+		}
         data.put("data", res.getJSONObject("result"));
         return "modules/branch/index";
     }

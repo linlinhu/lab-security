@@ -3,6 +3,8 @@ package cn.cdyxtech.lab.feign;
 
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.cloud.netflix.feign.FeignClient;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static cn.cdyxtech.lab.feign.BasicInfoAPI.SERVICE_PREFIX;
@@ -117,7 +119,7 @@ public interface BasicInfoAPI {
      * @return
      */
     @GetMapping("/wholeSecurityCenter/wholeSecurityCenterDetailByEcmId")
-    JSONObject scInfo(@RequestParam("ecmId") Integer ecmId);
+    JSONObject scInfo(@RequestParam("ecmId") Long ecmId);
 
     /**
      * 判断实验室是否存在二维码打印申请
@@ -135,9 +137,9 @@ public interface BasicInfoAPI {
      * @param operationUserId
      * @return
      */
-    @GetMapping("/laboratoryQrApply/apply")
+    @PostMapping("/laboratoryQrApply/apply")
     JSONObject printApply(@RequestParam("laboratoryId") Integer ecmId,
-                          @RequestParam("operationUserId") Integer operationUserId);
+                          @RequestParam("operationUserId") Long operationUserId);
 
 
     /**
@@ -151,7 +153,7 @@ public interface BasicInfoAPI {
      * @return
      */
     @GetMapping("/laboratoryQrApply/page")
-    JSONObject printApplyPage(@RequestParam("universityId") Integer ecmId,
+    JSONObject printApplyPage(@RequestParam("ecmId") Integer ecmId,
                               @RequestParam("verifyUserId") Integer verifyUserId,
                               @RequestParam("page") Integer page,
                               @RequestParam("limit") Integer limit,
@@ -268,4 +270,43 @@ public interface BasicInfoAPI {
      */
     @GetMapping("/wholeLaboratory/getUniversityHSSum/{ecmId}")
     JSONObject hazardStatis(@PathVariable("ecmId") Integer ecmId);
+    
+    /**
+     * 查询用户是否是安全中心的成员
+     * @param userId 用户id
+     * @param hEcmId 最高权限EcmId
+     * @return 
+     */
+    @GetMapping("/user/getHighestType")
+    JSONObject getHighestType(@RequestParam(value = "userId") Long userId,
+            @RequestParam(value = "hEcmId") Long hEcmId);
+            
+    /**
+     * 根据id查询用户详细信息
+     * @param userId 用户id
+     * @return 
+     */
+    @GetMapping(value = "/user/userLoginInfo", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    ResponseEntity<JSONObject> userLoginInfo(@RequestParam(value = "userId") Long userId);
+
+     /**
+     * 查询用户详情
+     * @param id 用户id
+     * @param highestEcmId   最高权限EcmId
+     * @param userFlockType 最高权限的用户类别
+     * @return 
+     */
+    @GetMapping("/user/findInfoById/{id}")
+    JSONObject findInfoById(@PathVariable(value = "id") Long id,
+            @RequestParam(value = "highestEcmId") Long highestEcmId,
+            @RequestParam(value = "userFlockType") Long userFlockType);
+
+
+     /**
+     * 通过ecmId查询本ecmId及其下级主体：主要供数据权限类需求的前端控制选择查询数据范围使用
+     * @param ecmId 主体id
+     * @return 
+     */
+    @GetMapping("/common/getEcmAndChildByEcmId/{ecmId}")
+    JSONObject getEcmAndChildByEcmId(@PathVariable(value = "ecmId") Long ecmId);
 }

@@ -10,9 +10,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import cn.cdyxtech.lab.constain.ApplicationConstain;
 import cn.cdyxtech.lab.controller.HeaderCommonController;
 import cn.cdyxtech.lab.feign.BasicInfoAPI;
+import cn.cdyxtech.lab.feign.InterfaceProxyCloudAPI;
 import cn.cdyxtech.lab.feign.MelAPIFeign;
+import cn.cdyxtech.lab.filter.MenuOperationFilter;
+import cn.cdyxtech.lab.util.UserClaim;
 
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONObject;
 import com.emin.base.exception.EminException;
@@ -20,10 +25,16 @@ import com.emin.base.exception.EminException;
 @Controller
 @RequestMapping("/lab")
 public class LabController extends HeaderCommonController {
+    private Logger logger = LoggerFactory.getLogger(LabController.class);
     @Autowired
     private MelAPIFeign melApiFeign;
     @Autowired
     private BasicInfoAPI basicInfoApi;
+
+    @Autowired
+    private InterfaceProxyCloudAPI proxyApi;
+    @Autowired
+	MenuOperationFilter menuOperationFilter;
 
     public JSONObject infoTpl() {
         JSONObject res = new JSONObject();
@@ -48,6 +59,12 @@ public class LabController extends HeaderCommonController {
         if (this.validateAuthorizationToken().getLabEcmId() == null) {
             throw new EminException("404");
         }
+        try {
+			String operationCodes = menuOperationFilter.menuOperations("lab");
+			data.put("operationCodes", operationCodes);
+		} catch (Exception e) {
+            logger.error("实验室信息界面跳转，加载权限出现异常->" + e.getMessage());
+		}
         Integer ecmId = Integer.parseInt(this.validateAuthorizationToken().getLabEcmId().toString());
         data.put("timestamp", System.currentTimeMillis());
         data.put("tpl", infoTpl());
@@ -74,16 +91,43 @@ public class LabController extends HeaderCommonController {
         JSONObject res = basicInfoApi.labInfo(ecmId);
         this.dealException(res);
         data.put("info", res.getJSONObject("result"));
+        data.put("pageSubmit", 1);
         return "tpl/form";
     }
 
     @PostMapping("/applyPrint")
     @ResponseBody
     public JSONObject applyPrint(Integer ecmId) {
-        Integer userId = 1;
+        Long userId = this.validateAuthorizationToken().getId();
         JSONObject res = new JSONObject();
         res = basicInfoApi.printApply(ecmId, userId);
         this.dealException(res);
+        return res;
+    }
+
+    @GetMapping("/schedulePrint")
+    public String schedulePrint(Map<String,Object> data, Integer ecmId) {
+        JSONObject res = proxyApi.schedulePrint(ecmId);
+        this.dealException(res);
+        data.put("schedules", res.getJSONArray("result"));
+        data.put("ecmId", ecmId);
+        return "modules/lab/schedule";
+    }
+
+    @GetMapping("/confirmPrint")
+    @ResponseBody
+    public JSONObject confirmPrint(Integer ecmId) {
+        UserClaim userClaim = this.validateAuthorizationToken();
+        Long userId = userClaim.getId();
+        if(ecmId == null) {
+            ecmId = userClaim.getLabEcmId().intValue();
+        }
+        if(ecmId == null) {
+            ecmId = userClaim.getLabEcmId().intValue();
+        }
+        JSONObject res = proxyApi.confirmPrint(ecmId, userId);
+        this.dealException(res);
+
         return res;
     }
 }

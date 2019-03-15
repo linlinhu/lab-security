@@ -22,8 +22,6 @@ import com.emin.base.exception.EminException;
 public class AccidentStatisController extends HeaderCommonController {
     @Autowired
     private MelAPIFeign melApiFeign;
-    @Autowired
-    private BasicInfoAPI basicInfoApi;
     
     @Autowired
     private SecurityCheckAPI securityCheckApi;
@@ -40,10 +38,10 @@ public class AccidentStatisController extends HeaderCommonController {
     @GetMapping("index")
     public String detail(Map<String,Object> data, Long id){
        
-        if (this.validateAuthorizationToken().getSchoolEcmId() == null) {
+        if (this.validateAuthorizationToken().getPersonalHeigherEcmId() == null) {
             throw new EminException("404");
         }
-        Integer ecmId = Integer.parseInt(this.validateAuthorizationToken().getSchoolEcmId().toString());
+        Integer ecmId = Integer.parseInt(this.validateAuthorizationToken().getPersonalHeigherEcmId().toString());
         data.put("ecmId", ecmId);
 
         return "modules/safety-overview/accident-statis/index";

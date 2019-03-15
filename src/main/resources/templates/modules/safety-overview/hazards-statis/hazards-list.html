@@ -1,5 +1,10 @@
-
-<div class="wrapper-content mgt20" id="common-management-${timestamp}">
+<style>
+    .hazards-statis .table .th-dangerSourceName,
+    .hazards-statis .table .td-dangerSourceName {
+        display: table-cell!important;
+    }
+</style>
+<div class="wrapper-content mgt20 hazards-statis" id="common-management-${timestamp}">
     <form>
         <div class="row">
             <div class="col-sm-3"></div>
@@ -20,5 +25,11 @@
         wrapId: '#common-management-${timestamp}',
         moduleName: 'hazards-statis',
         ecmId: '${ecmId}'
+    },function(res){
+        console.log('lalalalal')
+        if(res.opt == 'eye') {
+            var url = 'detail?ecmId='+res.ecmId;
+            goPage(url);
+        }
     })
 </script>

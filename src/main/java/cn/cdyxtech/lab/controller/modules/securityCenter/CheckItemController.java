@@ -4,9 +4,11 @@ import cn.cdyxtech.lab.constain.ConfigOption;
 import cn.cdyxtech.lab.controller.ResponseBack;
 import cn.cdyxtech.lab.facade.ConfigFacade;
 import cn.cdyxtech.lab.facade.ECOFacade;
+import cn.cdyxtech.lab.filter.MenuOperationFilter;
 import cn.cdyxtech.lab.util.JWTThreadLocalUtil;
 import cn.cdyxtech.lab.util.TestRandomUtil;
 import cn.cdyxtech.lab.vo.CheckDataVO;
+import cn.cdyxtech.lab.vo.GradeConfigVO;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.emin.base.controller.BaseController;
@@ -27,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -38,24 +41,53 @@ public class CheckItemController extends BaseController {
     private ConfigFacade configFacade;
     @Autowired
     private ECOFacade ecoFacade;
+    @Autowired
+    private MenuOperationFilter menuOperationFilter;
 
     @GetMapping("/index")
-    public String index(Map<String,Object> data){
-        Long topEcmId = ecoFacade.getTopEcmId(JWTThreadLocalUtil.getEcmId());
+    public String index(Map<String,Object> data,Boolean toPh){
+        Long topEcmId = JWTThreadLocalUtil.getRootEcmId();
+        String operationCodes = menuOperationFilter.menuOperations("checkItem");
         List<CheckDataVO> voList =configFacade.getCheckData(topEcmId);
-        data.put("checkItemList",JSONArray.toJSON(voList));
+        Collections.sort(voList);
+        ConfigOption.ConfigItem gradeConfig = configFacade.getConfigItem(ConfigOption.GRADE_CONFIG_GROUP_CODE,ConfigOption.GRADE_CONFIG_ITEM_CODE);
+        if(gradeConfig!=null){
+            GradeConfigVO vo = JSONObject.parseObject(gradeConfig.getValue(),GradeConfigVO.class);
+            Map<String, String> colorMap = vo.getGradeColors().stream().collect(Collectors.toMap(GradeConfigVO.GradeColor::getGradeStr, GradeConfigVO.GradeColor::getColor));
+            data.put("colorMap",colorMap);
+        }
+
+        data.put("checkItemList",voList);
+        data.put("toPh",toPh==null?false:toPh);
+        data.put("operationCodes",operationCodes);
         return "modules/security-center/checkConfig/index";
     }
 
     @GetMapping("/phList")
-    public String phIndex(Map<String,Object> data){
+    public String phIndex(Map<String,Object> data,String operationCodes){
         List<ConfigOption.ConfigItem> items = configFacade.getConfigItems(ConfigOption.POTENTIAL_HAZARD_LEVEL_GROUP);
-        List<Integer> avalibleLevels =Arrays.asList(1,2,3,4,5,6);
+        List<Integer> avalibleLevels = new ArrayList<>();
+        Map<String, String> colorMap = new HashMap<>();
+        ConfigOption.ConfigItem gradeConfig = configFacade.getConfigItem(ConfigOption.GRADE_CONFIG_GROUP_CODE,ConfigOption.GRADE_CONFIG_ITEM_CODE);
+        if(gradeConfig!=null){
+            GradeConfigVO vo = JSONObject.parseObject(gradeConfig.getValue(),GradeConfigVO.class);
+
+            for(int i=1;i<=vo.getLimit();i++){
+                avalibleLevels.add(i);
+            }
+            for(ConfigOption.ConfigItem item : items){
+                List<Integer> usedList = Arrays.asList(CommonsUtil.stringToIntegerArr(item.getValue()));
+                avalibleLevels = avalibleLevels.stream().filter(i -> !usedList.contains(i)).collect(toList());
+            }
+            colorMap = vo.getGradeColors().stream().collect(Collectors.toMap(GradeConfigVO.GradeColor::getGradeStr, GradeConfigVO.GradeColor::getColor));
+            data.put("colorMap",colorMap);
+        }
         for(ConfigOption.ConfigItem item : items){
-           List<Integer> usedList = Arrays.asList(CommonsUtil.stringToIntegerArr(item.getValue()));
-           avalibleLevels = avalibleLevels.stream().filter(i -> !usedList.contains(i)).collect(toList());
+            List<Integer> usedList = Arrays.asList(CommonsUtil.stringToIntegerArr(item.getValue()));
+            avalibleLevels = avalibleLevels.stream().filter(i -> !usedList.contains(i)).collect(toList());
         }
         data.put("items",items);
+        data.put("operationCodes",operationCodes);
         data.put("avalibleLevels",avalibleLevels);
         return "modules/security-center/checkConfig/potentialHazard/list";
     }
@@ -78,6 +110,21 @@ public class CheckItemController extends BaseController {
         return "modules/security-center/checkConfig/potentialHazard/form";
     }
 
+    @GetMapping("/gradeConfig")
+    public String gradeConfig(Map<String,Object> data){
+        ConfigOption.ConfigItem item = configFacade.getConfigItem(ConfigOption.GRADE_CONFIG_GROUP_CODE,ConfigOption.GRADE_CONFIG_ITEM_CODE);
+        data.put("itemCode",ConfigOption.GRADE_CONFIG_ITEM_CODE);
+        data.put("item",item);
+        return "modules/security-center/checkConfig/checkItem/grade";
+    }
+
+    @PostMapping("/saveGradeConfig")
+    @ResponseBody
+    public ResponseBack<Boolean> saveGradeConfig(@ModelAttribute ConfigOption.ConfigItem item){
+        configFacade.saveConfigItem(ConfigOption.GRADE_CONFIG_GROUP_CODE,item);
+        return ResponseBack.success(true);
+    }
+
     @PostMapping("/savePh")
     @ResponseBody
     public ResponseBack<Boolean> savePh(@ModelAttribute ConfigOption.ConfigItem item){
@@ -88,7 +135,7 @@ public class CheckItemController extends BaseController {
     @GetMapping("/data")
     @ResponseBody
     public ResponseBack<List<CheckDataVO>> getCheckData(){
-        Long topEcmId = ecoFacade.getTopEcmId(JWTThreadLocalUtil.getEcmId());
+        Long topEcmId = JWTThreadLocalUtil.getRootEcmId();
         List<CheckDataVO> voList =configFacade.getCheckData(topEcmId);
         return ResponseBack.success(voList);
     }
@@ -96,7 +143,7 @@ public class CheckItemController extends BaseController {
     @PostMapping("/save")
     @ResponseBody
     public ResponseBack<Boolean> save(@RequestBody String data){
-        Long topEcmId = ecoFacade.getTopEcmId(JWTThreadLocalUtil.getEcmId());
+        Long topEcmId =JWTThreadLocalUtil.getRootEcmId();
         configFacade.saveCheckData(topEcmId,data);
         return ResponseBack.success(true);
     }
@@ -122,7 +169,6 @@ public class CheckItemController extends BaseController {
                 String title = TestRandomUtil.getCellValue(row.getCell(1));
                 String keyPoint = TestRandomUtil.getCellValue(row.getCell(2));
                 String grade = TestRandomUtil.getCellValue(row.getCell(3));
-                String level = TestRandomUtil.getCellValue(row.getCell(4));
                 JSONObject item = new JSONObject();
                 item.put("seq", seq);
                 item.put("name", title);
@@ -153,7 +199,7 @@ public class CheckItemController extends BaseController {
                     String secondaryKey = key.substring(0,key.lastIndexOf("."));
                     JSONObject secondary = levalMap.get(secondaryKey);
                     secondary.put("level",2);
-                    secondary.getJSONArray("children").add(entry.getValue());
+                    secondary.getJSONArray("children").add(0,entry.getValue());
                     it.remove();
                 }
                 if(key.matches("\\d+\\.\\d+\\.?")){
@@ -163,10 +209,9 @@ public class CheckItemController extends BaseController {
                     //第二层找第一层
                     //截取第一段
                     String primaryKey = key.substring(0,key.lastIndexOf("."));
-                    System.out.println(key+"=="+primaryKey);
                     JSONObject primary = levalMap.get(primaryKey);
                     primary.put("level",1);
-                    primary.getJSONArray("children").add(entry.getValue());
+                    primary.getJSONArray("children").add(0,entry.getValue());
                     it.remove();
                 }
 

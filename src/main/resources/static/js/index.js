@@ -30,12 +30,27 @@ var indexCountTimer = null;
 	});
 	$('.my-msg-dp').unbind();
 	$('.my-msg-dp .my-msg').unbind('dropdown').on('click',function(){
-		getSimpleMessage();
+		goModule({
+			moduleName: 'my-message',
+			directive: 'index'
+		});
 	});
+	$('.my-msg-dp').hover(function(){
+		$('.my-msg-dp .my-msg .iconfont').unbind().mouseover(function(){
+			if(!$('#my-msg').parents('.my-msg-dp').hasClass('open')){
+				getSimpleMessage();
+			}
+		})
+	},function(){
+		if($('#my-msg').parents('.my-msg-dp').hasClass('open')){
+			$('#my-msg').parents('.my-msg-dp').removeClass('open');
+		}
+	})
 
 	function getCount(){
 		$http.get({
-			url:"my-message/unread-message-count"
+			url:"my-message/unread-message-count",
+			forbidLoading: true
 		},function(res){
 			let total = res.result;
 			if(total == 0) {
@@ -50,34 +65,27 @@ var indexCountTimer = null;
 	};
 	function getSimpleMessage(){
 		$http.get({
-			url:"my-message/query-simple-message"
+			url:"my-message/query-simple-message",
+			forbidLoading: true
 		},function(res){
 			if(!res.success) {
 				layer.msg('获取数据失败',{icon:5});
 				return;
 			}
-			let count = res.count,
-				total = res.total,
-				result = res.result;
+			let result = res.result;
 			if(result && result.length > 0) {
 				let tpl = my_massage_simple_List_tpl.innerHTML,
 					view = $('.my-msg-dp .dropdown-menu');
 				laytpl(tpl).render(result,function(html){
-					if(total > count) {
-						html += '<li><a href="javascript:void(0)" data-value="more" class="more">查看更多</a></li>';
-					}
+					html += '<li><a href="javascript:void(0)" data-id="more" class="more">查看更多</a></li>';
 					view.html(html);
 					$('#my-msg').dropdown('toggle');
 				})
-			} else {
-				goModule({
-					moduleName: 'my-message',
-					directive: 'index'
-				});
 			}
 		})
 	};
 	getCount();
-	indexCountTimer = setInterval(getCount,60*1000*2)
+	indexCountTimer = setInterval(getCount,60*1000*2);
+
 }())
 	

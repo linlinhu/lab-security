@@ -38,7 +38,7 @@ public class ConfigFacadeImpl implements ConfigFacade {
 
     private Long createConfigGroup(ConfigOption.ConfigGroup configGroup){
         //初始化配置组
-        Long ecmId = ecoFacade.getTopEcmId(JWTThreadLocalUtil.getEcmId());
+        Long ecmId = JWTThreadLocalUtil.getRootEcmId();
         JSONObject group = new JSONObject();
         group.put("groupCode", configGroup.getCode()+"_"+ecmId);
         group.put("isTree", true);
@@ -48,7 +48,7 @@ public class ConfigFacadeImpl implements ConfigFacade {
         return createResult.getJSONObject("result").getLong("id");
     }
     private Long createConfigGroup(String name,String groupCode){
-        Long ecmId = ecoFacade.getTopEcmId(JWTThreadLocalUtil.getEcmId());
+        Long ecmId = JWTThreadLocalUtil.getRootEcmId();
         //初始化配置组
         JSONObject group = new JSONObject();
         group.put("groupCode", groupCode+"_"+ecmId);
@@ -88,7 +88,7 @@ public class ConfigFacadeImpl implements ConfigFacade {
     }
     @Override
     public void saveConfigItem(String groupCode, ConfigOption.ConfigItem item){
-        Long ecmId = ecoFacade.getTopEcmId(JWTThreadLocalUtil.getEcmId());
+        Long ecmId = JWTThreadLocalUtil.getRootEcmId();
         JSONObject result = commonAPIFeign.configIsExists(groupCode+"_"+ecmId);
         ResultCheckUtil.check(result);
         Long groupId;
@@ -112,7 +112,7 @@ public class ConfigFacadeImpl implements ConfigFacade {
 
     @Override
     public void saveConfigItem(ConfigOption.ConfigGroup configGroup, ConfigOption.ConfigItem item){
-        Long ecmId = ecoFacade.getTopEcmId(JWTThreadLocalUtil.getEcmId());
+        Long ecmId = JWTThreadLocalUtil.getRootEcmId();
         JSONObject result = commonAPIFeign.configIsExists(configGroup.getCode()+"_"+ecmId);
         ResultCheckUtil.check(result);
         Long groupId;
@@ -135,7 +135,7 @@ public class ConfigFacadeImpl implements ConfigFacade {
 
     @Override
     public List<ConfigOption.ConfigItem> getConfigItems(ConfigOption.ConfigGroup configGroup){
-        Long ecmId = ecoFacade.getTopEcmId(JWTThreadLocalUtil.getEcmId());
+        Long ecmId = JWTThreadLocalUtil.getRootEcmId();
         List<ConfigOption.ConfigItem> defaults = getDefaultConfigItems(configGroup.getCode(),false);
         List<ConfigOption.ConfigItem> configItems = getDefaultConfigItems(configGroup.getCode()+"_"+ecmId,true);
         for(ConfigOption.ConfigItem defaultItem : defaults){
@@ -155,7 +155,7 @@ public class ConfigFacadeImpl implements ConfigFacade {
     }
     @Override
     public List<ConfigOption.ConfigItem> getConfigItems(String groupCode){
-        Long ecmId = ecoFacade.getTopEcmId(JWTThreadLocalUtil.getEcmId());
+        Long ecmId = JWTThreadLocalUtil.getRootEcmId();
 
         List<ConfigOption.ConfigItem> configItems = getDefaultConfigItems(groupCode+"_"+ecmId,true);
 
@@ -205,7 +205,7 @@ public class ConfigFacadeImpl implements ConfigFacade {
 
     @Override
     public ConfigOption.ConfigItem getConfigItem(String groupCode, String itemCode){
-        Long currentEcmId = JWTThreadLocalUtil.getEcmId();
+        Long currentEcmId = JWTThreadLocalUtil.getRootEcmId();
         Long ecmId = currentEcmId;//此处应该根据当前ECMID获取学校的ECMID
         JSONObject r = commonAPIFeign.configIsExists(groupCode+"_"+ecmId);
         ResultCheckUtil.check(r);
@@ -217,21 +217,27 @@ public class ConfigFacadeImpl implements ConfigFacade {
             }
 
         }
-        JSONObject result = commonAPIFeign.getConfigItemByCode(groupCode,itemCode);
-        ResultCheckUtil.check(result);
-        if(result.get("result")!=null){
-            JSONObject j = result.getJSONObject("result");
-            j.remove("id");
-            return j.toJavaObject(ConfigOption.ConfigItem.class);
+        r = commonAPIFeign.configIsExists(groupCode);
+        ResultCheckUtil.check(r);
+        if(r.getBooleanValue("result")){
+            JSONObject result = commonAPIFeign.getConfigItemByCode(groupCode,itemCode);
+            ResultCheckUtil.check(result);
+            if(result.get("result")!=null){
+                JSONObject j = result.getJSONObject("result");
+                j.remove("id");
+                return j.toJavaObject(ConfigOption.ConfigItem.class);
+            }
         }
+
         return null;
     }
 
     @Override
-    public JSONArray getCheckItem(String itemCode){
-        Long currentEcmId = JWTThreadLocalUtil.getEcmId();
+    public JSONArray getCheckItem(ConfigOption.ConfigItem item){
+        Long currentEcmId = JWTThreadLocalUtil.getRootEcmId();
         Long ecmId = ecoFacade.getTopEcmId(currentEcmId);
-        JSONObject result  = commonAPIFeign.getConfigItemByCode(ConfigOption.CHECK_DATA_GROUP,"checkItem_"+itemCode+"_"+JWTThreadLocalUtil.getEcmId());
+        String itemCode = item.getGroupCode()+"_checkItem_"+PinyinUtil.getPingYin(item.getName())+"_"+JWTThreadLocalUtil.getRootEcmId();
+        JSONObject result  = commonAPIFeign.getConfigItemByCode(ConfigOption.CHECK_DATA_GROUP,itemCode);
         ResultCheckUtil.check(result);
         if(result.get("result")!=null){
             ConfigOption.ConfigItem checkItem = result.getJSONObject("result").toJavaObject(ConfigOption.ConfigItem.class);
@@ -249,13 +255,14 @@ public class ConfigFacadeImpl implements ConfigFacade {
     }
 
     @Override
-    public void saveCheckItem(String categoryCode, String array){
+    public void saveCheckItem(ConfigOption.ConfigItem item, String array){
 
         JSONObject checkResult = commonAPIFeign.configIsExists(ConfigOption.CHECK_DATA_GROUP);
         ResultCheckUtil.check(checkResult);
         ConfigOption.ConfigItem checkDataItem = new ConfigOption.ConfigItem();
-        Long ecmId = ecoFacade.getTopEcmId(JWTThreadLocalUtil.getEcmId());
-        String itemCode = "checkItem_"+categoryCode+"_"+ecmId;
+        Long ecmId = JWTThreadLocalUtil.getRootEcmId();
+        String n = PinyinUtil.getPingYin(item.getName());
+        String itemCode = item.getGroupCode()+"_checkItem_"+n+"_"+ecmId;
         if (checkResult.getBooleanValue("result")) {
             JSONObject getGroupResult = commonAPIFeign.getConfigGroupByCode(ConfigOption.CHECK_DATA_GROUP);
             Long groupId = getGroupResult.getJSONObject("result").getLong("id");
@@ -266,7 +273,7 @@ public class ConfigFacadeImpl implements ConfigFacade {
             }else{
                 checkDataItem.setGroupId(groupId);
                 checkDataItem.setCode(itemCode);
-                checkDataItem.setName(itemCode);
+                checkDataItem.setName("checkItem_"+item.getName()+"_"+ecmId);
                 checkDataItem.setValueType("String");
             }
             checkDataItem.setValue(array);

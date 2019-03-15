@@ -1,4 +1,5 @@
 var SafetyChanged = function(p) {
+    
     $.extend(this, p);
     var that = this;
     

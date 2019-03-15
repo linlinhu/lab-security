@@ -38,8 +38,12 @@
 </div>
 <script type="text/javascript" src="${base}js/document/security-tree.js"></script>
 <script>
-new DocumentManage({
-	moduleCode: '${moculeCode}',
-	domainIsSelected: true
-})
+(function(){
+	new DocumentManage({
+		moduleCode: '${moculeCode}',
+		domainIsSelected: true,
+		operationCodes: '${operationCodes!""}'
+	})
+}())
+
 </script>

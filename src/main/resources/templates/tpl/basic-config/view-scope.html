@@ -8,7 +8,7 @@ $http.get({
     forbidLoading: true
 }, function(res) {
     if (res.replace(/\s*/g,"").length == 0) {
-        $('#view-scope-${timestamp}').parent().addClass('hide');
+        $('#view-scope-${timestamp}').parent().html('');
     } else {
         $('#view-scope-${timestamp}').html(res);
     }   

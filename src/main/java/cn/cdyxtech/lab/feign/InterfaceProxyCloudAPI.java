@@ -31,4 +31,12 @@ public interface InterfaceProxyCloudAPI {
      */
     @GetMapping("/statistics/getCollegeList")
     JSONObject getCollegeList(@RequestParam("ecmId") Long ecmId);
+
+    
+    @PostMapping("/laboratory/appointDetail/{laboratoryId}")
+    JSONObject schedulePrint(@PathVariable("laboratoryId") Integer ecmId);
+
+    
+    @PostMapping("/laboratory/acknowledge")
+    JSONObject confirmPrint(@RequestParam("laboratoryId") Integer ecmId,@RequestParam("operationUserId") Long userId);
 }

@@ -32,10 +32,10 @@ public class JWTThreadLocalUtil extends ThreadLocalUtil{
     }
     
     public static Long getRootEcmId(){
-        return ecmLocal.get();
+        return rootEcmIdLocal.get();
     }
     public static void setRootEcmId(Long rootEcmId){
-        ecmLocal.set(rootEcmId);
+        rootEcmIdLocal.set(rootEcmId);
     }
 
     public static Boolean isPlatformUser(){

@@ -25,9 +25,9 @@ public interface ConfigFacade {
 
     ConfigOption.ConfigItem getConfigItem(String groupCode, String itemCode);
 
-    JSONArray getCheckItem(String itemCode);
+    JSONArray getCheckItem(ConfigOption.ConfigItem item);
 
     void deleteConfigItem(Long id);
 
-    void saveCheckItem(String categoryCode, String array);
+    void saveCheckItem(ConfigOption.ConfigItem item, String array);
 }

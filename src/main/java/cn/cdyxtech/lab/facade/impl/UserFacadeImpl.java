@@ -62,9 +62,13 @@ public class UserFacadeImpl extends AbstractFacadeImpl<UserVO> implements UserFa
     }
 
     @Override
-    public PagedResult<UserVO> getPagedUser(PageRequest pageRequest, String keyword,Long ecmId,boolean ecmDeep,Long[] flockIds){
-        Long[] ecmIds =  ecoFacade.getSubEcmIds(ecmId,ecmDeep);
-        JSONObject json = userAPIFeign.userList(ecmIds,flockIds,pageRequest.getCurrentPage(),pageRequest.getLimit(),keyword,"2");
+    public PagedResult<UserVO> getPagedUser(PageRequest pageRequest, String keyword,Long ecmId,boolean ecmDeep,Long[] flockIds,Long[] controlTypes){
+
+        Long[] ecmIds = new Long[]{ecmId};
+        if(ecmDeep){
+            ecmIds =  ecoFacade.getSubEcmIds(ecmId,ecmDeep);
+        }
+        JSONObject json = userAPIFeign.userList(ecmIds,flockIds,pageRequest.getCurrentPage(),pageRequest.getLimit(),keyword,"2",controlTypes);
         ResultCheckUtil.check(json);
         JSONObject result = json.getJSONObject("result");
         return toPagedVO(result);

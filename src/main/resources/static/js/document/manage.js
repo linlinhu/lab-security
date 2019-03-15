@@ -1,5 +1,6 @@
 var DocumentManage = function(p){
 	p = p ? p : {};
+	$.extend(this,p)
 	let _this = this,
 		mels= '',
 		moduleCode = p.moduleCode,
@@ -23,6 +24,16 @@ var DocumentManage = function(p){
 						hasCheckbox: hasCheckbox,
 						moduleCode: moduleCode,
 						rightMenu: folderEdit ? rightMenu: null,
+						operationCodes: _this.operationCodes,
+						loaded: function(){
+							let operationCodes = _this.operationCodes;
+							if(operationCodes.indexOf('doc-download-folder') == -1) {//文件夹打包下载权限
+								documentTable.treeTableSelecter.find('td i[data-nodetype="10"]').remove();
+							}
+							if(operationCodes.indexOf('doc-download-file') == -1) {//文件下载权限
+								documentTable.treeTableSelecter.find('td i[data-nodetype="50"]').remove();
+							}
+						}
 					})
 					setSelectedCate();
 				});
@@ -100,10 +111,8 @@ var DocumentManage = function(p){
 		//设置选中的分类
 		setSelectedCate = function(){
 			if(_this.selectedCateId) {
-				console.log(2)
 				$(moduleId + ' .cate-item[data-id="'+_this.selectedCateId+'"] a').trigger('click');
 			} else {
-				console.log(2)
 				if(_this.cates && _this.cates.length > 0) {
 					$($(moduleId + ' .cate-item')[0]).find('a').trigger('click');
 				}
@@ -244,7 +253,8 @@ var DocumentManage = function(p){
 				html = null,
 				e = p.e,
 				pTop = p.top ? p.top : 0,
-				pLeft = p.left ? p.left : 0;
+				pLeft = p.left ? p.left : 0,
+				operationCodes = _this.operationCodes;
 			
 			e.preventDefault();
 			if(p.type == "folder") {
@@ -262,23 +272,34 @@ var DocumentManage = function(p){
 						'<li role="remove">删除</li>';
 			}
 			menu.html(html);
-			/* if(p.type == "folder") {
-				if(operationCodes.indexOf('edit-folder') == -1) { // 目录重命名权限
+			if(p.type == "folder") {
+				if(operationCodes.indexOf('doc-edit-folder') == -1) { // 文件夹重命名权限
 					menu.find('li[role="edit"]').remove();
 				};
-				if(operationCodes.indexOf('remove-folder') == -1) { // 目录删除权限
+				if(operationCodes.indexOf('doc-remove-folder-file') == -1) { // 文件夹目录删除权限
 					menu.find('li[role="remove"]').remove();
 				};
-			} else if(p.type == 'file') {
-				if(operationCodes.indexOf('move-file') == -1) { // 文件移动权限
+				if(operationCodes.indexOf('doc-move-folder-file') == -1) { // 文件夹移动权限
 					menu.find('li[role="move"]').remove();
 				};
-				if(operationCodes.indexOf('remove-file') == -1) { // 文件删除权限
+				if(operationCodes.indexOf('doc-upload-file') == -1) { // 上传文件权限
+					menu.find('li[role="file-upload"]').remove();
+				};
+			} else if(p.type == 'file') {
+				if(operationCodes.indexOf('doc-move-folder-file') == -1) { // 文件移动权限
+					menu.find('li[role="move"]').remove();
+				};
+				if(operationCodes.indexOf('doc-remove-folder-file') == -1) { // 文件删除权限
 					menu.find('li[role="remove"]').remove();
 				};
-			} */
-			
-		
+			} else if(p.type == "cate") {
+				if(operationCodes.indexOf('doc-edit-cate') == -1) { // 分类编辑权限
+					menu.find('li[role="edit"]').remove();
+				};
+				if(operationCodes.indexOf('doc-remove-cate') == -1) { // 分类删除权限
+					menu.find('li[role="remove"]').remove();
+				};
+			}
 				//根据事件对象中鼠标点击的位置，进行定位
 				menu.css('left', e.clientX - pLeft + 'px');
 				menu.css('top', e.clientY - pTop + 'px');
@@ -315,7 +336,6 @@ var DocumentManage = function(p){
 								setTimeout(function(){
 									getSelectedCate(function(res){
 										if(res.nodedomain != nodeDomain) {
-											
 											$(moduleId + ' .nav-tabs .cate-item').removeClass('active');
 											$(moduleId + ' .nav-tabs .cate-item[data-nodedomain="'+ nodeDomain +'"]').addClass('active');
 										} 
@@ -555,9 +575,9 @@ var DocumentManage = function(p){
 					nodeDomain = self.attr('data-nodeDomain');
 				_this.selectedCateId = pid;
 				$(moduleId + ' .dr-search-form input[name="keyword"]').val('');
-				if(!self.hasClass('selected')) {
-					$(moduleId + ' .nav-tabs .cate-item').removeClass('selected');
-					self.addClass('selected');
+				if(!self.hasClass('active')) {
+					$(moduleId + ' .nav-tabs .cate-item').removeClass('active');
+					self.addClass('active');
 					
 					if(nodeDomain != 'null') {
 						$(moduleId + ' input[name="keyword"]').attr('placeholder','搜索文档名');
@@ -598,20 +618,22 @@ var DocumentManage = function(p){
 			}
 			//分类的右键菜单
 			if(cateEdit) {
-				$(moduleId + ' .cates').unbind('contextmenu').on('contextmenu','.cate-item',function(e){
+				$(moduleId + ' .nav-tabs').unbind('contextmenu').on('contextmenu','.cate-item',function(e){
 					let self = $(this),
 						id = self.attr('data-id'),
-						nodeDomain = self.attr('data-nodeDomain');
+						nodeDomain = self.attr('data-nodeDomain'),
+						operationCodes = _this.operationCodes;
 					if(!(nodeDomain == 2 || nodeDomain == 3 || nodeDomain == 4)){
-						e.preventDefault();
-						rightMenu({id:id,nodeDomain:nodeDomain,type:'cate',e:e,name:self.text()});
+						if(operationCodes.indexOf('doc-edit-cate') != -1 || operationCodes.indexOf('doc-remove-cate') != -1) {
+							e.preventDefault();
+							rightMenu({id:id,nodeDomain:nodeDomain,type:'cate',e:e,name:self.text()});
+						}
 					}
 				});
 			}
 			//新建文件夹
 			$(moduleId + ' a[oper="folder-create"]').unbind().on('click',function(){
 				let pid = $(moduleId + ' ul.path li').last().attr('data-id');
-			
 				getSelectedCate(function(res){
 					openCatePanel({title:'新建文件夹',type:'folder',pid:pid,nodeDomain:res.nodedomain});
 				})
@@ -653,6 +675,7 @@ var DocumentManage = function(p){
 									if(res.nodedomain != nodeDomain) {
 										$(moduleId + ' .nav-tabs .cate-item').removeClass('active');
 										$(moduleId + ' .nav-tabs .cate-item[data-nodedomain="'+ nodeDomain +'"]').addClass('active');
+										
 									} 
 									documentTable.getList({pid:mvPid,nodeDomain:nodeDomain});
 								})

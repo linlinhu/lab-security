@@ -1,30 +1,39 @@
-<div class="wrapper-content userManagement" >
+<div class="wrapper-content userManagement" id="user-management-${timestamp}">
     <div class="row">
         <div class="col-sm-12">
             <div class="ibox float-e-margins">
-                <div class="ibox-title" style="border:none">
-                    <h5>用户列表</h5>
+                <div class="ibox-title <#if !title??>hide</#if>" style="border:none">
+                    <h5 style="font-size:16px;">${title!''}</h5>
                 </div>
-                <div class="ibox-content">
+                <div class="ibox-content" <#if !title??>style="border:0;"</#if>>
                     <div class="row">
                         <div class="col-sm-7" style="padding-left:10px">
                             <#if !showOperations?? || showOperations?seq_contains("add")>
-                                 <button class="btn ls-btn btn-sm btn-primary userOpts" data-opt="add"><i class="fa fa-plus"></i> 新增用户</button>
+                                <@codeValidation codes=operationCodes operationCode="user-add">
+                                <button class="btn ls-btn btn-sm btn-primary userOpts" data-opt="add"><i class="fa fa-plus"></i> 新增用户</button>
+                                </@codeValidation>
                             </#if>
                             <!-- <#if !showOperations?? || showOperations?seq_contains("resetPassword")>
                                  <button class="btn btn-sm btn-default  userOpts" data-opt="resetPassword"><i class="fa fa-unlock-alt"></i> 重置密码</button>
                             </#if> -->
                             <#if !showOperations?? || showOperations?seq_contains("disableUser")>
-                                 <button class="btn ls-btn btn-sm btn-warning  userOpts" data-opt="disableUser"><i class="fa fa-ban"></i> 停用</button>
+                                <@codeValidation codes=operationCodes operationCode="user-disable">
+                                <button class="btn ls-btn btn-sm btn-warning  userOpts" data-opt="disableUser"><i class="fa fa-ban"></i> 停用</button>
+                                </@codeValidation>
                             </#if>
                             <#if !showOperations?? || showOperations?seq_contains("enableUser")>
-                                 <button class="btn ls-btn btn-sm btn-success userOpts" data-opt="enableUser"><i class="fa fa-check-circle-o"></i> 启用</button>
+                                <@codeValidation codes=operationCodes operationCode="user-enable">
+                                <button class="btn ls-btn btn-sm btn-success userOpts" data-opt="enableUser"><i class="fa fa-check-circle-o"></i> 启用</button>
+                                </@codeValidation>
                             </#if>
                             <#if !showOperations?? || showOperations?seq_contains("deleteUser")>
-                                 <button class="btn ls-btn btn-sm btn-danger userOpts" data-opt="deleteUser"><i class="fa fa-trash"></i> 删除</button>
+                                <@codeValidation codes=operationCodes operationCode="user-remove">
+                                <button class="btn ls-btn btn-sm btn-danger userOpts" data-opt="deleteUser"><i class="fa fa-trash"></i> 删除</button>
+                                </@codeValidation>
                             </#if>
                         </div>
                         <div class="col-sm-2"></div>
+                        <@codeValidation codes=operationCodes operationCode="user-search">
                         <div class="col-sm-3">
                             <div class="input-group">
                                 <input type="text" placeholder="请输入关键词" class="input-sm form-control ls-input">
@@ -33,11 +42,11 @@
                                 </span>
                             </div>
                         </div>
+                        </@codeValidation>
                     </div>
                     <div class="table-responsive userList">
 
                     </div>
-
                 </div>
             </div>
         </div>
@@ -45,14 +54,18 @@
     </div>
 </div>
 <script type="text/javascript">
+
     (function(){
         var showColumns = ${showColumns!'[]'};
         var ecmId = "${ecmId!''}",ecmDeep = ${ecmDeep?string("true","false")},flockIds = ${queryFlockIds!'[]'},additionFlockId = ${additionFlockId!'null'}
+        var controlTypes = "${controlTypes!''}";
         this.optData = {}
         var that = this;
         var currentPage = 1;
         var defaultLimit = 10;
-
+        var operationCodes = '${operationCodes!""}';
+        var moduleId = '#user-management-${timestamp}';
+        
         var $this = {
             init:function(){
                 this.loadList();
@@ -97,25 +110,27 @@
                         title:id?"编辑用户":"新增用户",
                         type:1,
                         zIndex:20,
-                        area:"400px",
+                        area:"430px",
                         btn:["保存"],
                         content:res,
                         yes:function(index,layero){
                             var form = $(layero).find(".userForm")
                             if(form.valid()){
                                 var data = form.serializeObject();
-                                console.log(data)
+                                
+                                data.ecmId = ecmId
                                 if(additionFlockId!=null){
                                     if(typeof data.flockIds == "array"){
                                         data.flockIds.push(additionFlockId)
                                     }else{
-                                        data.flockIds = data.flockIds.join("").push(additionFlockId);
+                                        data.flockIds = [parseInt(data.flockIds),additionFlockId];
                                     }
 
                                 }
-
+                                
                                 $http.post({
                                     url:"user/save",
+                                    traditional:true,
                                     data:data
                                 },function(res){
                                     layer.close(index)
@@ -223,15 +238,35 @@
                         showColumns:showColumns.join(','),
                         ecmId:ecmId,
                         ecmDeep:ecmDeep,
-                        flockIds:flockIds.join(",")
+                        flockIds:flockIds.join(","),
+                        controlTypes: controlTypes
                     }
                 },function(res){
-
                     $(".userManagement:visible .userList:visible").html(res);
+
+                    if(operationCodes.indexOf('user-edit') == -1){ //编辑权限
+                        $(moduleId + ' td a[data-opt="edit"]').remove();
+                    }
+                    if(operationCodes.indexOf('user-disable') == -1){ //禁用权限
+                        $(moduleId + ' td a[data-opt="disableUser"]').remove();
+                    }
+                    if(operationCodes.indexOf('user-enable') == -1){ //启用权限
+                        $(moduleId + ' td a[data-opt="enableUser"]').remove();
+                    }
+                    if(operationCodes.indexOf('user-remove') == -1){ //删除权限
+                        $(moduleId + ' td a[data-opt="deleteUser"]').remove();
+                    }
+                    if(operationCodes.indexOf('user-edit') == -1 
+                    && operationCodes.indexOf('user-disable') == -1 
+                    && operationCodes.indexOf('user-enable') == -1 
+                    && operationCodes.indexOf('user-remove') == -1) {
+                        $(moduleId + ' .td-operation').remove();
+                        $(moduleId + ' .th-operation').remove();
+                    }
                     that.bindEvent();
                     $(".userManagement:visible .userList:visible .i-checks").iCheck({checkboxClass: "icheckbox_square-green", radioClass: "iradio_square-green",})
                     var pagingContainer = $(".userManagement:visible .userList:visible .pageContainer")
-                    var pageData = pagingContainer.data()
+                    var pageData = pagingContainer.data()||{};
                     laypage.render({
                         elem:pagingContainer[0],
                         count:pageData.total,

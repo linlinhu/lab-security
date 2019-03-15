@@ -86,6 +86,7 @@ public class TplController extends HeaderCommonController {
         items.add(JSONObject.parseObject(allStr));
         try {
             List<ConfigOption.ConfigItem> datas = configFacade.getConfigItems(ConfigOption.ConfigGroup.DANGEROUS_SOURCE_CATEGORY);
+            
             for (int i = 0; i < datas.size(); i++) {
                 items.add(datas.get(i));
             }
@@ -152,11 +153,13 @@ public class TplController extends HeaderCommonController {
         String allStr = "{\"name\":\"全部\",\"id\":\"\"}";
         JSONArray items = new JSONArray();
         items.add(JSONObject.parseObject(allStr));
-
+        JSONObject item;
         try {
             List<ConfigOption.ConfigItem> datas = configFacade.getConfigItems(ConfigOption.POTENTIAL_HAZARD_LEVEL_GROUP);
             for (int i = 0; i < datas.size(); i++) {
-                items.add(datas.get(i));
+                item =(JSONObject)JSONObject.toJSON(datas.get(i));
+                item.put("value", item.getString("name"));
+                items.add(item);
             }
         } catch (Exception e) {
             

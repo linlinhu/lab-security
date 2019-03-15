@@ -84,6 +84,7 @@ var TableManage = function(p, callback) {
         if (formEl.length == 1) {
             $.extend(params, formEl.serializeObject());
         }
+
         if (that.showColumns && that.showColumns.length > 0) {
             params.showColumns = that.showColumns.join(',')
         }
@@ -94,7 +95,7 @@ var TableManage = function(p, callback) {
         }, function(res) {
             $(that.wrapId + " .data-list").html(res);
             if (typeof that.loaded == 'function') {
-                that.loaded();
+                that.loaded(that);
             }
             that.bindEvent();
             $(that.wrapId + " .i-checks").iCheck({checkboxClass: "icheckbox_square-green", radioClass: "iradio_square-green",})
@@ -126,9 +127,9 @@ var TableManage = function(p, callback) {
             that.loadList(1, 10);
         });
     }
-    that.init = function() {
-        that.loadList(1, 10);
+    that.init = function(limit) {
+        that.loadList(1, limit);
         that.formChange();
     };
-    that.init();
+    that.init(that.limit||10);
 };

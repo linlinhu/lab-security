@@ -37,9 +37,9 @@
     new TableManage({
         wrapId: '#common-management-${timestamp}',
         moduleName: "safety-inspect",
-        ecmId: '${ecmId}'
     }, function (res) {
-        goPage('detail', res);
+        var url = 'detail?id=' + res.id + "&labid=" + res.labid;
+        goPage(url,res);
     })
     var layDateElem = '#safety-inspect-datepicker';
     laydate.render({
@@ -48,8 +48,14 @@
         range: '-',
         format: 'yyyy/M/d',
         done: function (value, sd, ed) {
-            $($(layDateElem).siblings('input[name="startTime"]')[0]).val(new Date(sd.year, sd.month, sd.date).getTime());
-            $($(layDateElem).siblings('input[name="endTime"]')[0]).val(new Date(ed.year, ed.month, ed.date).getTime());
+            if(value.length > 0) {
+                $($(layDateElem).siblings('input[name="startTime"]')[0]).val(new Date(sd.year, sd.month, sd.date).getTime());
+                $($(layDateElem).siblings('input[name="endTime"]')[0]).val(new Date(ed.year, ed.month, ed.date).getTime());
+            } else {
+                $($(layDateElem).siblings('input[name="startTime"]')[0]).val('');
+                $($(layDateElem).siblings('input[name="endTime"]')[0]).val('');
+            }
+            
         }
     }); 
 </script>

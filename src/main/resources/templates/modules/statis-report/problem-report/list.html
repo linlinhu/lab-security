@@ -16,9 +16,11 @@
             <div>
                 <#include "../../../tpl/basic-config/view-scope.html" />
             </div>
+            <@codeValidation codes=operationCodes operationCode="problem-report-download">
             <div class="rgt">
                 <a class="btn ls-btn btn-primary download" href="javascript:;">下载表格</a>
             </div>
+            </@codeValidation>
         </div>
     </form>
     <div class="data-list"></div>

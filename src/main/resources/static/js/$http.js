@@ -65,7 +65,7 @@ var $http = (function() {
         };
         var loadIndex = null;
         if (p.forbidLoading != true) {
-			loadIndex = layer.load();
+			loadIndex = layer.load(3,{shade: [0.1, '#393D49']});
         }
 
         var options = {
@@ -134,7 +134,7 @@ var $http = (function() {
             }
             var loadIndex = null;
             if (p.forbidLoading != true) {
-                loadIndex = layer.load();
+                loadIndex = layer.load(3,{shade: [0.01, '#393D49']});
             }
             
             var options = {

@@ -14,9 +14,9 @@ var changedTm = new TableManage({
     }
 }, function(res) {
     if (res.opt == 'detail') {
-        res.detailTitle = '安全整改管理';
         res.id = res.checkid;
-        goPage('detail', res);
+        var url = 'detail?id=' + res.id + "&labid=" + res.labid;
+        goPage(url,res);
     }
 })
 $($(changedTmElem).parent().parent().parent().siblings('form')[0]).unbind('change').change(function() {

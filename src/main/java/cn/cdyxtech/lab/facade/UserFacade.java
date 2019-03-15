@@ -18,7 +18,7 @@ public interface UserFacade extends AbstractFacade<UserVO> {
 
     void logout();
 
-    PagedResult<UserVO> getPagedUser(PageRequest pageRequest, String keyword,Long ecmId,boolean ecmDeep,Long[] flockIds);
+    PagedResult<UserVO> getPagedUser(PageRequest pageRequest, String keyword,Long ecmId,boolean ecmDeep,Long[] flockIds,Long[] controlTypes);
 
     void saveUser(UserVO vo, Long[] flockIds);
 

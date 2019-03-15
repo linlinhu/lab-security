@@ -42,7 +42,9 @@
     <div class="row" style="height:60px">
         <div class="col-sm-9"></div>
         <div class="col-sm-3 text-right">
+            <@codeValidation codes=operationCodes operationCode="add">
             <button class="btn ls-btn btn-sm btn-primary configOpts" data-group-code="${group.code}" data-group-name="${group.getName()}" data-opt="add"><i class="iconfont icon-icon_"></i> 新建分类</button>
+            </@codeValidation>
         </div>
     </div>
     <div class="categoryList"  data-group-code="${group.code}" data-group-name="${group.getName()}">
@@ -54,6 +56,7 @@
 
         var that = this
         this.groupName ="${group.getName()}";
+
         this.optData = {}
         var $this = {
             init:function(){
@@ -84,6 +87,13 @@
                 layer.prompt({
                     title: '新建'+that.optData.groupName
                 },function(value, index, elem){
+
+                    var item = $(".categoryList[data-group-code='"+that.optData.groupCode+"'] .categoryItem[data-name='"+$.trim(value)+"']")
+
+                    if(item.length>0 && item.data("id")!="0" && item.data("id")!=itemDetail.id){
+                        layer.msg("分类已存在",{icon:2})
+                        return;
+                    }
                     $http.post({
                         url:"security-center-initConfig/addCategory",
                         data:{
@@ -112,6 +122,7 @@
                 $http.get({
                     url:"security-center-initConfig/detail",
                     data:{
+                        operationCodes:"${operationCodes!''}",
                         groupCode:that.optData.groupCode,
                         itemCode:that.optData.itemCode,
                         groupName:"${group.getName()}",
@@ -125,6 +136,7 @@
                 $http.get({
                     url:"security-center-initConfig/list",
                     data:{
+                        operationCodes:"${operationCodes!''}",
                         groupCode:groupCode,
                         groupName:groupName
                     }

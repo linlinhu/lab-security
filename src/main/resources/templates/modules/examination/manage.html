@@ -18,32 +18,49 @@
     <div class="table-responsive data-list"></div>
 </div>
 <script>
-new TableManage({
-    wrapId: '#examination-${timestamp}',
-    moduleName: 'examination',
-    showColumns: []
-},function(res){
-	console.log('res',res)
-	let confirmMsg = '确认拒绝这条申请吗?',
-		isAgree = 2,
-		params = {
-			id: res.id
-		};
-	if(res.opt == 'agree') {
-		confirmMsg = '确认通过这条申请吗?';
-		isAgree = 1;
+(function(){
+	new TableManage({
+		wrapId: '#examination-${timestamp}',
+		moduleName: 'examination',
+		showColumns: [],
+		loaded: function(res){
+			let wrapId = res.wrapId,
+				operationCodes = '${operationCodes!""}';
+
+			if(operationCodes.indexOf('examination-agree') == -1){ //通过申请权限
+				$(wrapId + ' td a[data-opt="agree"]').remove();
+			}
+			if(operationCodes.indexOf('examination-refuse') == -1){ //拒绝申请权限
+				$(wrapId + ' td a[data-opt="refuse"]').remove();
+			}
+			if(operationCodes.indexOf('examination-agree') == -1 && operationCodes.indexOf('examination-refuse') == -1) {
+				$(wrapId + ' th.th-operation').remove();
+				$(wrapId + ' td.td-operation').remove();
+			}
+		}
+	},function(res){
+		let confirmMsg = '确认拒绝这条申请吗?',
+			isAgree = 2,
+			params = {
+				id: res.id
+			};
+		if(res.opt == 'agree') {
+			confirmMsg = '确认通过这条申请吗?';
+			isAgree = 1;
+		}
+		params.isAgree = isAgree;
+		verify({params:params,confirmMsg:confirmMsg});
+	})
+	function verify(data){
+		$http.post({
+			url: 'examination/verify',
+			data: data.params,
+			forbidLoading: false,
+			confirmMsg: data.confirmMsg
+		}, function(res) {
+			goPage('index');
+		})
 	}
-	params.isAgree = isAgree;
-	verify({params:params,confirmMsg:confirmMsg});
-})
-function verify(data){
-	$http.post({
-         url: 'examination/verify',
-         data: data.params,
-         forbidLoading: false,
-         confirmMsg: data.confirmMsg
-     }, function(res) {
-    	 goPage('index');
-     })
-}
+}())
+
 </script>

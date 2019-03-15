@@ -42,10 +42,10 @@ public class ChangedRedoController extends HeaderCommonController {
         String keyword, Integer ecmId){
         
         if (ecmId == null) {
-            if (this.validateAuthorizationToken().getSchoolEcmId() == null) {
+            if (this.validateAuthorizationToken().getPersonalHeigherEcmId() == null) {
                 throw new EminException("404");
             }
-            ecmId = Integer.parseInt(this.validateAuthorizationToken().getSchoolEcmId().toString());
+            ecmId = Integer.parseInt(this.validateAuthorizationToken().getPersonalHeigherEcmId().toString());
         
         }
         

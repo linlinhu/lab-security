@@ -1,11 +1,13 @@
 package cn.cdyxtech.lab.vo;
 
+import cn.cdyxtech.lab.util.TestRandomUtil;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Collections;
 import java.util.List;
 
-public class CheckDataVO extends AbstractVO{
+public class CheckDataVO extends AbstractVO implements Comparable<CheckDataVO>{
 
 
     private static final long serialVersionUID = 7403729636544747134L;
@@ -67,18 +69,28 @@ public class CheckDataVO extends AbstractVO{
     public void setSeq(String seq) {
         this.seq = seq;
     }
-
+    @JsonProperty("nodes")
     public List<CheckDataVO> getChildren() {
+        if(this.children!=null){
+            Collections.sort(children);
+        }
+
         return children;
     }
 
-    @JsonProperty("nodes")
+
     public void setChildren(List<CheckDataVO> children) {
+
         this.children = children;
+
     }
 
     @Override
     public boolean valid() {
         return true;
+    }
+    @Override
+    public int compareTo(CheckDataVO o) {
+        return TestRandomUtil.compareVersion(this.seq,o.getSeq());
     }
 }

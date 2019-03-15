@@ -33,8 +33,8 @@ public class NotificationConfigFacadeImpl extends AbstractFacadeImpl<Notificatio
     }
 
     @Override
-    public List<SecurityTreeVO> getSecurityTree(){
-        JSONObject result = notificationAPIFeign.getSecurityTree();
+    public List<SecurityTreeVO> getSecurityTree(String keyword){
+        JSONObject result = notificationAPIFeign.getSecurityTree(keyword);
         ResultCheckUtil.check(result);
         return AbstractVO.JSONArrayToVOList(result.getJSONArray("result"),SecurityTreeVO.class);
     }

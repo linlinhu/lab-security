@@ -37,24 +37,33 @@ var FormTpl = function(p) {
                 disableDragAndDrop: true,
                 callbacks: {
                     onImageUpload: function(files) {
-                        var fileData = new FormData()
-                        fileData.append("file",files[0])
-                        fileData.append("type","img")
-                        $http.post({
-                            url:"/file/upload.do",
-                            contentType:false,
-                            processData:false,
-                            data:fileData
-                        },function(res){
-                            var imgSrc = res.storage[0].fileStorageUrl
-                            var img = $("<img></img>").attr("src",imgSrc).addClass("img-responsive recordImg").css({"width":"144px","height":"144px"})
-                            summernote.summernote("insertNode",img[0]);
-                            console.log(summernote.data())
-                        })
+                        var fileData = new FormData();
+                        fileData.append("myType","img")
+                        fileData.append("file",'')
+                        for(let i = 0; i < files.length; i++) {
+                        	fileData.set("file",files[i])
+                        	$http.post({
+                                url:"/file/upload.do",
+                                contentType:false,
+                                processData:false,
+                                data:fileData
+                            },function(res){
+                                var imgSrc = res.storage[0].fileStorageUrl
+                                var img = $("<img></img>").attr("src",imgSrc).addClass("img-responsive recordImg").css({"width":"144px","height":"144px"})
+                                summernote.summernote("insertNode",img[0]);
+                               /* console.log(summernote.data())*/
+                            })
+                        }  
+                    },
+                    onImageLinkInsert: function(link){
+                    	var imgSrc = link;
+                        var img = $("<img></img>").attr("src",imgSrc).addClass("img-responsive recordImg").css({"width":"144px","height":"144px"})
+                        summernote.summernote("insertNode",img[0]);
                     }
                 }
     		})
     	}
+    	
     };
     /**
      * 嵌入选择器代码
@@ -134,13 +143,13 @@ var FormTpl = function(p) {
                 // 删除图片对象
                 $(this).parent().remove();
                 $.extend(data, htmlEl.parent().data());
-
+                console.log(data,pics)
                 if (data.fileNumLimit > pics.length) {
                     htmlEl.siblings('a.upload').removeClass('hide');
                 }
             });
         }
-        $(that.wrapSelector + ' .pic-selector a.upload').unbind().click(function() {
+        $(that.wrapSelector + ' .pic-selector a.upload').unbind().click(function() {//上传图片
             var self = this;
             var data = $(self).data();
             $.extend(data, $(this).parent().data());
@@ -176,9 +185,7 @@ var FormTpl = function(p) {
 
                 var html = '';
                 if (res.storage) {
-                    //var picUrl = res.storage[0].fileStorageUrl;
-
-                    var picUrl = res.storage[1].fileStorageUrl;
+                    var picUrl = res.storage[0].fileStorageUrl;
 
                     html += '<li>' +
                         '<i class="pic" style="background-image:url(' + picUrl + ')"></i>' +
@@ -195,9 +202,79 @@ var FormTpl = function(p) {
                 layer.closeAll();
             })
         });
-        bindRemoveEvent();
+        bindRemoveEvent();  
+    };
 
-        
+    that.fileSelector = function() {
+        var bindRemoveEvent = function() {
+            $(that.wrapSelector +  ' .file-selector a.remove').unbind().click(function() {
+                var data = $(this).data();
+                
+                var htmlEl = $(this).parent().parent().siblings('value');
+                var files = JSON.parse(htmlEl[0].innerHTML);
+                
+                // 删除文件数据
+                pics = that.removePic(data.url, files);
+                htmlEl[0].innerHTML = JSON.stringify(files);
+
+                // 删除文件对象
+                $(this).parent().remove();
+                $.extend(data, htmlEl.parent().data());
+
+                if (data.fileNumLimit > files.length) {
+                    htmlEl.siblings('a.upload').removeClass('hide');
+                }
+            });
+        }
+        $(that.wrapSelector + ' .file-selector a.upload').unbind().click(function() {//上传文件
+            var self = this;
+            var data = $(self).data();
+            var type = ["img","excel", "doc","pdf"];
+            $.extend(data, $(this).parent().data());
+            $.extend(data, {
+                title: '上传文件',
+                uploadUrl: 'file/universalUpload.do',
+                filesType: type,
+                data:{ecmId: that.ecmId,}
+            });
+            
+            var htmlEl = $(self).siblings('value')[0];
+            var files =  [];
+            if (htmlEl.innerHTML.replace(/\s*/g,"") != "") {
+                files = JSON.parse(htmlEl.innerHTML);
+            }
+
+            new EminAontherFileUpload().init(data,function(response,file){
+                if (!response.success) {
+                    layer.msg(response.message);
+                    layer.closeAll();
+                    return false;
+                }
+                var res = response.result;
+                res.originalName = file.name
+                files.push(res);
+                htmlEl.innerHTML = JSON.stringify(files);
+
+                var html = '';
+                if (res.storage) {
+                    var fileUrl = res.storage[0].fileStorageUrl;
+
+                    html += '<li>' +
+                        '<i class="fa '+res.viewFileType+'"></i><span class="file-name"> ' + res.originalName+ '</span>' +
+                        '<a class="remove" href="javascript:;" data-url="' + fileUrl + '"><i class="fa fa-remove"></i></a>' +
+                    '</li>';
+                }
+                $(self).siblings('ul.selected-area').append(html);
+                bindRemoveEvent();
+
+                var fileLen = $(self).siblings('ul.selected-area').find('li').length;
+                if (data.fileNumLimit <= fileLen) {
+                    $(self).addClass('hide');
+                }
+                layer.closeAll();
+            })
+        });
+        bindRemoveEvent();  
     };
 
     that.relateSelector = function() {
@@ -258,7 +335,7 @@ var FormTpl = function(p) {
                         btn:["确定"],
                         content:res,
                         yes:function(index,layero){
-                            var checks = $(layero).find("input:checked");
+                            var checks = $(layero).find("tbody input:checked");
                             var dataLimit = parseInt(relateParams.dataLimit);
                             if (dataLimit > 0 && checks.length > dataLimit) {
                                 layer.msg('最多可选择' + dataLimit + '条数据');
@@ -292,33 +369,22 @@ var FormTpl = function(p) {
         that.embeddedSelector();
         that.mapLocation();
         that.picSelector();
+        that.fileSelector();
         that.relateSelector();
         that.formSubmit(callback);
         that.summernote();
     };
-    that.submitObj = function(callback) {
+    that.submitObj = function(callback,ignoreValidation) {
         var submitObj = $(that.wrapSelector).data();
-        var data = $(that.wrapSelector).serializeObject();
-        $(that.wrapSelector + ' value').each(function(){
-            var item = $(this);
-            data[item.data().name] = item.text().replace(/\s*/g,"");
-        })
-        $(that.wrapSelector + ' select[multiple="multiple"]').each(function(){
-            var self = $(this);
-            data[self.attr('name')] = self.val().join(',');
-        })
-        $(that.wrapSelector + ' .summernote').each(function(){
-            var self = $(this),
-            	html = self.summernote("code");
-            data[self.attr('name')] = html;
-        })
-         $(that.wrapSelector + ' input.nyrsfm').each(function(){
-            var item = $(this);
-            data[item.attr('name')] = item.attr('data-value');
-        })
+        var data = that.getFormData();
+        
         submitObj.data = JSON.stringify(data);
         delete submitObj['validator'];
-
+        if(!ignoreValidation) {
+            if(!that.validateFn(data)){
+                return false;
+            }
+        }
         $http.post({
             url: 'mel/save',
             data: submitObj
@@ -337,12 +403,67 @@ var FormTpl = function(p) {
         });
     };
     that.formSubmit = function(callback) {
-        $(that.wrapSelector).validate({
+        /*$(that.wrapSelector).validate({
             submitHandler: function (form) {
                 that.submitObj(callback);
             }
-        });
-        
+        });*/
+    	$(that.wrapSelector + ' a[type="submit"]').unbind().on('click',function(){
+    		that.submitObj(callback);
+    	})
     };
+    that.getFormData = function(){
+        var data = $(that.wrapSelector).serializeObject();
+        $(that.wrapSelector + ' value').each(function(){
+            var item = $(this);
+            data[item.data().name] = item.text().replace(/\s*/g,"");
+        })
+        $(that.wrapSelector + ' select[multiple="multiple"]').each(function(){
+            var self = $(this);
+            	value = self.val();
+            
+        	if(value && value.length > 0) {
+        		value = value.join(',');
+        	} else {
+        		value = '';
+        	}
+            data[self.attr('name')] = value;
+        })
+        $(that.wrapSelector + ' .summernote').each(function(){
+            var self = $(this),
+            	html = self.summernote("code");
+            data[self.attr('name')] = html;
+        })
+         $(that.wrapSelector + ' input.nyrsfm').each(function(){
+            var item = $(this);
+            data[item.attr('name')] = item.attr('data-value');
+        })
+        return data;  
+    };
+    that.validateFn = function(submitData){
+		let validateData = that.validateData || {},
+			rules = validateData.rules || {},
+			messages = validateData.messages || {};
+		if(rules!={}){
+			for(key in rules) {
+				if(rules[key].required) {
+					if(submitData[key] == '') {
+						layer.msg(messages[key].required,{icon:5});
+						return false;
+						break;
+					}
+				}
+				if(rules[key].regEx != '') {
+					let reg = new RegExp(rules[key].regEx);
+					if(!reg.test(submitData[key])) {
+						layer.msg(messages[key].required,{icon:5});
+						return false;
+						break;
+					}
+				}
+			}
+		}
+		return true;
+	}
     that.init(that.submitCallback);
 };

@@ -16,11 +16,20 @@
     <#if type==1 || type==4>
        	<div class="personal-filter-line">
 			<input placeholder="搜索标题关键词" class="form-control ls-input" type="text" name="keyword" role="user-params">
-           <button type="button" class="btn btn-primary" role="submit"><i class="iconfont icon-icon_search"></i></button>
-           <span class="iconfont icon-icon_close reset hide"></span>
+			<input type="hidden" name="isDraft" role="user-params" value="${isDraft}">
+        	<button type="button" class="btn btn-primary" role="submit"><i class="iconfont icon-icon_search"></i></button>
+        	<span class="iconfont icon-icon_close reset hide"></span>
        	</div>
      </#if>
 </form>
 <#if type==1 || type==4>
 	<a class="btn btn-primary publish-notify"><#if type==1>发布通知<#else>发布公告</#if></a>
+	<ul class="my-tabs ${isDraft}">
+		<li class="<#if isDraft=='false'>active</#if>">
+			<a data-toggle="tab" data-isDraft="false" aria-expanded="true"> 已发送</a>
+		</li>
+		<li class="<#if isDraft=='true'>active</#if>">
+			<a data-toggle="tab"  data-isDraft="true" aria-expanded="true"> 草稿箱</a>
+		</li>
+	</ul>
 </#if>

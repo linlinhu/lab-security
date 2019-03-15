@@ -13,6 +13,7 @@ import cn.cdyxtech.lab.constain.ApplicationConstain;
 import cn.cdyxtech.lab.controller.HeaderCommonController;
 import cn.cdyxtech.lab.feign.BasicInfoAPI;
 import cn.cdyxtech.lab.feign.MelAPIFeign;
+import cn.cdyxtech.lab.filter.MenuOperationFilter;
 
 import java.util.Map;
 
@@ -20,14 +21,19 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.emin.base.dao.PageRequest;
 import com.emin.base.exception.EminException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 @RequestMapping("/qrcode")
 public class QrcodeController extends HeaderCommonController {
+    private Logger logger = LoggerFactory.getLogger(QrcodeController.class);
     @Autowired
     private MelAPIFeign melApiFeign;
     @Autowired
     private BasicInfoAPI basicInfoApi;
+    @Autowired
+	MenuOperationFilter menuOperationFilter;
 
     public JSONObject tpl() {
         JSONObject res = new JSONObject();
@@ -73,23 +79,40 @@ public class QrcodeController extends HeaderCommonController {
         JSONObject res = basicInfoApi.sbranchPage(ecmId, 1, 100, null);
         this.dealException(res);
         data.put("branchs", res.getJSONObject("result").getJSONArray("resultList"));
+        try {
+			String operationCodes = menuOperationFilter.menuOperations("qrcode");
+			data.put("operationCodes", operationCodes);
+		} catch (Exception e) {
+            logger.error("二维码管理界面跳转，加载权限出现异常->" + e.getMessage());
+		}
         
-
         return "modules/qrcode/manage";
     }
     
     @GetMapping("/list")
-    public String list(Map<String,Object> data, String[] showColumns, Integer branchId, String keyword){
+    public String list(Map<String,Object> data, String[] showColumns, Long ecmId, Long branchId, String keyword){
+    	if (this.validateAuthorizationToken().getId() == null) {
+            throw new EminException("404");
+        }
+        if(branchId != null) {
+            ecmId = branchId;
+        }
+        if (ecmId == null) {
+            ecmId = this.validateAuthorizationToken().getSchoolEcmId();
+            if (ecmId == null) {
+                throw new EminException("404");
+            }
+        }
+        Integer userId = Integer.parseInt(this.validateAuthorizationToken().getId().toString());
         data.put("timestamp", System.currentTimeMillis());
         data.put("tpl", tpl().getJSONArray("groups").getJSONObject(0));
+        PageRequest pr = getPageRequestData();
+       /*  JSONObject res = basicInfoApi.printApplyPage(ecmId.intValue(), userId, pr.getCurrentPage(), pr.getLimit(), keyword); */
+       JSONObject res = basicInfoApi.labsPageBySchoolId(ecmId.intValue(), pr.getCurrentPage(), pr.getLimit(), keyword, null, null);
+        this.dealException(res);
+        data.put("data", res.getJSONObject("result"));
         if(showColumns!=null){
             data.put("showColumns",showColumns);
-        }
-        if (branchId != null) {
-            PageRequest pr = getPageRequestData();
-            JSONObject res = basicInfoApi.labPage(branchId, pr.getCurrentPage(), pr.getLimit(), keyword, null);
-            this.dealException(res);
-            data.put("data", res.getJSONObject("result"));
         }
         return "tpl/list";
     }

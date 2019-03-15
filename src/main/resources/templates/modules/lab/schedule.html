@@ -1,0 +1,137 @@
+<style>
+    ul.print-schedule-item {
+        display: block;
+        padding: 20px 60px;
+        color: #3E4956;
+    }
+    
+    ul.print-schedule-item > li {
+        display: block;
+        overflow: hidden;
+        position: relative;
+        padding-left: 138px;
+    }
+    
+    ul.print-schedule-item > li > div.time-node {
+        position: absolute;
+        left: 0;
+        top: 10px;
+        text-align: right;
+        width: 88px;
+    
+    }
+    
+    ul.print-schedule-item > li > div.time-node >div.date {
+        font-size: 17px;
+        margin-bottom: 15px;
+    }
+    
+    ul.print-schedule-item > li > div.time-node >div.time {
+        font-size: 12px;
+    }
+    
+    ul.print-schedule-item > li > div.icon-img {
+        display: block;
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        background-color: #28D582;
+        border-radius: 40px;
+        top: 0;
+        left: 118px;
+        text-align: center;
+        line-height: 40px;
+        color: #fff;
+    }
+    
+    ul.print-schedule-item > li > div.icon-item-1 {
+        background-color: #FF4D77;
+    }
+    ul.print-schedule-item > li > div.icon-item-2 {
+        background-color: #28D582;
+    }
+    
+    
+    ul.print-schedule-item > li > div.detail-block {
+        padding: 10px 50px;
+        border-left: 1px solid #D6DBE6;
+        font-size: 14px;
+    }
+    
+    ul.print-schedule-item > li > div.detail-block > div {
+        margin-bottom: 15px;
+    }
+    
+    ul.print-schedule-item > li > div.detail-block > div > span {
+        display: inline-block;
+        width: 88px;
+    }
+    ul.print-schedule-item > li > div.detail-block > div.title {
+        font-weight: bold;
+        margin-bottom: 20px;
+        font-size: 18px;
+    }
+    
+    ul.print-schedule-item > li > div.detail-block > div.pics img {
+        margin-bottom: 10px;
+        margin-right: 10px;
+    }
+    ul.print-schedule-item > li .detail-block div p {
+        padding: 3px 0;
+    }
+    ul.print-schedule-item .confirm-print-opt {
+        margin-top: 20px;
+    }
+    </style>
+    
+    <#setting datetime_format = 'yyyy/MM/dd~HH:mm'>
+    <ul class="print-schedule-item"> 
+        <#list schedules as item>
+            <#if item.operation == 10 || item.operation == 20>
+            <li>
+                <#if item.operation == 10>
+                    <div class="icon-img icon-item-1"><span class="iconfont icon-icon_find"></span></div>
+                <#elseif item.operation == 20>
+                    <div class="icon-img icon-item-2"><span class="iconfont icon-icon_yes"></span></div>
+                <#else>
+                    <div class="icon-img"><span class="iconfont icon-icon_yes"></span></div>
+                </#if>
+                <#assign timeNode = item.createTime?number_to_datetime />
+                <div class="time-node">
+                    <div class="date">${timeNode?split('~')[0]}</div>
+                    <div class="time">${timeNode?split('~')[1]}</div>
+                </div>
+                <div class="detail-block">
+                    <div class="title">
+                        <#if item.operation == 10>
+                        提交申请
+                        <#elseif item.operation == 20>
+                        打印完成
+                        <#else>
+                        待确认收码
+                        </#if>
+                    </div>
+                    <div>
+                        <p><span>操作人：</span>${item.userName}</p>
+                        <p><span>电话：</span>${item.userPhone}</p>
+                    </div>
+                    
+                    <#if item.type == 30>
+                    <!-- <div class="confirm-print-opt"><button type="button" class="btn btn-default" onclick="confirmPrint()">已收到二维码</button></div> -->
+                    </#if>
+                </div>
+            </li>
+            </#if>
+        </#list>
+        <div class="confirm-print-opt text-center"><button type="button" class="btn btn-primary">已收到二维码</button></div>
+    </ul>
+    
+    <script>
+        (function(){
+            let operation_20_el = $('.print-schedule-item .icon-item-2');
+            if(!operation_20_el.length == 1){
+                $('.print-schedule-item .confirm-print-opt').remove();
+            }
+        }())
+        
+    </script>

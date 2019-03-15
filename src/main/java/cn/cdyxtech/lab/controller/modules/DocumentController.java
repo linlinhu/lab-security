@@ -19,13 +19,17 @@ import cn.cdyxtech.lab.controller.HeaderCommonController;
 
 import cn.cdyxtech.lab.feign.DocumentApiFeign;
 import cn.cdyxtech.lab.feign.MelAPIFeign;
+import cn.cdyxtech.lab.filter.MenuOperationFilter;
 import cn.cdyxtech.lab.util.UserClaim;
 
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 @RequestMapping("/document")
 public class DocumentController extends HeaderCommonController{
+	private Logger logger = LoggerFactory.getLogger(SchoolController.class);
 	@Autowired
 	DocumentApiFeign documentApiFeign;
 	
@@ -34,12 +38,21 @@ public class DocumentController extends HeaderCommonController{
 	
 	@Autowired
 	FileResourceType fileResourceType;
+	
+	@Autowired
+	MenuOperationFilter menuOperationFilter;
 
     @GetMapping("/index")
     public ModelAndView index(Map<String,Object> data){
     	UserClaim userClaim = this.validateAuthorizationToken();
 		Long highestEcmId = userClaim.getHighestEcmId();
-    	ModelAndView mv = new ModelAndView("modules/document/manage");
+		ModelAndView mv = new ModelAndView("modules/document/manage");
+		try {
+			String operationCodes = menuOperationFilter.menuOperations("document");
+			mv.addObject("operationCodes", operationCodes);
+		} catch (Exception e) {
+            logger.error("档案库管理界面跳转，加载权限出现异常->" + e.getMessage());
+		}
     	mv.addObject("moculeCode","document");
     	mv.addObject("ecmId",highestEcmId);
         return mv;

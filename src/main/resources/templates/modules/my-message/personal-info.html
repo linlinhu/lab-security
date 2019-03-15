@@ -1,0 +1,68 @@
+<style>
+    .personal-info .user-name {
+        margin-top: 20px;
+    }
+    .personal-info .user-name span {
+        display: inline-block;
+        font-size: 18px;
+        font-weight: 600;
+        padding: 10px 0;
+    }
+    .personal-info .item {
+        padding: 10px 0;
+        font-size: 18px;
+    }
+    .personal-info .item > div {
+        display: inline-block;
+
+    }
+    .personal-info .item > div.label-p {
+        width: calc(50% - 66px);
+    }
+    .personal-info .item > div.text {
+        width: calc(50% + 60px);
+        padding-left: 30px;
+    }
+    .personal-info .item .edit {
+        cursor: pointer;
+    }
+</style>
+<div class="wrapper-content personal-info">
+    <div class="user-name text-center">
+        <img src="img/my-message/user.png" width="45" height="45"><br>
+        <span>${data.realName}</span>
+    </div>
+    <div class="item">
+       <div class="label-p text-right">联系电话：</div>
+       <div class="text"><span>${data.mobile}</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="edit text-navy" onclick="goPage('modification')">修改</span></div>
+    </div>
+    <div class="item">
+        <div class="label-p text-right">所属层级：</div>
+        <div class="text">
+            <#if data.laboratoryName??>
+                ${data.laboratoryName}
+            <#else>
+                <#if data.collegeName??>
+                    ${data.collegeName}
+                <#else>
+                    ${data.scName}
+                </#if>
+            </#if>
+        </div>
+    </div>
+    <#if data.laboratoryName??>
+        <div class="item">
+            <div class="label-p text-right">所属学院：</div>
+            <div class="text">
+                ${data.collegeName!'-'}
+            </div>
+        </div>
+    </#if>
+    <div class="item">
+        <div class="label-p text-right">岗位角色：</div>
+        <div class="text">
+            ${data.roleName!'-'}
+        </div>
+    </div>
+</div>
+<script></script>

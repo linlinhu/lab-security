@@ -16,7 +16,7 @@
         allow_single_deselect: true, //删除选项
         max_selected_options: ${max_selected_options}, //多选上限
         disable_search:true, //禁用搜索框
-        placeholder_text_multiple:'请选择' //提示值
+        placeholder_text_multiple:'请选择' + '${tips}'//提示值
     });
     var value = "${value!''}";
     if (value.split(',').length > 1) {

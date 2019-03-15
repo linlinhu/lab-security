@@ -40,13 +40,17 @@
                                 <#assign value = info[dkey][dname]>
                             </#if>
                             <#if dkParams?size == 1>
-                                <#assign value = info[dkParams]>
+                                <#assign value = info[item.dataKey]>
                             </#if>
                             <div class="empty-content" data-url="${item.typeExtend.url}"  data-item-token="${item.itemToken}" data-value="${value}"></div>
                             </#if>
                         <#break>
                         <#case 4>
-                        <div class="summernote" name="${item.itemToken}"></div>
+                        <div class="summernote" name="${item.itemToken}">
+                            <#if info[item.dataKey]??>
+                                ${info[item.dataKey]?replace("&lt;","<")?replace("&gt;",">")?replace("”",'"')?replace("’","'")?replace("&amp;","&")}
+                            </#if>
+                        </div>
                         <#break>
                         <#case 5>
                             <#if item.typeExtend.sourceType == 'local'>
@@ -69,7 +73,7 @@
                                     </#list>
                                        
                                 <#else>
-                                    <#assign values = info[dkParams] />
+                                    <#assign values = info[item.dataKey]>
                                 </#if>
                             <div class="empty-content" data-url="${item.typeExtend.url}" data-item-token="${item.itemToken}"  data-value="${values}"></div>
                             </#if>
@@ -115,9 +119,9 @@
                             <#else>
                                 <#assign picSize = 0>
                             </#if>
-                            <div class="pic-selector" data-file-num-limit="${maxLen}" data-title="${fTitle},最多${maxLen}张">
+                            <div class="pic-selector" data-file-num-limit="${item.typeExtend.uploadLimit!1}" data-title="${fTitle},最多${item.typeExtend.uploadLimit!1}张">
                                 <value data-name="${item.itemToken}" class="hide"><#if info[item.dataKey]??><@obj2json obj=info[item.dataKey] ></@obj2json><#else>[]</#if></value>
-                                <a class="upload <#if maxLen == picSize>hide</#if>" href="javascript:;" data-upload-url="${item.typeExtend.url}" data-files-type="img"><i class="iconfont icon-icon_"></i></a>
+                                
                                 
                                 <ul class="selected-area">
                                     <#if picSize gt 0>
@@ -130,6 +134,39 @@
                                     </#list>
                                     </#if>
                                 </ul>
+                                <a class="upload <#if maxLen == picSize>hide</#if>" href="javascript:;" data-upload-url="${item.typeExtend.url}" data-files-type="img"><i class="iconfont icon-icon_"></i></a>
+                            </div>
+                        <#break>
+                        <#case 31>
+                            <#if uploadParams?? && uploadParams[item.dataKey]??>
+                                <#assign maxLen = uploadParams[item.dataKey].fileNumberLimit>
+                                <#assign fTitle = uploadParams[item.dataKey].title>
+                            <#else>
+                                <#assign maxLen = 1>
+                                <#assign fTitle = "上传文件">
+                            </#if>
+                            <#if info??>
+                                <#assign fileSize = info[item.dataKey]?size>
+                            <#else>
+                                <#assign fileSize = 0>
+                            </#if>
+                            <div class="file-selector" data-file-num-limit="${item.typeExtend.uploadLimit!1}" data-title="${fTitle},最多${item.typeExtend.uploadLimit!1}张">
+                                <value data-name="${item.itemToken}" class="hide"><#if info[item.dataKey]??><@obj2json obj=info[item.dataKey] ></@obj2json><#else>[]</#if></value>
+                                
+                                
+                                <ul class="selected-area">
+                                    <#if fileSize gt 0>
+                                    <#list info[item.dataKey] as file>
+                                    <#assign fileUrl = file.storage[0].fileStorageUrl />
+                                    <li>
+                                        <i class="fa ${file.viewFileType}"></i><span class="file-name"></span>
+                                        <a class="remove" href="javascript:;" data-url="${fileUrl}"><i class="iconfont icon-icon_delate"></i></a>
+                                    </li>
+                                    </#list>
+                                    </#if>
+                                </ul>
+                                
+                                <a class="upload <#if maxLen == picSize>hide</#if>" href="javascript:;" data-upload-url="${item.typeExtend.url}" data-files-type="img"><i class="iconfont icon-icon_"></i></a>
                             </div>
                         <#break>
                         <#case 50>
@@ -187,10 +224,15 @@
                         <#break>
                         <#case 90>
                         <#if item.typeExtend.code == 'selection-officer'>
-                         	<div class="choose-data form-control">
+                         	<div class="choose-data form-control" name="${item.itemToken}}">
                          		<span class="placeholder">请选择${item.title}</span>
-                         	</div>
-                         	<input name="${item.itemToken}" type="hidden">
+                            </div>
+                            
+                         	<input name="${item.itemToken}" type="hidden" value='<@obj2json obj=info[item.dataKey]></@obj2json>'>
+                        </#if>
+                        <#if item.typeExtend.code == 'readonly'>
+                             <div class="readonly-text">${info[item.dataKey]}</div>
+                             <input class="form-control" type="hidden" name="${item.itemToken}" value="${info[item.dataKey]}">
                         </#if>
                         
                         <#break>
@@ -203,8 +245,8 @@
         </#list>
         </#list>
         <#if pageSubmit?? && pageSubmit == 1>
-            <div class="text-center">
-                <button type="submit" class="btn btn-primary">${submitName!'保存'}</button>
+            <div class="text-center form-btn-group">
+                <a type="submit" class="btn btn-primary">${submitName!'保存'}</a>
             </div>
         
         </#if>
@@ -213,8 +255,27 @@
 
 <script>
 	<#if !hasPersonalFunction??>
-    new FormTpl({
-        wrapSelector: '#form${timestamp}'
-    })
+        let validateData = {rules:{},messages:{}},required;
+        <#list tpl.groups as group>
+            <#list group.items as item>
+                <#if item.required>
+                required = true;
+                <#else>
+                required = false;
+                </#if>
+                validateData.rules['${item.itemToken}'] = {
+                    required: required,
+                    regEx: '${item.regEx}'
+                }
+                validateData.messages['${item.itemToken}'] = {
+                    required: '${item.regExText}'
+                }
+            </#list>
+        </#list>
+        new FormTpl({
+            wrapSelector: '#form${timestamp}',
+            validateData: validateData||{},
+            ecmId: '${ecmId}'
+        })
     </#if>
 </script>

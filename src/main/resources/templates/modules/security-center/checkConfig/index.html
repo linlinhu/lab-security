@@ -102,7 +102,9 @@
         border-right: 1px solid #e7eaec !important;
     }
 </style>
-
+<#if !colorMap??>
+<#assign colorMap = {"1":"#55D1BC","2":"#5ECBE5","3":"#67B9EC","4":"#80B0EC","5":"#8EA3E6","6":"#A696EB","7":"#E3B391","8":"#F4B252","9":"#ED935F","10":"#F16281"}>
+</#if>
 <div class="security-center-checkConfig">
     <div class="tabs-container">
 
@@ -110,22 +112,22 @@
             <ul class="nav nav-tabs">
 
 
-                <li class="active">
+                <li class="<#if !toPh>active</#if>">
                     <a data-toggle="tab" href="#checkConfigTab-1"
                        aria-expanded="false"> 检查项配置</a>
                 </li>
-                <li class="">
+                <li class="<#if toPh>active</#if>">
                     <a data-toggle="tab" href="#checkConfigTab-2"
                        aria-expanded="false"> 问题等级配置</a>
                 </li>
             </ul>
             <div class="tab-content">
-                <div id="checkConfigTab-1" class="tab-pane active">
+                <div id="checkConfigTab-1" class="tab-pane <#if !toPh>active</#if>">
                     <div class="panel-body categoryContainer">
                          <#include "checkItem/index.html">
                     </div>
                 </div>
-                <div id="checkConfigTab-2" class="tab-pane">
+                <div id="checkConfigTab-2" class="tab-pane <#if toPh>active</#if>">
                     <div class="panel-body categoryContainer levelConfig">
                          <#include "potentialHazard/index.html">
                     </div>
@@ -140,11 +142,13 @@
 </div>
 <script type="text/javascript">
     (function () {
-        /*$(".security-center-checkConfig .nav-tabs a[data-toggle='tab']").on("shown.bs.tab", function () {
-            $(".security-center-checkConfig .itemDetail:visible").fadeOut(function () {
+        $(".security-center-checkConfig .nav-tabs a[data-toggle='tab']").on("shown.bs.tab", function () {
+           /* $(".security-center-checkConfig .itemDetail:visible").fadeOut(function () {
                 $(this).empty()
-            })
-        })*/
+            })*/
+            $(".checkItemConfig .gradeConfig").fadeOut().empty()
+            layer.closeAll()
+        })
 
     })()
 </script>

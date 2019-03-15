@@ -1,27 +1,35 @@
+<#if !colorMap??>
+    <#assign colorMap= {"1":"#55D1BC","2":"#5ECBE5","3":"#67B9EC","4":"#80B0EC","5":"#8EA3E6","6":"#A696EB","7":"#E3B391","8":"#F4B252","9":"#ED935F","10":"#F16281"}>
+</#if>
 
-<#assign colorMap= {"1":"#28D582","2":"#92A2CA","3":"#7D68FF","4":"#FFBE32","5":"#FF80B9","6":"#FF4D77"}>
-<#list items as item>
-    <#assign itemLevel =item.value?split(",")>
-    <#assign maxLevel = (itemLevel?reverse)[0]>
-    <div class="categoryItem">
-        <div class="title" style="color:#fff;background:${colorMap["${maxLevel}"]}">
-            ${item.name}
-            <#if  item.id??>
-             <span class="deleteBtn phLevelOpts" data-opt="delete" data-id="${item.id}" ><i class="fa fa-times"></i></span>
-            </#if>
-        </div>
-        <div class="content">
-            <#list item.value?split(",")?sort as l>
-                <span>${l}级</span>
-            </#list>
+<#if items?? && items?size gt 0 >
+    <#list items as item>
+        <#assign itemLevel =item.value?split(",")>
+        <#assign maxLevel = (itemLevel?reverse)[0]>
+        <div class="categoryItem">
+            <div class="title" style="color:#fff;background:${colorMap["${maxLevel}"]}">
+                ${item.name}
+                <#if  item.id??>
+                 <span class="deleteBtn phLevelOpts" data-opt="delete" data-id="${item.id}" ><i class="fa fa-times"></i></span>
+                </#if>
+            </div>
+            <div class="content">
+                <#list item.value?split(",")?sort as l>
+                    <span>${l}级</span>
+                </#list>
+
+            </div>
+            <div style="position: absolute;right:12px;bottom: 12px;">
+                <a href="javascript:;" class="phLevelOpts" data-opt="edit" data-code="${item.code}"  style="color: #55A8FD;" ><i class="iconfont icon-icon_edit"></i></a>
+            </div>
 
         </div>
-        <div style="position: absolute;right:12px;bottom: 12px;">
-            <a href="javascript:;" class="phLevelOpts" data-opt="edit" data-code="${item.code}"  style="color: #55A8FD;" ><i class="iconfont icon-icon_edit"></i></a>
-        </div>
+    </#list>
+<#else>
+<#assign message="暂时没有问题等级数据">
+<#include "/tpl/no-data.html">
+</#if>
 
-    </div>
-</#list>
 <script type="text/javascript">
     console.log([${avalibleLevels?join(",")}])
     $(".phLevelManagement .phList").trigger("loaded",[[${avalibleLevels?join(",")}]])

@@ -47,10 +47,10 @@ public class ChangedStatisController extends HeaderCommonController {
     @GetMapping("index")
     public String detail(Map<String,Object> data, Long id){
         data.put("timestamp", System.currentTimeMillis());
-        if (this.validateAuthorizationToken().getSchoolEcmId() == null) {
+        if (this.validateAuthorizationToken().getPersonalHeigherEcmId() == null) {
             throw new EminException("404");
         }
-        Integer ecmId = Integer.parseInt(this.validateAuthorizationToken().getSchoolEcmId().toString());
+        Integer ecmId = Integer.parseInt(this.validateAuthorizationToken().getPersonalHeigherEcmId().toString());
         data.put("schoolEcmId", ecmId);
         data.put("ecmId", ecmId);
         // 整改统计数据
@@ -58,8 +58,9 @@ public class ChangedStatisController extends HeaderCommonController {
         this.dealException(rectifyRes);
 
         JSONObject rectifyData = this.parseChartData(rectifyRes.getJSONArray("result"), RECTIFY_STATIS);
+        
         if(rectifyData != null) {
-            data.put("unRectifyCount", rectifyData.getInteger("undoneCount"));
+            data.put("unRectifyCount", rectifyData.getInteger("unDoneCount"));
             data.put("rectifyCount", rectifyData.getInteger("doneCount"));
             data.put("rectifyTotal", rectifyData.getInteger("total"));
             data.put(RECTIFY_STATIS, rectifyData.toJSONString());
@@ -69,10 +70,11 @@ public class ChangedStatisController extends HeaderCommonController {
         JSONObject reviewRes = securityCheckApi.reviewStatus(ecmId);
         this.dealException(reviewRes);
         JSONObject reviewData = this.parseChartData(reviewRes.getJSONArray("result"), REVIEW_STATIS);
+        
         if(reviewData != null) {
-            data.put("unReviewCount", rectifyData.getInteger("undoneCount"));
-            data.put("reviewCount", rectifyData.getInteger("doneCount"));
-            data.put("reviewTotal", rectifyData.getInteger("total"));
+            data.put("unReviewCount", reviewData.getInteger("unDoneCount"));
+            data.put("reviewCount", reviewData.getInteger("doneCount"));
+            data.put("reviewTotal", reviewData.getInteger("total"));
             data.put(REVIEW_STATIS, reviewData.toJSONString());
         }
 
@@ -99,10 +101,10 @@ public class ChangedStatisController extends HeaderCommonController {
                        String keyword, Integer ecmId){
 
         if (ecmId == null) {
-            if (this.validateAuthorizationToken().getSchoolEcmId() == null) {
+            if (this.validateAuthorizationToken().getPersonalHeigherEcmId() == null) {
                 throw new EminException("404");
             }
-            ecmId = Integer.parseInt(this.validateAuthorizationToken().getSchoolEcmId().toString());
+            ecmId = Integer.parseInt(this.validateAuthorizationToken().getPersonalHeigherEcmId().toString());
         }
 
         data.put("tpl", safetyOverviewTpl().getJSONArray("groups").getJSONObject(2));

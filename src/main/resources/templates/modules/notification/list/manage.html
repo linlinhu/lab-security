@@ -41,6 +41,11 @@
 	top: 14px;
 	right: 12px;
 }
+.notification-list ul.my-tabs {
+	width: 100%;
+	padding: 20px 0;
+	border-bottom: 1px solid #D6DBE6;
+}
 </style>
 <div class="document-manage vertical-tabs notification-list" id="notification-list-${timestamp}">
 	<div class="cate-area text-center">
@@ -66,11 +71,47 @@
 </div>
 <script type="text/javascript" src="${base}js/notification/list/manage.js"></script>
 <script>
-NotificationList.init({
-	 wrapId: '#notification-list-${timestamp}',
-	 moduleName: 'notification-list',
-	 showColumns: ${showColumns!'[]'},
-	 ecmId: '${ecmId}',
-	 type: '${type}'
-})
+(function(){
+	NotificationList.init({
+		wrapId: '#notification-list-${timestamp}',
+		moduleName: 'notification-list',
+		showColumns: ${showColumns!'[]'},
+		ecmId: '${ecmId}',
+		type: '${type}',
+		isDraft: '${isDraft}',
+		operationCodes: '${operationCodes}',
+		loaded: function(res){
+			let operationCodes = res.operationCodes,
+				wrapId = res.wrapId,
+				type = $(wrapId + ' form input[name="type"]').val(),
+				isDraft = $(wrapId + ' form input[name="isDraft"]').val() == 'false' ? false : true;
+			if(type == 1){
+				if(!isDraft && operationCodes.indexOf('notification-remove-check') == -1){ //删除检查通知权限
+					$(wrapId + ' td a[data-opt="remove"]').remove();
+				}
+				if(isDraft && operationCodes.indexOf('notification-remove-c-draft') == -1){ //删除检查通知草稿权限
+					$(wrapId + ' td a[data-opt="remove"]').remove();
+				}
+			}
+			if(type == 2){
+				if(operationCodes.indexOf('notification-remove-modify') == -1){ //删除整改通知权限
+					$(wrapId + ' td a[data-opt="remove"]').remove();
+				}
+			}
+			if(type == 3){
+				if(operationCodes.indexOf('notification-remove-review') == -1){ //删除复查通知权限
+					$(wrapId + ' td a[data-opt="remove"]').remove();
+				}
+			}
+			if(type == 4){
+				if(!isDraft && operationCodes.indexOf('notification-remove-notice') == -1){ //删除系统公告权限
+					$(wrapId + ' td a[data-opt="remove"]').remove();
+				}
+				if(isDraft && operationCodes.indexOf('notification-remove-n-draft') == -1){ //删除系统公告草稿权限
+					$(wrapId + ' td a[data-opt="remove"]').remove();
+				}
+			}
+		}
+	})
+}())	
 </script>

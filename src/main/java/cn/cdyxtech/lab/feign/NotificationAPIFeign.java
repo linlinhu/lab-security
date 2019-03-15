@@ -28,8 +28,6 @@ public interface NotificationAPIFeign {
     @GetMapping("/unqualifiedProGradeNoticeFlow/findAll")
     JSONObject findAllNotificationConfig();
 
-    @GetMapping("/noticePerson/getSecurityTree")
-    JSONObject getSecurityTree();
     /**
      * 我的消息
      * @param keyword 关键字
@@ -65,28 +63,32 @@ public interface NotificationAPIFeign {
      * 我的未读消息简单列表
      * @param userId  用户id
      * @param count 数量
-     */
+     * @param readStatus 阅读状态：0 未读 1已读
+     */ 
     @GetMapping(value ="/message/queryMySimpleMessage")
     JSONObject queryMySimpleMessage(
             @RequestParam(value = "userId") Long userId,
-            @RequestParam(value = "count") Long count);
+            @RequestParam(value = "count") Long count,
+            @RequestParam(value = "readStatus") Long readStatus);
     
     /**
      * 获取消息详情
      * @param userId  用户id
      * @param id 消息记录id
+     * @param isNeedReceiver 是否需要发送范围
      */
     @GetMapping(value ="/message/queryDetail/{id}")
     JSONObject detail(
     		@PathVariable(value = "id") Long id,
-            @RequestParam(value = "userId") Long userId);
+            @RequestParam(value = "userId") Long userId,
+            @RequestParam(value = "isNeedReceiver") Boolean isNeedReceiver);
     
     /**
      * 删除
      * @param userId  用户id
      * @param messageId 消息记录id
      */
-    @GetMapping(value ="/noticePerson/delMyMessage")
+    @PostMapping(value ="/noticePerson/delMyMessage")
     JSONObject delMyMessage(
     		@RequestParam(value = "messageId") Long messageId,
             @RequestParam(value = "userId") Long userId);
@@ -109,6 +111,7 @@ public interface NotificationAPIFeign {
      * @param sort 按照某个属性进行排序,多个属性按照’,’英文逗号隔开,同理与order属性一起
      * @param order 按照什么类型排序,可选值:asc(默认,升序),desc(降序),多个属性按照’,’英文逗号隔开,同理与sort属性一起,多个属性则有多个排序值
      * @param ecmId 学校id
+     * @param isDraft 是不是草稿
      */
     @GetMapping(value ="/message/pageMessage")
     JSONObject pageMessage(
@@ -120,7 +123,8 @@ public interface NotificationAPIFeign {
             @RequestParam(value = "order") String order,
             @RequestParam(value = "page") Integer page,
             @RequestParam(value = "limit") Integer limit,
-            @RequestParam(value = "ecmId") Long ecmId);
+            @RequestParam(value = "ecmId") Long ecmId,
+            @RequestParam(value = "isDraft") Boolean isDraft);
     
     /**
      * 分页加载整改通知

@@ -1,0 +1,203 @@
+<style>
+    .gradeConfig .configContainer{
+        border:1px solid rgba(228, 228, 228, 1);
+        height:80%;
+    }
+    .gradeConfig .gradeColors{
+        position:relative;
+        height:calc(100% - 98px);
+        display: grid;
+        grid-template-columns: repeat(5,1fr);
+        grid-column-gap: 4%;
+        grid-template-rows: 20% 20%;
+    }
+    .gradeConfig .gradeColors .colorItem{
+
+        display: flex;
+        flex-flow:column;
+        align-items: center;
+        justify-content: center;
+    }
+    .gradeConfig .gradeColors .colorContainer{
+        cursor:pointer;
+        width:30px;
+        height:30px;
+
+    }
+</style>
+<#assign defaultColorMap>
+    {"1":"#55D1BC","2":"#5ECBE5","3":"#67B9EC","4":"#80B0EC","5":"#8EA3E6","6":"#A696EB","7":"#E3B391","8":"#F4B252","9":"#ED935F","10":"#F16281"}
+</#assign>
+<#assign defaultColorMap = defaultColorMap?eval>
+<#if item??>
+ <#assign config = item.value?eval/>
+</#if>
+<div class="wrapper-content" style="height:100%">
+    <div class="col-sm-12 p-sm">
+        <div class="rcrumbs">
+            <ul>
+                <li><a href="javascript:;" class="closeBtn">检查项配置</a><span class="divider">></span></li>
+                <li>等级配置</li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-sm-12 p-m configContainer m-b-md">
+        <div class="col-sm-8 tips">
+            提醒：<span style="color:#868686">配置您学校的检查项等级数，配置完成后可为每个检查项设定其严重等级</span>
+        </div>
+        <div class="col-sm-12" style="font-size:16px;color:#3E4956">
+            最高等级: <a href="javascript:;" data-mode="inline" data-type="select" data-value="${(config.limit)!10}" class="levelLimit">${(config.limit)!10}级
+            <i class="iconfont icon-icon_edit"></i></a>
+        </div>
+        <div class="col-sm-12 gradeColors ">
+            <#if config??>
+                <#list config.gradeColors as c>
+                    <div class="colorItem">
+                        <div class="title">
+                            ${c.grade}级
+                        </div>
+                        <div class="colorContainer" style="background:${c.color}" data-color="${c.color}"></div>
+                    </div>
+                </#list>
+            <#else>
+                <#list 1..10 as i>
+                    <div class="colorItem">
+                        <div class="title">
+                            ${i}级
+                        </div>
+                        <div class="colorContainer" style="background:${defaultColorMap['${i}']}" data-color="${defaultColorMap['${i}']}"></div>
+                    </div>
+                </#list>
+            </#if>
+
+        </div>
+    </div>
+    <div class="text-center">
+        <button class="btn btn-primary saveBtn"><i class="fa fa-save"></i> 保存配置</button>
+    </div>
+    <div class="colorPicker" style="display: none">
+        <div style="color:#000" class="m-b-xs">
+            请选择该等级标识颜色
+        </div>
+        <div style="display: grid;grid-template-columns: repeat(9, minmax(30px, 1fr));grid-template-rows: repeat(2, minmax(30px, 1fr));grid-gap: 5px;">
+            <div style="background: #DBCC84;cursor: pointer" data-color="#DBCC84"></div>
+            <div style="background: #D3D268;cursor: pointer" data-color="#D3D268"></div>
+            <div style="background: #99D588;cursor: pointer" data-color="#99D588"></div>
+            <div style="background: #7AD69A;cursor: pointer" data-color="#7AD69A"></div>
+            <div style="background: #55D1BC;cursor: pointer" data-color="#55D1BC"></div>
+            <div style="background: #5ECBE5;cursor: pointer" data-color="#5ECBE5"></div>
+            <div style="background: #67B9EC;cursor: pointer" data-color="#67B9EC"></div>
+            <div style="background: #80B0EC;cursor: pointer" data-color="#80B0EC"></div>
+            <div style="background: #8EA3E6;cursor: pointer" data-color="#8EA3E6"></div>
+
+            <div style="background: #A696EB;cursor: pointer" data-color="#A696EB"></div>
+            <div style="background: #E3B391;cursor: pointer" data-color="#E3B391"></div>
+            <div style="background: #F4B252;cursor: pointer" data-color="#F4B252"></div>
+            <div style="background: #ED935F;cursor: pointer" data-color="#ED935F"></div>
+            <div style="background: #F16281;cursor: pointer" data-color="#F16281"></div>
+
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    (function(){
+        var item = {
+            id:"${(item.id)!''}",
+            code:"${(item.code)!itemCode}",
+            name:"等级颜色配置",
+            valueType:"String",
+            value:'${(item.value)!""}'
+        }
+        var source = []
+        var saved = false;
+        var defaultColorMap =  {"1":"#55D1BC","2":"#5ECBE5","3":"#67B9EC","4":"#80B0EC","5":"#8EA3E6","6":"#A696EB","7":"#E3B391","8":"#F4B252","9":"#ED935F","10":"#F16281"}
+        for(var i=1;i<=10;i++){
+            source.push({
+                value:i,
+                text:i+"级"
+            })
+        }
+        $(".gradeConfig .levelLimit").editable({
+
+            showbuttons:false,
+            source: source
+        })
+        $(".saveBtn").click(function(){
+            var limit = $(".gradeConfig .levelLimit").editable("getValue",true)
+            var gradeColors = []
+            $(".gradeConfig .gradeColors .colorItem .colorContainer").each(function(i,v){
+                var grade = (i+1);
+                gradeColors.push({
+                    grade:grade,
+                    color:$(v).attr("data-color")
+                })
+            })
+            var data = {
+                limit:limit,
+                gradeColors:gradeColors
+            }
+            item.value = JSON.stringify(data)
+            $http.post({
+                url:"checkItem/saveGradeConfig",
+                data:item
+            },function(res){
+                layer.msg("保存成功",{icon:1})
+                goPage("index")
+            })
+        })
+        $(".gradeConfig .colorItem .colorContainer").click(function(){
+            var that = this
+            layer.tips($(".gradeConfig .colorPicker").html(), this,{
+                area:["auto"],
+                tips:[3,"rgb(247,247,247)"],
+                closeBtn :1,
+                time:0,
+                success:function(layero, index){
+                    $(layero).find("div[data-color]").mouseover(function(){
+                        $(this).css({boxShadow:"0px 0px 3px #666666"})
+                    }).mouseout(function(){
+                        $(this).css({boxShadow:"none"})
+                    })
+
+                    $(layero).find("div[data-color]").click(function(){
+                        var color = $(this).attr("data-color")
+                        var target = $(".gradeConfig .colorItem .colorContainer[data-color='"+color+"']")
+
+                        if(target.length>0){
+                            target.attr("data-color",$(that).attr("data-color"))
+                            target[0].style.background=$(that).attr("data-color")
+
+                        }
+                        $(that).attr("data-color",$(this).attr("data-color"))
+                        $(that)[0].style.background=$(this).attr("data-color")
+
+                        layer.close(index)
+                    })
+                }
+            });
+        })
+        $(".gradeConfig .levelLimit").on("save",function(e,params){
+            var limit = params.newValue
+            var t = this;
+            setTimeout(function () {
+                $(t).html(limit + "级 <i class=\"iconfont icon-icon_edit\"></i>")
+            }, 100)
+            var list = $(".gradeColors .colorItem")
+            if(list.length>limit){
+                list.slice(limit).remove()
+            }else if(list.length<limit){
+                for(var i=1;i<=limit-list.length;i++){
+                    $("<div class='colorItem'><div class='title'>"+(list.length+i)+"级</div><div class='colorContainer' style='background:"+defaultColorMap[(list.length+i)]+"' data-color='"+defaultColorMap[(list.length+i)]+"'></div></div>").appendTo(".gradeColors")
+                }
+            }
+        })
+        <#if !config??>
+            $(".gradeConfig .levelLimit").editable("show")
+        </#if>
+
+        $(".checkItemConfig .gradeConfig .closeBtn").click(function(){
+            $(".checkItemConfig .gradeConfig").fadeOut().empty()
+        })
+        $(".checkItemConfig .gradeConfig .rcrumbs").rcrumbs()
+    })()
+</script>

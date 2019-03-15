@@ -4,8 +4,18 @@
 .inspect-lab-info .map-selection {
     display: none;
 }
+.bread-crumb span {
+	cursor: pointer;
+}
+.inspect-lab-info .mel-info > div.item {
+    padding: 12px 15px 12px 60px;
+}
+.inspect-lab-info .mel-info .up-or-down {
+    margin-left: 40px;
+    cursor: pointer;
+}
 </style>
-<section class="bread-crumb">${detailTitle!'安全检查管理'} &gt;&gt; <span class="text-navy">查看详情</span></section>
+<section class="bread-crumb"><span onclick="goPage('index')">${detailTitle!'安全检查管理'}</span>&nbsp;&gt;&gt; <span class="text-navy">查看详情</span></section>
     
 <div class="basic-box sc-info lab-info inspect-lab-info">
     <div class="seperate-title">
@@ -24,3 +34,36 @@
     </div>
     <#include "history.html"/>
 </div>
+<script>
+    (function(){
+        up_or_down();
+        function up_or_down(){//详情的展开或者收起
+            let EL = $('.inspect-lab-info .mel-info'),
+                up_btn = '<span class="text-navy up-or-down" oper="up">收起详情</span>',
+                down_btn = '<span class="text-navy up-or-down" oper="down">展开详情</span>';
+            EL.find('.collegeName').append(down_btn);
+            EL.find('.address').append(up_btn);
+            btn = EL.find('.up-or-down');
+            btn.unbind().on('click',function(){
+                let oper = $(this).attr('oper');
+                $(this).hide();
+                if(oper == 'up') {
+                    EL.find('.item').each(function(index,value) {
+                        if(index >2) {
+                            $(value).hide();
+                        }
+                    })
+                    EL.find('.up-or-down[oper="down"]').show();
+                } else {
+                    EL.find('.item').each(function(index,value) {
+                        if(index > 2) {
+                            $(value).show();
+                        }
+                    })
+                    EL.find('.up-or-down[oper="up"]').show();
+                }
+            })
+            EL.find('.up-or-down[oper="up"]').trigger('click');
+        }
+    }())
+</script>

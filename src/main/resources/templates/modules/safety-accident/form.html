@@ -50,6 +50,13 @@
 .security-accident-form textarea {
 	min-height: 200px;
 }
+.security-accident-form .empty-content{
+	width: calc(50% - 10px);
+    display: inline-block;
+}
+.security-accident-form .empty-content[data-url="safety-accident/get-college-list"] {
+	margin-right: 20px;
+}
 </style>
 <div class="security-accident-form" id="security-accident-form-${timestamp}">
 	<ul class="path">
@@ -65,6 +72,23 @@ var SecurityAccidentForm = (function(){
 	let init = function(p){
 		moduleId = p.moduleId;
 		eventInit();
+		fn();
+		function fn(){
+			let ELS = $(moduleId + ' .empty-content'),
+				parent,
+				placeholder,
+				placeEl = $(moduleId + ' input[name="fsdd-1"]').parent();
+				
+			placeEl.find('input').attr('type','hidden');
+			
+			ELS.each(function(index,value){
+				parent = $(value).parents('.group-item');
+				placeholder = parent.attr('data-regex-tip');
+				parent.find('input.default').val(placeholder);
+				placeEl.append(parent.find('.empty-content'));
+				parent.remove();
+			})
+		}
 	},
 	renderChooseData = function(data,el){
 		let html = '',
@@ -76,7 +100,8 @@ var SecurityAccidentForm = (function(){
 				newList.push({
 					position:item.role,
 					userId: item.userId,
-					userName: item.text
+					userName: item.text,
+					mobile: item.mobile
 				})
 				return '<span class="item" data-id="'+item.id+'">'+item.text+'<i class="iconfont icon-icon_close1"></i></span>';
 			});
@@ -84,6 +109,22 @@ var SecurityAccidentForm = (function(){
 		}
 		el.attr('data-value',JSON.stringify(data))
 		el.next().val(JSON.stringify(newList));
+	},
+	getLads = function(ecmId){
+		let url = 'safety-accident/get-lab-list',
+			labEmptyEl = $(moduleId + ' .empty-content[data-url="' + url + '"]'),
+			data = labEmptyEl.data();
+		$http.get({
+			url: url,
+			data: {
+				itemToken: data.itemToken,
+				value: data.value,
+				ecmId: ecmId
+			},
+			forbidLoading: true
+		}, function(res) {
+			labEmptyEl.html(res);
+		});
 	},
 	eventInit = function(){
 		//时间控件初始化
@@ -105,7 +146,6 @@ var SecurityAccidentForm = (function(){
 				selectedData = [];
 			}
 			new SelectionOfficerFn({selectedData:selectedData,title:'调查组'},function(res){
-				console.log(res);
 				renderChooseData(res,self);
 			})
 		})
@@ -128,12 +168,36 @@ var SecurityAccidentForm = (function(){
 			renderChooseData(selectedData,$(moduleId + ' .choose-data'));
 		})
 		$(moduleId + ' .empty-content').on('change', 'select[multiple="multiple"]', function(e){
-			let collegeEcmId = $(this).val(),
+			let self = $(this),
+				parent = self.parents('.empty-content'),
+				data_url = parent.attr('data-url'),
+				currentEcmId = $(this).val(),
+				currentEcmName = '',
+				placeInput = parent.parent('div').find('input[placeholder="请输入发生地点"]'),
+				palceStr = '';
+
+			if(currentEcmId && currentEcmId.length == 1) {
+				currentEcmName = $(this).find('option[value="'+currentEcmId[0]+'"]').text();
+			}
+			if(data_url == 'safety-accident/get-college-list') {//学院
+				$(moduleId + ' input[name^="xymc"]').val(currentEcmName);
+				if(currentEcmId && currentEcmId.length == 1) {
+					getLads(currentEcmId[0]);
+				} else {
+					getLads();
+				}
+			} else {//实验室
+				$(moduleId + ' input[name^="sysmc"]').val(currentEcmName);
+			}
+			palceStr = $(moduleId + ' input[name^="xymc"]').val() + $(moduleId + ' input[name^="sysmc"]').val();
+			placeInput.val(palceStr);
+
+			/* let collegeEcmId = $(this).val(),
 				collegeName = '';
 			if(collegeEcmId && collegeEcmId.length == 1) {
 				collegeName = $(this).find('option[value="'+collegeEcmId[0]+'"]').text()
 			}
-			$(moduleId + ' input[name="collegeName"]').val(collegeName);
+			$(moduleId + ' input[name^="xymc"]').val(collegeName); */
 		})
 		
 	};

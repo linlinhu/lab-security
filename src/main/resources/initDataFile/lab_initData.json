@@ -27,23 +27,67 @@
   "dangerousSourceCategory":[
     {
       "groupId":0,
-      "code":"poisonous",
-      "name":"有毒品",
-      "value":"有毒品",
+      "code":"huaxuepin",
+      "name":"化学品",
+      "value":"化学品",
       "valueType":"String"
     },
     {
       "groupId":0,
-      "code":"inflammable",
-      "name":"易燃品",
-      "value":"易燃品",
+      "code":"judupin",
+      "name":"剧毒品",
+      "value":"剧毒品",
       "valueType":"String"
     },
     {
       "groupId":0,
-      "code":"explosive",
-      "name":"易爆品",
-      "value":"易爆品",
+      "code":"yizhiduhuaxuepin",
+      "name":"易制毒化学品",
+      "value":"易制毒化学品",
+      "valueType":"String"
+    },
+    {
+      "groupId":0,
+      "code":"yizhibaohuaxuepin",
+      "name":"易制爆化学品",
+      "value":"易制爆化学品",
+      "valueType":"String"
+    },
+    {
+      "groupId":0,
+      "code":"dianqi",
+      "name":"电气",
+      "value":"电气",
+      "valueType":"String"
+    },{
+      "groupId":0,
+      "code":"qiping",
+      "name":"气瓶",
+      "value":"气瓶",
+      "valueType":"String"
+    },{
+      "groupId":0,
+      "code":"gaowenhuodiwen",
+      "name":"高温或低温",
+      "value":"高温或低温",
+      "valueType":"String"
+    },{
+      "groupId":0,
+      "code":"gaoyahuodiya",
+      "name":"高压或低压",
+      "value":"高压或低压",
+      "valueType":"String"
+    },{
+      "groupId":0,
+      "code":"huaxuefanyin",
+      "name":"化学反应",
+      "value":"化学反应",
+      "valueType":"String"
+    },{
+      "groupId":0,
+      "code":"yundongshebei",
+      "name":"运动设备",
+      "value":"运动设备",
       "valueType":"String"
     }
   ],

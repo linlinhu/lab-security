@@ -19,15 +19,33 @@
         <th>角色</th>
         </#if>
         <#if !showColumns?? || showColumns?seq_contains("operation")>
-        <th>操作</th>
+        <th style="width:120px;" class="th-operation">操作</th>
         </#if>
     </tr>
     </thead>
+    <#if pagedResult.resultList?? && pagedResult.resultList?size gt 0>
+    <#assign totalCount = pagedResult.totalCount>
     <tbody>
     <#list pagedResult.resultList as user>
-        <#if user.id == userId>
-            <#continue>
+
+        <#if flockId??>
+
+            <#assign skip=false>
+            <#list user.personFlocks as pf>
+
+                <#if pf.flock.id==flockId>
+                    <#assign skip=true>
+
+                    <#break>
+                </#if>
+            </#list>
+            <#if skip>
+                <#assign totalCount = totalCount-1 />
+                <#continue >
+            </#if>
         </#if>
+
+
         <tr>
             <#if !showColumns?? || showColumns?seq_contains("select")>
             <td style="width:80px">
@@ -47,7 +65,7 @@
             <td>
                 <#assign role="">
                 <#list user.personFlocks as pf>
-                    <#if pf.type==1>
+                    <#if pf.type==1 && pf.flock.controlType == 1>
                         <#assign role="1">
                        ${pf.flock.name}&nbsp;
                     </#if>
@@ -56,18 +74,32 @@
             </td>
             </#if>
             <#if !showColumns?? || showColumns?seq_contains("operation")>
-                 <td style="display: flex;justify-content:space-around;width:120px">
-                     <a href="javascript:;" class="userOpts" data-opt="edit" data-id="${user.id}"><i class="fa fa-edit"></i></a>
-                     <a href="javascript:;" class="userOpts" data-opt="resetPassword" data-id="${user.id}"><i class="fa fa-unlock-alt"></i></a>
-                     <a href="javascript:;" class="userOpts" data-opt="${(user.userStatus==1)?string("disableUser","enableUser")}" data-id="${user.id}"><i class="fa fa-${(user.userStatus==1)?string("ban","check-circle-o")}"></i></a>
-                     <a href="javascript:;" class="userOpts" data-opt="deleteUser" data-id="${user.id}"><i class="fa fa-trash"></i></a>
+                 <td style="display: flex;justify-content:space-around;width:120px;padding-top: 20px;" class="td-operation">
+                      <#if user.id != userId>
+                          <a href="javascript:;" class="userOpts" data-opt="edit" data-id="${user.id}"><i class="fa fa-edit"></i></a>
+                          <!-- <a href="javascript:;" class="userOpts" data-opt="resetPassword" data-id="${user.id}"><i class="fa fa-unlock-alt"></i></a> -->
+                          <a href="javascript:;" class="userOpts" data-opt="${(user.userStatus==1)?string("disableUser","enableUser")}" data-id="${user.id}"><i class="fa fa-${(user.userStatus==1)?string("ban","check-circle-o")}"></i></a>
+                          <a href="javascript:;" class="userOpts" data-opt="deleteUser" data-id="${user.id}"><i class="fa fa-trash"></i></a>
+                      </#if>
+
                  </td>
             </#if>
         </tr>
     </#list>
 
     </tbody>
+    </#if>
 </table>
-<div class="pageContainer text-center" data-total="${pagedResult.totalCount}" data-page="${pagedResult.currentPage}">
 
+<#if pagedResult.resultList?? && pagedResult.resultList?size gt 0>
+<div class="pageContainer text-right" data-total="${totalCount}" data-page="${pagedResult.currentPage}">
 </div>
+</#if>
+
+
+
+<#if !pagedResult.resultList?? || pagedResult.resultList?size == 0>
+
+    <#assign message="暂无数据" />
+    <#include "../../tpl/no-data.html" /> 
+</#if>

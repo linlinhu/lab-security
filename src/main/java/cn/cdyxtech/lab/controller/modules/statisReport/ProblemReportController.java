@@ -2,12 +2,9 @@ package cn.cdyxtech.lab.controller.modules.statisReport;
 
 import cn.cdyxtech.lab.constain.ApplicationConstain;
 import cn.cdyxtech.lab.controller.HeaderCommonController;
-import cn.cdyxtech.lab.facade.ConfigFacade;
-import cn.cdyxtech.lab.facade.ECOFacade;
-import cn.cdyxtech.lab.feign.BasicInfoAPI;
 import cn.cdyxtech.lab.feign.MelAPIFeign;
-import cn.cdyxtech.lab.feign.OverviewStatisAPIFeign;
 import cn.cdyxtech.lab.feign.SecurityCheckAPI;
+import cn.cdyxtech.lab.filter.MenuOperationFilter;
 
 import com.alibaba.fastjson.JSONObject;
 import com.emin.base.dao.PageRequest;
@@ -20,16 +17,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 @RequestMapping("/problem-report")
 public class ProblemReportController extends HeaderCommonController {
-    private static final org.apache.log4j.Logger LOGGER = org.apache.log4j.Logger.getLogger(ProblemReportController.class);
+    private Logger logger = LoggerFactory.getLogger(ProblemReportController.class);
 
     @Autowired
     private MelAPIFeign melApiFeign;
     @Autowired
     private SecurityCheckAPI securityCheckApi;
+    @Autowired
+	MenuOperationFilter menuOperationFilter;
 
     @Value("${labApiGateway}")
     private String labAPIGateway;
@@ -59,6 +60,12 @@ public class ProblemReportController extends HeaderCommonController {
         if (this.validateAuthorizationToken().getSchoolEcmId() == null) {
             throw new EminException("404");
         }
+        try {
+			String operationCodes = menuOperationFilter.menuOperations("statis-report");
+			data.put("operationCodes", operationCodes);
+		} catch (Exception e) {
+            logger.error("统计报表管理界面跳转，加载权限出现异常->" + e.getMessage());
+		}
         Integer ecmId = Integer.parseInt(this.validateAuthorizationToken().getSchoolEcmId().toString());
         data.put("ecmId", ecmId);
         data.put("downloadUrl", labAPIGateway + "/api-lab-security-check/check/exportProStatistics/" + ecmId);

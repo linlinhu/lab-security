@@ -169,7 +169,7 @@
                 onImageUpload: function (files) {
                     var fileData = new FormData()
                     fileData.append("file", files[0])
-                    fileData.append("type", "img")
+                    fileData.append("myType", "img")
                     $http.post({
                         url: "/file/upload.do",
                         contentType: false,
@@ -257,7 +257,7 @@
         $(".recordForm .addItems").click(function () {
             uploadWin.init({
                 uploadUrl: "/file/universalUpload.do",
-                filesType: ["excel", "doc","pdf"],
+                filesType: ["img","excel", "doc","pdf"],
                 data: {ecmId: 0},
                 fileNumLimit: 1,
                 fileSizeLimit: 5,

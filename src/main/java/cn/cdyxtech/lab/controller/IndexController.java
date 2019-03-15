@@ -1,8 +1,10 @@
 package cn.cdyxtech.lab.controller;
 
-// import cn.cdyxtech.lab.config.ConfigBean;
+import cn.cdyxtech.lab.feign.ResultCheckUtil;
+import com.alibaba.fastjson.JSONArray;
 import cn.cdyxtech.lab.feign.UserAPIFeign;
 import cn.cdyxtech.lab.filter.MenuFilter;
+import cn.cdyxtech.lab.util.JWTThreadLocalUtil;
 import cn.cdyxtech.lab.util.UserClaim;
 
 import org.slf4j.Logger;
@@ -11,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
@@ -28,29 +32,37 @@ public class IndexController extends HeaderCommonController {
 
     @GetMapping("/")
     public String index(Map<String,Object> data){
-       /* Long userId = JWTThreadLocalUtil.getUserId();
+        Long userId = JWTThreadLocalUtil.getUserId();
         JSONObject userDetail = personAPIFeign.detail(userId);
         JSONObject user = userDetail.getJSONObject("result");
+        JSONObject flock;
         ResultCheckUtil.check(userDetail);
-        JSONObject flockResult = personAPIFeign.getUserFlocks(userId);
-        JSONArray flocks = flockResult.getJSONArray("result");
+        JSONArray flocks = user.getJSONArray("personFlocks");
         int userType = user.getIntValue("userType");
+       
         if(flocks.size()==0 && userType!=1){
             data.put("noPermissions",true);
         }else{
             JSONArray menuList;
             if(flocks.size()>0){
-                Long[] groupIds = new Long[flocks.size()];
+                List<Long> groupIdList = new ArrayList<>();
                 for(int j=0;j<flocks.size();j++){
-                    groupIds[j] = flocks.getJSONObject(j).getLong("id");
+                    flock = flocks.getJSONObject(j);
+                    if(flock.getLong("type").equals(1L) && (
+                        flock.getJSONObject("flock").getLong("controlType").equals(0L) 
+                        ||
+                        flock.getJSONObject("flock").getLong("controlType").equals(2L)
+                    )) {
+                        groupIdList.add(flock.getLong("flockId"));
+                    }
                 }
-                menuList = menuFilter.buildMenByUserType(userType, groupIds);
+                menuList = menuFilter.buildMenByUserType(userType, groupIdList.stream().toArray(Long[]::new));
             }else{
                 menuList = menuFilter.buildMenByUserType(userType);
             }
             data.put("menus",menuList);
-        }
-        data.put("userDetail",user);*/
+        };
+        
     	UserClaim userClaim = this.validateAuthorizationToken();
     	String reanName = userClaim.getRealName();
     	String mobile = userClaim.getMobile();

@@ -12,6 +12,7 @@ import cn.cdyxtech.lab.feign.BasicInfoAPI;
 import cn.cdyxtech.lab.feign.MelAPIFeign;
 
 import java.util.Map;
+import java.util.ArrayList;
 
 import com.alibaba.fastjson.JSONObject;
 import com.emin.base.dao.PageRequest;
@@ -40,10 +41,10 @@ public class HazardsStatisController extends HeaderCommonController {
     @GetMapping("index")
     public String detail(Map<String,Object> data, Long id){
         data.put("timestamp", System.currentTimeMillis());
-        if (this.validateAuthorizationToken().getSchoolEcmId() == null) {
+        if (this.validateAuthorizationToken().getPersonalHeigherEcmId() == null) {
             throw new EminException("404");
         }
-        Integer ecmId = Integer.parseInt(this.validateAuthorizationToken().getSchoolEcmId().toString());
+        Integer ecmId = Integer.parseInt(this.validateAuthorizationToken().getPersonalHeigherEcmId().toString());
         data.put("ecmId", ecmId);
 
         // 按学院统计数据-用学校ecmId
@@ -115,10 +116,10 @@ public class HazardsStatisController extends HeaderCommonController {
         String dangerSource, 
         String keyword, Integer ecmId){
         if (ecmId == null) {
-            if (this.validateAuthorizationToken().getSchoolEcmId() == null) {
+            if (this.validateAuthorizationToken().getPersonalHeigherEcmId() == null) {
                 throw new EminException("404");
             }
-            ecmId = Integer.parseInt(this.validateAuthorizationToken().getSchoolEcmId().toString());
+            ecmId = Integer.parseInt(this.validateAuthorizationToken().getPersonalHeigherEcmId().toString());
         }
         data.put("tpl", safetyOverviewTpl().getJSONArray("groups").getJSONObject(1));
         
@@ -126,9 +127,52 @@ public class HazardsStatisController extends HeaderCommonController {
         Integer page = pr.getCurrentPage();
         Integer limit = pr.getLimit();
         JSONObject res = basicInfoApi.labPage(ecmId, page, limit, keyword, dangerSource);
-        // String resStr = "{\"resultList\":[{\"dangerSourceName\":\"易燃品\",\"labName\":\"微生物实验室502-1\",\"laboratoryCategoryNames\":[{\"categoryName\":\"化学类\"}],\"labLevel\":\"Ⅰ级\",\"securityUserName\":\"张三\"},{\"dangerSourceName\":\"剧毒物\",\"labName\":\"药剂实验室302-2\",\"laboratoryCategoryNames\":[{\"categoryName\":\"生物类\"}],\"labLevel\":\"Ⅳ级\",\"securityUserName\":\"李四\"}],\"currentPage\":1,\"totalCount\":2}";
-        data.put("data", res.getJSONObject("result"));
+        JSONObject result = res.getJSONObject("result");
+        JSONArray list = result.getJSONArray("resultList");
+        JSONObject item;
+        JSONArray dangerSourceList;
+        ArrayList<String> dangerSourceNameList;
+        String dangerSourceNameStr = new String();
+        if(!list.isEmpty()) {
+            for(int i = 0; i < list.size(); i++){
+                item = list.getJSONObject(i);
+                dangerSourceNameList = new ArrayList();
+                dangerSourceList = item.getJSONArray("hazardSourceCategoryNames");
+                if(dangerSourceList!=null && !dangerSourceList.isEmpty()) {
+                    for(int j = 0; j < dangerSourceList.size(); j++) {
+                        dangerSourceNameList.add(dangerSourceList.getJSONObject(j).getString("categoryName"));
+                    }
+                }
+                dangerSourceNameStr = String.join("，", dangerSourceNameList);
+                item.put("dangerSourceName", dangerSourceNameStr);
+               
+            }
+            result.put("resultList", list);
+        }
+        System.out.println("危险源统计result++++++++++++++++++++"+result);
+        data.put("data", result);
         return "tpl/list";
+    }
+
+    @GetMapping("detail")
+    public String list(Map<String,Object> data, Integer ecmId){
+        data.put("timestamp", System.currentTimeMillis());
+        data.put("tpl", infoTpl());
+
+        JSONObject res = basicInfoApi.labInfo(ecmId);
+        this.dealException(res);
+        data.put("data", res.getJSONObject("result"));
+        data.put("existApplyId", 100);
+        data.put("showColumns", "mobile,name,role");
+        data.put("showOperations", "search");
+        return "modules/safety-overview/labs-statis/detail";
+    }
+
+    public JSONObject infoTpl() {
+        JSONObject res = new JSONObject();
+        res = melApiFeign.dataModel(ApplicationConstain.SERVICE_ID, "info-lab", "BROWSER");
+        this.dealException(res);
+        return res.getJSONObject("result");
     }
 
 }

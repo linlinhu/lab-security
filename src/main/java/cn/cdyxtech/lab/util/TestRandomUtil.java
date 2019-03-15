@@ -8,6 +8,8 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 
 import java.io.FileInputStream;
 import java.text.DecimalFormat;
@@ -124,33 +126,33 @@ public class TestRandomUtil {
 
     public static void main(String[] args) {
 
-        try (FileInputStream fis = new FileInputStream("C:\\Users\\Administrator\\Desktop\\资料\\实验室安全检查等级划分20190122.xls"); HSSFWorkbook book = new HSSFWorkbook(fis)) {
+        try (FileInputStream fis = new FileInputStream("C:\\Users\\Administrator\\Desktop\\资料\\实验室检查模板20190305.xls"); HSSFWorkbook book = new HSSFWorkbook(fis)) {
             TreeMap<String, JSONObject> levalMap = new TreeMap<>(new Comparator<String>() {
                 @Override
                 public int compare(String o1, String o2) {
-                    return compareVersion(o2,o1);
+                    return TestRandomUtil.compareVersion(o2,o1);
                 }
             });
-            HSSFSheet sheet = book.getSheetAt(0);
+            Sheet sheet = book.getSheetAt(0);
             int firstRow = 4;
             int rowCount = sheet.getLastRowNum();
             for (int i = firstRow; i <= rowCount; i++) {
-                HSSFRow row = sheet.getRow(i);
-                String seq = getCellValue(row.getCell(0));
-                String title = getCellValue(row.getCell(1));
-                String keyPoint = getCellValue(row.getCell(2));
-                String grade = getCellValue(row.getCell(3));
-                String level = getCellValue(row.getCell(4));
+                Row row = sheet.getRow(i);
+                String seq = TestRandomUtil.getCellValue(row.getCell(0));
+                String title = TestRandomUtil.getCellValue(row.getCell(1));
+                String keyPoint = TestRandomUtil.getCellValue(row.getCell(2));
+                String grade = TestRandomUtil.getCellValue(row.getCell(3));
                 JSONObject item = new JSONObject();
                 item.put("seq", seq);
                 item.put("name", title);
-                item.put("level", level);
 
-                if (level.equals("3")) {
+                if(seq.matches("\\d+\\.\\d+\\.\\d+\\.?")){
                     item.put("hasChild",false);
                     item.put("keyPoint", keyPoint);
                     item.put("grade", grade);
-                } else {
+                    item.put("level", 3);
+                }
+                else {
                     item.put("hasChild",true);
                     item.put("children", new JSONArray());
                 }
@@ -168,9 +170,9 @@ public class TestRandomUtil {
                         key = key.substring(0,key.length()-1);
                     }
                     String secondaryKey = key.substring(0,key.lastIndexOf("."));
-                    System.out.println(key+"=="+secondaryKey);
                     JSONObject secondary = levalMap.get(secondaryKey);
-                    secondary.getJSONArray("children").add(entry.getValue());
+                    secondary.put("level",2);
+                    secondary.getJSONArray("children").add(0,entry.getValue());
                     it.remove();
                 }
                 if(key.matches("\\d+\\.\\d+\\.?")){
@@ -182,14 +184,16 @@ public class TestRandomUtil {
                     String primaryKey = key.substring(0,key.lastIndexOf("."));
                     System.out.println(key+"=="+primaryKey);
                     JSONObject primary = levalMap.get(primaryKey);
-                    primary.getJSONArray("children").add(entry.getValue());
+                    primary.put("level",1);
+                    primary.getJSONArray("children").add(0,entry.getValue());
                     it.remove();
                 }
 
             }
             List<JSONObject> list = new ArrayList<>(levalMap.values());
             Collections.reverse(list);
-            System.out.println(JSONArray.toJSONString(list));
+            String data = JSONArray.toJSONString(list);
+            System.out.println(data);
 
 
 

@@ -11,6 +11,7 @@ import cn.cdyxtech.lab.controller.HeaderCommonController;
 import cn.cdyxtech.lab.feign.BasicInfoAPI;
 import cn.cdyxtech.lab.feign.InterfaceProxyCloudAPI;
 import cn.cdyxtech.lab.feign.MelAPIFeign;
+import cn.cdyxtech.lab.util.UserClaim;
 
 import java.util.Map;
 
@@ -26,6 +27,8 @@ public class SecurityUsersController extends HeaderCommonController {
     private MelAPIFeign melApiFeign;
     @Autowired
     private InterfaceProxyCloudAPI ipcApi;
+    @Autowired
+	private BasicInfoAPI basicInfoAPI;
 
     public JSONObject safetyOverviewTpl() {
         JSONObject res = new JSONObject();
@@ -39,10 +42,10 @@ public class SecurityUsersController extends HeaderCommonController {
     @GetMapping("/index")
     public String index(Map<String,Object> data,String[] showColumns,String[] showOperations){
         data.put("timestamp", System.currentTimeMillis());
-        if (this.validateAuthorizationToken().getSchoolEcmId() == null) {
+        if (this.validateAuthorizationToken().getPersonalHeigherEcmId() == null) {
             throw new EminException("404");
         }
-        Integer ecmId = Integer.parseInt(this.validateAuthorizationToken().getSchoolEcmId().toString());
+        Integer ecmId = Integer.parseInt(this.validateAuthorizationToken().getPersonalHeigherEcmId().toString());
         data.put("ecmId0", ecmId);
         return "modules/safety-overview/security-users/index";
     }
@@ -52,25 +55,41 @@ public class SecurityUsersController extends HeaderCommonController {
         Integer ecmId0,   
         Integer ecmId,
         String keyword){
-
-        if (ecmId0 == null) {
-            if (this.validateAuthorizationToken().getSchoolEcmId() == null) {
-                throw new EminException("404");
-            }
-            ecmId0 = Integer.parseInt(this.validateAuthorizationToken().getSchoolEcmId().toString());
-        
+        UserClaim userClaim = this.validateAuthorizationToken();
+        Long heigherEcmId = userClaim.getPersonalHeigherEcmId();
+        Integer type = 3; //默认是实验室 
+        if (heigherEcmId == null) {
+            throw new EminException("404");
         }
-
-        Integer type = ecmId == null ? 1 : 2;
-        ecmId = ecmId == null ? ecmId0 : ecmId;
+        if(userClaim.getHighestEcmIdType() == 4) {
+            type = 4; //安全中心
+        } else {
+            if(heigherEcmId.equals(userClaim.getSchoolEcmId())) {
+                type = 1; //学校
+            } else if(heigherEcmId.equals(userClaim.getBranchEcmId())) {
+                type = 2; //学院
+            }
+        }
 
         data.put("tpl", safetyOverviewTpl().getJSONArray("groups").getJSONObject(8));
         PageRequest pr = getPageRequestData();
-        JSONObject res = ipcApi.securityUsers(ecmId, type, keyword);
+        JSONObject res = ipcApi.securityUsers(heigherEcmId.intValue(), type, keyword);
         this.dealException(res);
+        JSONArray resultList = res.getJSONArray("result");
+        /* res = basicInfoAPI.scInfo(ecmId.longValue());
+        this.dealException(res);
+        Long scFlockId = res.getJSONObject("result").getLong("flockId");
+        if(scFlockId != null) {
+            res = ipcApi.securityUsers(scFlockId.intValue(), 4, keyword);
+            this.dealException(res);
+            JSONArray tempList = res.getJSONArray("result");
+            if(!tempList.isEmpty()) {
+                resultList.add(tempList.get(0));
+            }
+        } */
         JSONObject result = JSONObject.parseObject("{\"currentPage\":1,\"totalCount\":0,\"resultList\":[]}");
-        result.put("totalCount", res.getJSONArray("result").size());
-        result.put("resultList", res.getJSONArray("result"));
+        result.put("totalCount", resultList.size());
+        result.put("resultList", resultList);
         data.put("data", result);
         return "tpl/list";
     }

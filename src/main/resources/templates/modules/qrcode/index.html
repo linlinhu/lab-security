@@ -28,7 +28,7 @@
         height: 30px;
         line-height: 30px;
         padding: 0 15px;
-        border: 1px solid #3E4956;
+        border: 1px solid #D6DBE6;
         color: #3E4956;
         border-radius: 4px;
     }
@@ -36,8 +36,11 @@
     .td-operation > a > i {
         display: none;
     }
+    .qrcode-manage .td-operation {
+        text-align: right!important;
+    }
 </style>
-<div class="common-management" id="common-management-${timestamp}">
+<div class="common-management qrcode-manage" id="common-management-${timestamp}">
     <div class="tabs-container horizontal-tabs">
         <ul class="nav nav-tabs">
             <#list tpl.groups as group>
@@ -48,7 +51,6 @@
         </ul>
 
         <div class="tab-content">
-            
             <#list tpl.groups as group>
                 <div id="qrcode-group-${group.id}" class="tab-pane <#if group_index == 0>active</#if>">
                     <div class="panel-body qrcode-group">

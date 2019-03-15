@@ -25,10 +25,11 @@
 	        <h3>安全管理信息系统</h3>
 	    </div>
 	    <div class="rightPanel">
-	       <form id="loginForm">
-	            <div class="loginTitle">
-	            	 登录
-	            </div>
+            <div class="login-types">
+                    <div class="login-type" role="qrcode" style="float: left;">二维码登录</div>
+                    <div class="login-type" role="username" >账户登录</div>
+            </div>
+	       <form id="loginForm" class="sub-panel sub-panel-username">
 	            <div class="form-group">
 	                <input class="form-control" type="text" placeholder="账号/手机号码/电子邮箱" name="username">
 	                <span class="iconfont icon-icon_phone"></span>
@@ -45,7 +46,24 @@
 	            <div class="form-group loginBtnParent" >
 	                <button class="btn ls-btn btn-success btn-block loginBtn">登录</button>
 	            </div>
-	        </form>
+            </form>
+            <div class="qrcode-box sub-panel sub-panel-qrcode" id="login-qrcode">
+                <img class="qrcode">
+                <p style="margin-top: 3%;">打开<span class="text-navy text-center">实验室安全检查小程序</span></p>
+                <p class="text-center">扫描二维码</p>
+                <div class="cover">
+                    <div>
+                        <p>二维码已失效</p>
+                        <span class="refresh">刷新</span>
+                    </div>
+                </div>
+            </div>
+            <div class="scan-success sub-panel text-center">
+                <img src="img/login/scan-success.png">
+                <p style="font-size: 14px;">扫描成功！</p>
+                <p>请在手机上确认登录</p>
+                <span class="text-navy back">返回二维码登录</span>
+            </div>
 	    </div>
        
     </div>
@@ -61,64 +79,40 @@
 <script src="/js/jquery.md5.js"></script>
 <script>
     $(function () {
-
-        /* if(localStorage.merisWebToken){
-            sessionStorage.isLogout = 'false';
-            window.location.replace("/")
-        } */
-
-       
-        
-      	var icon = "<i class='fa fa-times-circle'></i> ";
-        var Validate = function (id, url, eventBinds) {
-	        this.id = id;
-	        this.jq = $("#" + id);
-	        this.url = url;
-	        this.config = {width: 120, height: 300};
-	        this.sequence = "";
-	        this.createSequence = function () {
-	            return "user-" + new Date().getTime() + "-" + Math.random().toString(36).substr(2);
-	        };
-            this.init = function () {
-                var _config = {
-                    width: 80,
-                    height: 40,
-                    fontName:"华文彩云",
-                };
-                $.extend(this.config, _config);
-                var _this = this;
-                var length = eventBinds.length;
-                for (var j = 0; j < length; j++) {
-                    this.jq.on(eventBinds[j], function () {
-                        _this.request();
-                    });
+        var icon = "<i class='fa fa-times-circle'></i> ",
+            validate = null,
+            qrcode_valid = null;
+        //切换登录方式
+        $(".login-type").unbind().on('click',function(){
+            let self = $(this),
+                role = self.attr('role');
+            if(!self.hasClass('active')){
+                $(".login-type").removeClass('active');
+                self.addClass('active');
+                showSubPanel();
+                if(role == 'qrcode'){
+                    if(qrcode_valid) {
+                        qrcode_valid.eventSource.close();
+                        qrcode_valid.init();
+                    } else {
+                        qrcode_valid = new Qrcode_valid('login-qrcode',2,'/getValidImg','/qrcode-valid');
+                    }
+                } else {
+                    if(validate){
+                        $('.validateCode').trigger('click');
+                    } else {
+                        validate = new Validate("validateCode", "/getValidImg", ["click"]) 
+                    }
+                    if(qrcode_valid) {
+                        qrcode_valid.eventSource.close();
+                    }
+                   
                 }
-                this.request();
-                return this;
-            };
-            this.request = function () {
-                this.sequence = this.createSequence();
-                this.handlerSrc(this.createUrl());
-            };
-            this.handlerSrc = function (url) {
-                console.info("当前验证码访问路径:url=" + encodeURI(url));
-                this.jq.attr("src", encodeURI(url));
-            };
-            this.createUrl = function () {
-                return url + "?sequence=" + this.sequence
-                    + "&fontName="+this.config.fontName
-                    + "&width="+this.config.width
-                    + "&height="+this.config.height
-                    +"&"+ new Date().getTime();
-            };
-            this.getCurSequence =function(){
-                return this.sequence;
             }
-            return this.init();
-        };
+        });
+        $($(".login-types .login-type")[0]).trigger('click');
 
-        var validate = new Validate("validateCode", "/getValidImg", ["click"]);
-        sessionStorage.isModify = false;
+        //账号登录
         $("#loginForm").validate({
             onfocusin: function(element) { $(element).valid(); },
             onfocusout: function(element) { $(element).valid(); },
@@ -153,46 +147,169 @@
             },
             submitHandler: function (form) {
                 var data = $(form).serializeObject();
-                var url = form.action;
+                var url = '/login';
 
                 data.password = $.md5(data.password)
                 data.sessionKey = validate.sequence;
-                console.log(data)
-                loading = layer.load();
-                $.ajax({
-                    url: url,
-                    type: "post",
-                    dataType: "json",
-                    data: data,
-                    success: function (res, status, xhr) {
-                        layer.close(loading);
-                        if (!res.success) {
-                            layer.msg(res.message ? res.message : '登录失败', {icon: 5});
-                            $('.validateCode').trigger('click');
-                        } else {
-                            sessionStorage.isLogout = 'false';
-              
-                        	window.location.replace("/")
-                        }
-                    },
-                    error: function () {
-                        setTimeout(function () {
-                            layer.alert('抱歉，资源访问失败', {
-                                        closeBtn: 0
-                                    },
-                                    function () {
-                                        layer.close(loading);
-                                        //history.go(-1);
-                                        layer.closeAll('dialog');
-                                    }
-                            );
-                            $('.validateCode').trigger('click');
-                        }, 1000)
-                    }
-                })
-
+                login(url,data,'username');
             }
         });
+        //二维码登录
+        function Qrcode_valid(id,outTime,qrURL,checkURL){
+            var _this  = this;
+            this.expire = outTime * 60 * 1000;
+            this.cover = $('#' + id + ' .cover');
+            this.createSequence = function(){
+                this.sequence = "auth-" + new Date().getTime() + "-" + Math.random().toString(36).substr(2);
+            }
+            //生成二维码
+            this.createQrcode = function(){
+                _this.createSequence();
+                let url = qrURL + "?sequence=" + _this.sequence
+                    + "&expire="+_this.expire
+                    + "&validateType=qr-quick-mix"
+                    + "&height = 400"
+                    + "&width = 400"
+                    + "&"+ new Date().getTime();
+                $('#' + id + ' .qrcode').attr("src", encodeURI(url));
+                _this.cover.hide();
+            }
+            this.init = function(){
+                _this.outTime = _this.expire;
+                _this.createQrcode();
+                 //eventSourc
+                if(_this.eventSource) {
+                    _this.eventSource.close();
+                }
+                _this.eventSource = new EventSource("http://" + window.location.host + checkURL + "?sequence=" + _this.sequence);
+                _this.eventSource.onmessage = function(event){
+                    if(_this.outTime < 0) {
+                        _this.eventSource.close();
+                        _this.cover.show();
+                    } else {
+                        let data = JSON.parse(event.data),
+                            status = null;
+                        if(data.result && data.result.status && data.result.sequence ==  _this.sequence) {
+                            status = data.result.status;
+                            if(status == 'authorize-success') {
+                                _this.eventSource.close();
+                                login('/login',{userId:data.result.response.userId},'qrcode');
+                            } else if(status == 'scan-success'){
+                                showSubPanel($('.signin .scan-success'));
+                            } else if(status == 'scan-fail' || status == 'auth-cancel') {
+                                showSubPanel();
+                                _this.init();
+                            }
+                        }
+                    }
+                    _this.outTime -= 3000;
+                }
+               
+                _this.cover.find('.refresh').unbind().on('click',function(){
+                    _this.init();
+                })
+                $('.signin .scan-success .back').unbind().on('click',function(){
+                    showSubPanel($('#' + id));
+                    _this.init();
+                })
+            }
+            return this.init();
+        }
+        //生成验证码
+        function Validate(id, url, eventBinds) {
+	        this.id = id;
+	        this.jq = $("#" + id);
+	        this.url = url;
+	        this.config = {width: 160, height: 40,fontSize:30};
+	        this.sequence = "";
+	        this.createSequence = function () {
+	            return "user-" + new Date().getTime() + "-" + Math.random().toString(36).substr(2);
+	        };
+            this.init = function () {
+                var _config = {
+                    width: 80,
+                    height: 40,
+                    fontName:"华文彩云",
+                    fontSize:30
+                };
+                $.extend(_config,this.config);
+                this.config = _config;
+                var _this = this;
+                var length = eventBinds.length;
+                for (var j = 0; j < length; j++) {
+                    this.jq.on(eventBinds[j], function () {
+                        _this.request();
+                    });
+                }
+                this.request();
+                return this;
+            };
+            this.request = function () {
+                this.sequence = this.createSequence();
+                this.handlerSrc(this.createUrl());
+            };
+            this.handlerSrc = function (url) {
+               /*  console.info("当前验证码访问路径:url=" + encodeURI(url)); */
+                this.jq.attr("src", encodeURI(url));
+            };
+            this.createUrl = function () {
+                return url + "?sequence=" + this.sequence
+                    + "&fontName="+this.config.fontName
+                    + "&width="+this.config.width
+                    + "&height="+this.config.height
+                    + "&fontSize="+this.config.fontSize
+                    +"&"+ new Date().getTime();
+            };
+            this.getCurSequence =function(){
+                return this.sequence;
+            }
+            return this.init();
+        };
+        function login(url,data,type){
+            loading = layer.load();
+            $.ajax({
+                url: url,
+                type: "post",
+                dataType: "json",
+                data: data,
+                success: function (res, status, xhr) {
+                    layer.close(loading);
+                    if (!res.success) {
+                        layer.msg(res.message ? res.message : '登录失败', {icon: 5});
+                        if(type == 'username') {
+                            $('.validateCode').trigger('click');
+                        }
+                    } else {
+                        sessionStorage.isLogout = 'false';
+            
+                        window.location.replace("/")
+                    }
+                },
+                error: function () {
+                    setTimeout(function () {
+                        layer.alert('抱歉，资源访问失败', {
+                                    closeBtn: 0
+                                },
+                                function () {
+                                    layer.close(loading);
+                                    layer.closeAll('dialog');
+                                }
+                        );
+                        if(type == 'username') {
+                            $('.validateCode').trigger('click');
+                        }
+                    }, 1000)
+                }
+            })
+        }
+        function showSubPanel(el){
+            if(!el){
+                let role = $('.signin .login-type.active').attr('role');
+                el =  $('.signin .sub-panel-' + role);
+            }
+            $('.signin .sub-panel').hide();
+            el.show();
+        }
         $.validator.addMethod("passwordR", function (value, element, params) {
             var passwordR = /^[0-9a-zA-Z]{0,}[0-9a-zA-Z]{1}$/;
             return this.optional(element) || (passwordR.test(value));
@@ -213,12 +330,6 @@
             }
         });
         return o;
-    };
-
-    // $(document).ready(function () {
-    //     $(document).bind("contextmenu", function (e) {
-    //         return false;
-    //     });
-    // });
+    };  
 </script>
 </html>

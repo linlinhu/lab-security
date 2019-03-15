@@ -11,9 +11,11 @@
                     </div>
                 </div>
             </div>
+            <@codeValidation codes=operationCodes operationCode="branch-labs-add">
             <div class="col-sm-3 text-right" style="padding-left:10px">
-                    <button class="btn ls-btn btn-sm btn-primary entityOpts" data-opt="add"><span class="iconfont icon-icon_"></span> 新增</button>
+                <button class="btn ls-btn btn-sm btn-primary entityOpts" data-opt="add"><span class="iconfont icon-icon_"></span> 新增</button>
             </div>
+            </@codeValidation>
         </div>
     </form>
     <div class="table-responsive data-list"></div>
@@ -22,7 +24,23 @@
 <script>
 new TableManage({
     wrapId: '#common-management-${timestamp}',
-    moduleName: 'branch-labs'
+    moduleName: 'branch-labs',
+    operationCodes: '${operationCodes!""}',
+    loaded: function(res){
+        let wrapId = res.wrapId,
+            operationCodes = res.operationCodes;
+        if(operationCodes.indexOf('branch-labs-edit') == -1) { //编辑实验室权限
+            $(wrapId + ' td a[data-opt="edit"]').remove();
+        }
+        if(operationCodes.indexOf('branch-labs-remove') == -1) { //删除实验室权限
+            $(wrapId + ' td a[data-opt="remove"]').remove();
+        }
+        if(operationCodes.indexOf('branch-labs-edit') == -1 && operationCodes.indexOf('branch-labs-remove') == -1) {
+            $(wrapId + ' .th-operation').remove()
+            $(wrapId + ' .td-operation').remove()
+        }
+
+    }
 }, function(res) {
     goPage('form', res);
 })

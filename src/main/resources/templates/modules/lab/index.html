@@ -30,7 +30,9 @@
                 <span>基本信息</span>
                 <div class="opts">
                     <#if !showOperations?? || showOperations?seq_contains("add")>
+                    <@codeValidation codes=operationCodes operationCode="laboratory-eidt">
                         <a  class="text-navy" href="javascript:goPage('form?ecmId=${data.ecmId}');" style="width: 150px;"><span class="iconfont icon-icon_edit"></span></a>
+                    </@codeValidation>
                     </#if>
                 </div>
             </div>
@@ -38,23 +40,24 @@
         </div>
         <div class="basic-box">
             <div class="seperate-title">
-                <span>人员信息</span>
-                <div class="opts">
-                    <#if !showOperations?? || showOperations?seq_contains("add")>
-                    <a class="text-navy" href="javascript:;"><span class="iconfont icon-icon_"></span></a>
-                    </#if>
-                </div>
+                <span>实验室的人员</span>
             </div>
             <div class="relate-users"></div>
         </div>
     </section>
 <script>
     <#if existApplyId??>
-        $('#labs-${timestamp} a[data-opt="apllicationPrint"]').remove();
+        $('#labs-${timestamp} a[data-opt="apllicationPrint"]').hide();
+    <#else>
+        $('#labs-${timestamp} a[data-opt="schedulePrint"]').hide();
     </#if>
-
-
+(function(){
     var optData = {};
+    var operationCodes = '${operationCodes!""}';
+    if(operationCodes.indexOf('laboratory-qrcode') == -1) { //二维码申请与确认权限
+        $('#labs-${timestamp} a[data-opt="apllicationPrint"]').remove();
+        $('#labs-${timestamp} a[data-opt="schedulePrint"]').remove()
+    }
     $('#labs-${timestamp} .entityOpts').unbind().click(function() {
         var opt = $(this).data("opt");
         optData = $(this).data();
@@ -69,10 +72,41 @@
         $http.post({
             url: 'lab/applyPrint',
             data: {
-                ecmId: ${data.ecmId}
+                ecmId: '${data.ecmId}',
             }
         }, function(res) {
-            $('#labs-${timestamp} a[data-opt="apllicationPrint"]').addClass('hide');
+            layer.msg("申请打印成功！");
+            $('#labs-${timestamp} a[data-opt="apllicationPrint"]').hide();
+            $('#labs-${timestamp} a[data-opt="schedulePrint"]').show();
+        });
+    }
+
+    function schedulePrint() {
+        $http.get({
+            url: 'lab/schedulePrint',
+            data: {
+                ecmId: '${data.ecmId}'
+            }
+        }, function(res) {
+            var lindex = layer.open({
+                title: "查看打印进度",
+                type: 1,
+                area: [ '600px', '400px'],
+                content:res
+            });
+            $('.print-schedule-item .confirm-print-opt').unbind().on('click',confirmPrint)
+            function confirmPrint() {
+                $http.get({
+                    url: 'lab/confirmPrint',
+                    data: {
+                        ecmId: '${data.ecmId}'
+                    }
+                }, function(res) {
+                    layer.close(lindex);
+                    $('#labs-${timestamp} a[data-opt="apllicationPrint"]').show();
+                    $('#labs-${timestamp} a[data-opt="schedulePrint"]').hide();
+                });
+            }
         });
     }
 
@@ -81,14 +115,15 @@
         data: {
             page: 1,
             limit: 10,
-            ecmId: ${data.ecmId},
+            ecmId: '${data.ecmId}',
             ecmDeep: false,
             showColumns: '${showColumns}',
-            showOperations: '${showOperations}'
+            showOperations: '${showOperations}',
+            operationCodes: operationCodes
         },
         forbidLoading: true
     }, function(res) {
         $('#labs-${timestamp} .relate-users').html(res);
     })
+}()) 
 </script>
-

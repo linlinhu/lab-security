@@ -1,48 +1,57 @@
 <style>
-    .configItemDetail,.configItemDetail .ibox,.ibox-content{
-         height:100%;
+    .configItemDetail, .configItemDetail .ibox, .ibox-content {
+        height: 100%;
     }
-    .configItemDetail .checkDataItemsPanel .panel-heading .collapseIcon i:before{
-        content:"\f106"
+
+    .configItemDetail .checkDataItemsPanel .panel-heading .collapseIcon i:before {
+        content: "\f106"
     }
-    .configItemDetail .checkDataItemsPanel .panel-heading.collapsed .collapseIcon i:before{
-        content : "\f107";
+
+    .configItemDetail .checkDataItemsPanel .panel-heading.collapsed .collapseIcon i:before {
+        content: "\f107";
     }
-    .configItemDetail .checkItemTitle{
-        height:65px;
+
+    .configItemDetail .checkItemTitle {
+        height: 65px;
         line-height: 65px;
-        font-size:16px;
-        padding-left:24px;
-        border:1px solid rgba(214,219,230,1);
+        font-size: 16px;
+        padding-left: 24px;
+        border: 1px solid rgba(214, 219, 230, 1);
         border-bottom: none;
-        color:#3E4956
+        color: #3E4956
     }
-    .configItemDetail .checkDataItemsPanel{
+
+    .configItemDetail .checkDataItemsPanel {
         border-radius: 0px !important;
         margin-top: 0 !important;
-        border-top:none;
+        border-top: none;
         border-bottom: none;
     }
-    .itemNameEl{
+
+    .itemNameEl {
         margin-left: 10px;
     }
-    .configItemDetail .checkDataItemsPanel .panel-heading{
+
+    .configItemDetail .checkDataItemsPanel .panel-heading {
         border-radius: 0px;
-        height:50px;
+        height: 50px;
         padding: 11px 23px 16px 23px;
     }
-    .configItemDetail .checkDataItemsPanel .panel-heading .groupTitle{
-        font-size:18px;
+
+    .configItemDetail .checkDataItemsPanel .panel-heading .groupTitle {
+        font-size: 18px;
 
     }
-    .configItemDetail .treeview .expand-icon{
-        width:15px !important;
-        margin-left:16px;
-        font-size:14px;
+
+    .configItemDetail .treeview .expand-icon {
+        width: 15px !important;
+        margin-left: 16px;
+        font-size: 14px;
     }
-    .configItemDetail .treeview .check-icon{
-        color:#55A8FD;
-        width:15px !important;
+
+    .configItemDetail .treeview .check-icon {
+        color: #55A8FD;
+        width: 15px !important;
     }
 </style>
 
@@ -52,135 +61,155 @@
             <div class="panel-body" style="margin-left: 2%;width:96%;height:calc(100% - 40px);border:none;">
 
                 <div class="row" style="line-height:35px;margin-bottom: 20px">
-                    <div class="col-sm-6" style="font-size:16px;color:#3E4956" >
-                    ${groupName}: <a href="javascript:;" data-mode="inline" class="itemNameEl">${item.name} <i class="iconfont icon-icon_edit"></i></a>
+                    <div class="col-sm-6" style="font-size:16px;color:#3E4956">
+                    ${groupName}: <a href="javascript:;" data-mode="inline" class="itemNameEl">${item.name}
+                        <@codeValidation codes=operationCodes operationCode="saveConfig">
+                        <i class="iconfont icon-icon_edit"></i></a>
+                        </@codeValidation>
                     </div>
-                    <div class="col-sm-6 text-right" >
-                        <button class="btn ls-btn btn-xs btn-outline closeBtn"><i class="iconfont icon-icon_exit" aria-hidden="true"></i> 返回</button>
+                    <div class="col-sm-6 text-right">
+                        <button class="btn ls-btn btn-xs btn-outline closeBtn"><i class="iconfont icon-icon_exit"
+                                                                                  aria-hidden="true"></i> 返回
+                        </button>
                     </div>
                 </div>
                 <div class="checkItemTitle">
                     检查项配置
                 </div>
-                <div class="panel-group" id="checkDataGroups"  style="height:calc(100% - 130px );overflow: auto">
+                <div class="panel-group" id="checkDataGroups" style="height:calc(100% - 130px );overflow: auto">
                     <#list gloableCheckList as check>
 
-
-                        <div class="panel panel-default checkDataItemsPanel" data-id="${check.seq}" data-value="${check.name}">
-                            <div class="panel-heading" data-toggle="collapse" data-parent="#checkDataGroups" href="#check_${check.seq}" style="cursor:pointer">
-                                <h5 class="panel-title" >
+                        <div class="panel panel-default checkDataItemsPanel" data-id="${check.seq}"
+                             data-value="${check.name}">
+                            <div class="panel-heading" data-toggle="collapse" data-parent="#checkDataGroups"
+                                 href="#check_${check.seq}" style="cursor:pointer">
+                                <h5 class="panel-title">
 
                                     <span class="groupTitle">${check.name?replace('\\d+(\\.\\d+\\.?)?','','r')}</span>
                                     <span class="collapseIcon pull-right"><i class="fa"></i></span>
-                                    <div class="checkCountInfo pull-right m-r-sm">已选择 <span class="count">0</span>  项 </div>
+                                    <div class="checkCountInfo pull-right m-r-sm">已选择 <span class="count">0</span> 项
+                                    </div>
 
                                 </h5>
                             </div>
                             <div id="secondListData_${check.seq}" class="hide">
                                 <@obj2json obj=check.children> </@obj2json>
                             </div>
-                            <div id="check_${check.seq}" class="panel-collapse collapse in secondList" data-id="${check.seq}">
+                            <div id="check_${check.seq}" class="panel-collapse collapse in secondList"
+                                 data-id="${check.seq}">
 
-                        </div>
+                            </div>
                         </div>
                     </#list>
                 </div>
             </div>
             <div class="text-center" style="height:50px;line-height:50px">
+                <@codeValidation codes=operationCodes operationCode="saveConfig">
                 <button class="btn ls-btn btn-primary saveBtn">保存</button>
+                </@codeValidation>
             </div>
         </div>
     </div>
 </div>
-<script type="text/javascript">
-    (function(){
-        var checkItems = ${checkItems};
-        var colorMap = {"1":"#28D582","2":"#92A2CA","3":"#7D68FF","4":"#FFBE32","5":"#FF80B9","6":"#FF4D77"};
-        checkItems = JSON.stringify(checkItems)
-        var itemDetail={
-            groupCode:"${groupCode}",
-            name:"${item.name}",
-            value:"${item.value}",
-            id:"${item.id!''}"
-        }
 
-        $(".configItemDetail .itemNameEl").editable().on("save",function(e,params){
+
+<script type="text/javascript">
+    (function () {
+        var checkItems = ${checkItems};
+
+        <#if colorMap??>
+             var colorMap = ${colorMap}
+        <#else>
+             var colorMap = {"1":"#55D1BC","2":"#5ECBE5","3":"#67B9EC","4":"#80B0EC","5":"#8EA3E6","6":"#A696EB","7":"#E3B391","8":"#F4B252","9":"#ED935F","10":"#F16281"};
+        </#if>
+        checkItems = JSON.stringify(checkItems)
+        var itemDetail = {
+            groupCode: "${groupCode}",
+            name: "${item.name}",
+            value: "${item.value}",
+            id: "${item.id!''}"
+        }
+         <@codeValidation codes=operationCodes operationCode="saveConfig">
+        $(".configItemDetail .itemNameEl").editable().on("save", function (e, params) {
 
 
             var value = params.newValue;
-            var t =this;
-            setTimeout(function(){
-                $(t).html(value+" <i class=\"iconfont icon-icon_edit\"></i>")
-            },100)
+            var t = this;
+            setTimeout(function () {
+                $(t).html(value + " <i class=\"iconfont icon-icon_edit\"></i>")
+            }, 100)
 
             itemDetail.name = value
             itemDetail.value = value
         })
-        $(".configItemDetail .closeBtn").click(function(){
-            $(".security-center-initConfig .itemDetail").fadeOut(function(){
+         </@codeValidation>
+        $(".configItemDetail .closeBtn").click(function () {
+            $(".security-center-initConfig .itemDetail").fadeOut(function () {
                 $(this).empty()
             })
         })
-        function getData(list){
 
-            let content = $("#secondListData_"+$(list).data("id")).html()
+        function getData(list) {
+
+            let content = $("#secondListData_" + $(list).data("id")).html()
             let json = JSON.parse(content);
-            for(var i=0;i<json.length;i++){
+            for (var i = 0; i < json.length; i++) {
                 json[i].selectable = false
                 json[i].text = json[i].name;
                 var children = json[i].children
                 var checkCount = 0;
-                for(var j=0;j<children.length;j++){
+                for (var j = 0; j < children.length; j++) {
                     children[j].text = children[j].name
                     children[j].selectable = false
                     children[j].tags = [children[j].grade]
 
-                    if(checkItems.indexOf(JSON.stringify({name:children[j].name,seq:children[j].seq}))>-1){
-                        children[j].state={checked:true,disabled:false,expanded:false}
-                        checkCount ++;
+                    if (checkItems.indexOf(JSON.stringify({name: children[j].name, seq: children[j].seq})) > -1) {
+                        children[j].state = {checked: true, disabled: false, expanded: false}
+                        checkCount++;
                     }
                 }
 
 
-                if(checkCount==children.length){
-                    json[i].state={checked:true,disabled:false,expanded:false}
-                }else if(checkCount>0){
-                    json[i].state={checked:"undefined",disabled:false,expanded:false}
+                if (checkCount == children.length) {
+                    json[i].state = {checked: true, disabled: false, expanded: false}
+                } else if (checkCount > 0) {
+                    json[i].state = {checked: "undefined", disabled: false, expanded: false}
                 }
                 json[i].nodes = children;
 
             }
             return json
         }
-        $(".secondList").each(function(){
+
+        $(".secondList").each(function () {
             $(this).treeview({
                 showCheckbox: true,
-                hierarchicalCheck:true,//级联勾选
-                multiSelect:true,
+                hierarchicalCheck: true,//级联勾选
+                multiSelect: true,
                 expandIcon: 'fa fa-angle-right ',
                 collapseIcon: 'fa fa-angle-down ',
-                showTags:true,
+                showTags: true,
                 nodeIcon: '',
                 selectedIcon: '',
                 checkedIcon: 'fa fa-check-square ',
                 partiallyCheckedIcon: 'fa fa-check-square',
                 uncheckedIcon: 'fa fa-square-o ',
                 data: getData(this),
-                onInitialized:function(event,nodes){
+                onInitialized: function (event, nodes) {
                     var that = this
-                   setTimeout(function(){
-                       var checkedCount = $(that).treeview("getChecked").length
-                       $(that).parent().find(".checkCountInfo .count").html(checkedCount)
-                   },500)
+                    setTimeout(function () {
+                        var checkedCount = $(that).treeview("getChecked").length
+                        $(that).parent().find(".checkCountInfo .count").html(checkedCount)
+                    }, 500)
                 },
-                onNodeChecked: function(event,node){
+                onNodeChecked: function (event, node) {
 
                     var checkedCount = $(this).treeview("getChecked").length
 
 
                     $(this).parent().find(".checkCountInfo .count").html(checkedCount)
                 },
-                onNodeUnchecked: function(event,node){
+                onNodeUnchecked: function (event, node) {
 
                     var checkedCount = $(this).treeview("getChecked").length
 
@@ -189,38 +218,44 @@
                 }
             })
 
-           /* var checkedCount = $(this).treeview("getChecked")
-            var p = $(this).treeview("getParents",node)
-            if(p.length>0){
-                if(!p[0].state.checked){
-                    checkedCount+=1;
-                }
-            }
+            /* var checkedCount = $(this).treeview("getChecked")
+             var p = $(this).treeview("getParents",node)
+             if(p.length>0){
+                 if(!p[0].state.checked){
+                     checkedCount+=1;
+                 }
+             }
 
-            $(this).parent().find(".checkCountInfo .count").html(checkedCount)*/
+             $(this).parent().find(".checkCountInfo .count").html(checkedCount)*/
         })
-        $(".secondList ul li .badge").each(function(){
+        $(".secondList ul li .badge").each(function () {
             $(this).css({
-                background:colorMap[$(this).html()],
-                color:"#fff"
+                background: colorMap[$(this).html()],
+                color: "#fff"
             })
         })
-        $(".configItemDetail .saveBtn").click(function(){
+        $(".configItemDetail .saveBtn").click(function () {
+            var item = $(".categoryList[data-group-code='"+itemDetail.groupCode+"'] .categoryItem[data-name='"+$.trim(itemDetail.name)+"']")
+
+            if(item.length>0 && item.data("id")!="0" && item.data("id")!=itemDetail.id){
+                layer.msg("分类已存在",{icon:2})
+                return;
+            }
             var nodes = []
-            $(".secondList").each(function(){
+            $(".secondList").each(function () {
                 var checkeds = $(this).treeview("getChecked")
-                for(var i=0;i<checkeds.length;i++){
+                for (var i = 0; i < checkeds.length; i++) {
                     nodes.push({
-                        seq:checkeds[i].seq,
-                        name:checkeds[i].name
+                        seq: checkeds[i].seq,
+                        name: checkeds[i].name
                     })
                 }
             })
             itemDetail.checkDataItems = JSON.stringify(nodes);
             $http.post({
-                url:"security-center-initConfig/saveConfig",
-                data:itemDetail
-            },function(res){
+                url: "security-center-initConfig/saveConfig",
+                data: itemDetail
+            }, function (res) {
                 $(".categoryList[data-group-code='${groupCode}']").trigger("refresh")
             })
 

@@ -56,7 +56,9 @@
         提醒：您可<span style="color:#55A8FD">添加问题等级</span>，配置其<span style="color:#55A8FD">对应的检查项等级</span>
     </div>
     <div class="col-sm-6 text-right">
+        <@codeValidation codes=operationCodes operationCode="addPH">
         <button class="btn ls-btn btn-sm btn-primary phLevelOpts" data-opt="add"><i class="iconfont icon-icon_"></i> 添加</button>
+        </@codeValidation>
     </div>
 
     <div class="phList col-sm-12" style="padding:0">
@@ -107,7 +109,7 @@
                             var form = $(layero).find(".phForm")
                             if(form.valid()){
                                 var data = form.serializeObject();
-                                console.log(data)
+
                                 $http.post({
                                     url:"checkItem/savePh",
                                     data:data,
@@ -142,6 +144,9 @@
             loadList:function(){
                 $http.get({
                     url:"checkItem/phList",
+                    data:{
+                        operationCodes:"${operationCodes!''}"
+                    }
                 },function(res){
                     $(".phLevelManagement .phList").html(res)
                     that.bindEvent()

@@ -236,7 +236,7 @@ input::-webkit-input-placeholder{
 <script id="user_tree_table_body_tpl" type="text/html">
 {{# if(d.data && d.data.length > 0) { }}
 	{{# layui.each(d.data, function(index,item) { }}
-		<tr data-tt-id="{{item.nodeId}}" data-tt-parent-id="{{item.parentId}}" {{# if(item.hasChild == "true") { }}
+		<tr data-tt-id="{{item.nodeId}}" data-tt-parent-id="{{item.parentNodeId}}" {{# if(item.hasChild == "true") { }}
 				data-tt-branch='true'
 			{{# } }}>
 			{{# layui.each(d.mel, function(index2,mel) { }}
